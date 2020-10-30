@@ -1,0 +1,35 @@
+<template>
+  <div class="messageContainer">
+    <div class="message">
+      {{msg}}
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "messageReceive",
+  props: {
+    msg: String
+  }
+}
+</script>
+
+<style scoped>
+  .messageContainer{
+    position: relative;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+  .message{
+    position: relative;
+    width: max-content;
+    min-width: 5rem;
+    max-width: calc(100% - 3rem);
+    padding: 1rem;
+    left: 0rem;
+    background-color: #42a7b9;
+    border-radius: 1rem 1rem 1rem 0rem;
+    text-align: left;
+  }
+</style>

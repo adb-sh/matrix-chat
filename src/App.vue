@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div class="content">
-      <div id="messages">
+      <div class="messages">
+        <div class="spacer" style="height: 1rem;"></div>
         <message msg="Hey :D" />
         <message msg="Du bist blööööd xD" />
         <messageReceive msg="Du auch" />
@@ -17,6 +18,16 @@
                       Fusce lorem tortor, viverra ac suscipit sit amet, scelerisque id eros.
                       Suspendisse et ultricies elit, vitae pretium ipsum. Suspendisse vel ex in turpis pulvinar feugiat. "
         />
+        <messageReceive msg="Du hast Pizza!" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <div class="spacer" style="height: 1rem;"></div>
+      </div>
+      <div class="newMessageBanner">
+        <input class="newMessageInput" placeholder="type a message ..." type="text"/>
       </div>
     </div>
   </div>
@@ -52,18 +63,47 @@ body{
 }
 .content{
   position: absolute;
-  top: 0px;
-  left: calc(50% - 26rem);
-  padding: 1rem;
-  min-height: calc(100% - 2rem);
+  top: 0;
+  left: calc(50% - 25rem);
+  padding: 0;
+  min-height: calc(100%);
   width: 50rem;
   min-width: 15rem;
   background-color: #313131;
+  box-shadow: 3px 3px 10px #111;
+}
+.messages{
+  position: absolute;
+  margin: 0;
+  left: 0;
+  top: 0;
+  height: calc(100% - 4rem);
+  width: 100%;
+  overflow-y: auto;
+}
+.newMessageBanner{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  min-height: 4rem;
+  background-color: #1d1d1d;
+  border-radius: 1rem 1rem 0 0;
+}
+.newMessageInput{
+  position: absolute;
+  top: 0.5rem;
+  left: 2rem;
+  height: 3rem;
+  width: calc(100% - 7rem);
+  background-color: #fff0;
+  border: 0;
+  color: #fff;
 }
 
 @media (max-width: 55rem){
   .content{
-    width: calc(100% - 2rem);
+    width: calc(100%);
     left: 0;
   }
 }

@@ -19,7 +19,8 @@ export default {
   .messageContainer{
     position: relative;
     margin-top: 0.5rem;
-    width: 100%;
+    width: calc(100% - 2rem);
+    left: 1rem;
   }
   .message{
     margin-left:auto; margin-right:0;

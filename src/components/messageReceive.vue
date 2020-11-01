@@ -28,9 +28,9 @@ export default {
     min-width: 5rem;
     max-width: calc(100% - 3rem);
     padding: 1rem;
-    left: 0rem;
+    left: 0;
     background-color: #42a7b9;
-    border-radius: 1rem 1rem 1rem 0rem;
+    border-radius: 1rem 1rem 1rem 0;
     text-align: left;
   }
 </style>

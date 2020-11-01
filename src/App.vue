@@ -26,9 +26,7 @@
         <message msg="und Kuchen :P" />
         <div class="spacer" style="height: 1rem;"></div>
       </div>
-      <div class="newMessageBanner">
-        <input class="newMessageInput" placeholder="type a message ..." type="text"/>
-      </div>
+      <newMessage />
     </div>
   </div>
 </template>
@@ -36,12 +34,14 @@
 <script>
 import message from './components/message.vue';
 import messageReceive from './components/messageReceive.vue';
+import newMessage from './components/newMessage.vue';
 
 export default {
   name: 'App',
   components: {
     message,
-    messageReceive
+    messageReceive,
+    newMessage
   }
 }
 </script>
@@ -52,9 +52,6 @@ body{
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   position: absolute;
   color: #ffffff;
   background-color: #1d1d1d;
@@ -80,25 +77,6 @@ body{
   height: calc(100% - 4rem);
   width: 100%;
   overflow-y: auto;
-}
-.newMessageBanner{
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  min-height: 4rem;
-  background-color: #1d1d1d;
-  border-radius: 1rem 1rem 0 0;
-}
-.newMessageInput{
-  position: absolute;
-  top: 0.5rem;
-  left: 2rem;
-  height: 3rem;
-  width: calc(100% - 7rem);
-  background-color: #fff0;
-  border: 0;
-  color: #fff;
 }
 
 @media (max-width: 55rem){

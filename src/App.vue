@@ -44,6 +44,26 @@ export default {
     newMessage
   }
 }
+
+const wsurl = 'ws://127.0.0.1:8081'
+const socket = new WebSocket(wsurl)
+
+socket.onopen = () => {
+  socket.send('new session')
+}
+socket.onerror = (error) => {
+  console.log(`WebSocket error: ${error}`)
+}
+//socket.onclose = () => show_error('session timed out (refresh)')
+/*socket.onmessage = (e) => {
+  console.log(e.data)
+  let msg = e.data.split(";", 2)
+  if (msg[0] === 'error') show_error(msg[1])
+  else if (msg[0] === 'surl') {
+    document.getElementById('surl-input').value = msg[1]
+    document.getElementById('surl-popup').style.display = 'block'
+  }
+}*/
 </script>
 
 <style>

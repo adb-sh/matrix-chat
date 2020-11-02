@@ -1,7 +1,7 @@
 <template>
   <div class="newMessageBanner">
     <textarea name="input" id="newMessageInput" class="newMessageInput" placeholder="type a message ..." type="text" v-model="content" />
-    <icon style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
+    <icon style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="../sym/ic_send_white_24px.svg" />
   </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
     icon
   },
   props: {
-    content: String,
+    content: String
   },
   mounted() {
     ResizeListener(document.getElementById("newMessageInput"));

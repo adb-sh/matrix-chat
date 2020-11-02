@@ -57,4 +57,5 @@ function resize() {
     vertical-align: middle;
     font-family: Avenir, Helvetica, Arial, sans-serif;
   }
+
 </style>

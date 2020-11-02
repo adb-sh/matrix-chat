@@ -27,6 +27,7 @@
         <div class="spacer" style="height: 1rem;"></div>
       </div>
       <newMessage />
+      <topBanner />
     </div>
   </div>
 </template>
@@ -35,13 +36,15 @@
 import message from './components/message.vue';
 import messageReceive from './components/messageReceive.vue';
 import newMessage from './components/newMessage.vue';
+import topBanner from './components/topBanner.vue';
 
 export default {
   name: 'App',
   components: {
     message,
     messageReceive,
-    newMessage
+    newMessage,
+    topBanner
   }
 }
 </script>

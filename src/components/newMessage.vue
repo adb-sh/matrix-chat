@@ -1,7 +1,7 @@
 <template>
   <div class="newMessageBanner">
-    <textarea name="input" id="newMessageInput" class="newMessageInput" placeholder="type a message ..." type="text" v-model="content" />
-    <icon style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="../sym/ic_send_white_24px.svg" />
+    <textarea id="newMessageInput" class="newMessageInput" placeholder="type a message ..." type="text" v-model="content" />
+    <icon onclick="sendMessage()" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="../sym/ic_send_white_24px.svg" />
   </div>
 </template>
 
@@ -18,10 +18,13 @@ export default {
   },
   mounted() {
     ResizeListener(document.getElementById("newMessageInput"));
+    /*EventListener.$on('EVENT_NAME', function (){
+
+    });*/
   }
 }
 
-export const ResizeListener = (id) => {
+export const ResizeListener = id => {
   id.addEventListener("input", resize);
 }
 function resize() {

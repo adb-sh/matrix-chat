@@ -1,6 +1,6 @@
 <template>
   <div class="iconContainer" >
-    <img class="icon" :src="ic" alt="" />
+    <img class="icon" v-bind:src=ic alt="" />
   </div>
 </template>
 

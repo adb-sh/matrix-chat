@@ -2,10 +2,9 @@ const ws = require('ws')
 
 //WS server
 const wss = new ws.Server({
-    port: 8081,
+    port: 8090,
     perMessageDeflate: {
         zlibDeflateOptions: {
-            // See zlib defaults.
             chunkSize: 1024,
             memLevel: 7,
             level: 3
@@ -13,21 +12,20 @@ const wss = new ws.Server({
         zlibInflateOptions: {
             chunkSize: 10 * 1024
         },
-        // Other options settable:
-        clientNoContextTakeover: true, // Defaults to negotiated value.
-        serverNoContextTakeover: true, // Defaults to negotiated value.
-        serverMaxWindowBits: 10, // Defaults to negotiated value.
-        // Below options specified as default values.
-        concurrencyLimit: 10, // Limits zlib concurrency for perf.
-        threshold: 1024 // Size (in bytes) below which messages
-        // should not be compressed.
+        clientNoContextTakeover: true,
+        serverNoContextTakeover: true,
+        serverMaxWindowBits: 10,
+        concurrencyLimit: 10,
+        threshold: 1024
     }
 });
 
 //WS handler
-wss.on('connection', ws => {
-    ws.on('message', message => {
-        if (message.split(';', 2)[0] === 'message') wss.clients.forEach(clients => clients.send(message))
+wss.on('connection', (ws, req) => {
+    console.log(`${req.socket.remoteAddress} connected`)
+    ws.on('message', msg => {
+        console.log(`${req.socket.remoteAddress} => ${msg}`)
+        if (msg.split(';', 2)[0] === 'message') wss.clients.forEach(clients => clients.send(msg))
     })
     ws.send('websocket connected')
 })

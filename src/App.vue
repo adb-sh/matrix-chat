@@ -27,6 +27,7 @@
         <div class="spacer" style="height: 1rem;"></div>
       </div>
       <newMessage />
+      <error msg="fehler!"/>
     </div>
   </div>
 </template>
@@ -35,18 +36,21 @@
 import message from './components/message.vue';
 import messageReceive from './components/messageReceive.vue';
 import newMessage from './components/newMessage.vue';
+import error from "@/components/error.vue";
 
 export default {
   name: 'App',
   components: {
     message,
     messageReceive,
-    newMessage
+    newMessage,
+    error
   }
 }
 
-const wsurl = 'ws://127.0.0.1:8081'
+const wsurl = 'ws://127.0.0.1:8090'
 const socket = new WebSocket(wsurl)
+function element(id){ return document.getElementById(id)}
 
 socket.onopen = () => {
   socket.send('new session')
@@ -54,15 +58,24 @@ socket.onopen = () => {
 socket.onerror = (error) => {
   console.log(`WebSocket error: ${error}`)
 }
-//socket.onclose = () => show_error('session timed out (refresh)')
-/*socket.onmessage = (e) => {
+socket.onclose = () => show_error('session timed out (refresh)')
+socket.onmessage = (e) => {
   console.log(e.data)
   let msg = e.data.split(";", 2)
   if (msg[0] === 'error') show_error(msg[1])
-  else if (msg[0] === 'surl') {
-    document.getElementById('surl-input').value = msg[1]
-    document.getElementById('surl-popup').style.display = 'block'
-  }
+  else if (msg[0] === 'message');
+}
+
+function show_error(msg) {
+  let error_style = element('errorBox').style
+  element('errorMessage').innerText = msg
+  error_style.display = "block"
+  error_style.animation = "slide-from-left alternate 0.2s"
+  setTimeout(() => {error_style.animation = ""}, 200)
+}
+
+/*function sendMessage(msg, user){
+  socket.send(`message;${user};${msg}`)
 }*/
 </script>
 

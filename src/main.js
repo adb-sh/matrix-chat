@@ -34,7 +34,7 @@ socket.onopen = () => {
 socket.onerror = (error) => {
   console.log(`WebSocket error: ${error}`)
 }
-socket.onclose = () => show_error('session timed out (refresh)')
+socket.onclose = () => show_error('session ended (refresh)')
 socket.onmessage = (e) => {
   console.log(`data received => ${e.data}`)
   let msg = JSON.parse(e.data)

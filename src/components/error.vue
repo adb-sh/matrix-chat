@@ -1,6 +1,6 @@
 <template>
   <div id="errorBox" class="errorBox">
-    <icon class="errorBtn" onclick="this.parentNode.style.display = 'none'" ic="/sym/ic_close_white_24px.svg" />
+    <icon class="errorBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
     <div id="errorMessage" class="btnText">
       {{msg}}
     </div>
@@ -30,6 +30,7 @@ name: "error",
     width: 16rem;
     background-color: #E53935;
     border-radius: 15px;
+    box-shadow: 3px 3px 10px #111;
   }
   #errorBox{
     display: none;
@@ -39,14 +40,14 @@ name: "error",
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     color: #fff;
     font-family:Arial, "lucida console", sans-serif;
   }
   .errorBtn{
     position: absolute;
-    top: 0rem;
-    right: 0rem;
+    top: 0;
+    right: 0;
     background-color: #0000;
     box-shadow: none;
   }

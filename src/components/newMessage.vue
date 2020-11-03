@@ -1,7 +1,7 @@
 <template>
   <div class="newMessageBanner">
     <label for="newMessageInput"></label><textarea id="newMessageInput" class="newMessageInput" placeholder="type a message ..." v-model="content" />
-    <icon id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="../sym/ic_send_white_24px.svg" />
+    <icon id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
   </div>
 </template>
 

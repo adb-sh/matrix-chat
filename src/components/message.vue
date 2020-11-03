@@ -18,7 +18,7 @@ export default {
 <style scoped>
   .messageContainer{
     position: relative;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     width: calc(100% - 2rem);
     left: 1rem;
   }
@@ -28,10 +28,17 @@ export default {
     width: max-content;
     min-width: 5rem;
     max-width: calc(100% - 3rem);
-    padding: 1rem;
+    padding: 0.7rem 1rem 0.45rem 1rem;
     right: 0;
-    background-color: #42b983;
+    background-color: #42a7b9;
     border-radius: 1rem 1rem 0 1rem;
     text-align: left;
+  }
+
+  @media (min-width: 45rem){
+    .message{
+      margin-left: 0; margin-right: auto;
+      border-radius: 1rem 1rem 1rem 0;
+    }
   }
 </style>

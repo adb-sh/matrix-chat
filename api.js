@@ -23,9 +23,15 @@ const wss = new ws.Server({
 //WS handler
 wss.on('connection', (ws, req) => {
     console.log(`${req.socket.remoteAddress} connected`)
-    ws.on('message', msg => {
-        console.log(`${req.socket.remoteAddress} => ${msg}`)
-        if (msg.split(';', 2)[0] === 'message') wss.clients.forEach(clients => clients.send(msg))
+    ws.on('message', msgJSON => {
+        let msg = JSON.parse(msgJSON)
+        console.log(`${req.socket.remoteAddress} => ${msgJSON}`)
+        if (msg.type === 'message') wss.clients.forEach(client => client.send(msgJSON))
     })
-    ws.send('websocket connected')
+    let msg = {
+        type: "info",
+        time: Date.now(),
+        content: "connected"
+    }
+    ws.send(JSON.stringify(msg))
 })

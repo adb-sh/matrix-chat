@@ -1,33 +1,33 @@
 <template>
   <div id="app">
     <div class="content">
-      <div class="messages">
-        <div class="spacer" style="height: 1rem;"></div>
-        <message msg="Hey :D" />
-        <message msg="Du bist blööööd xD" />
-        <messageReceive msg="Du auch" />
-        <message msg="lol" />
-        <messageReceive msg="Du bist voll blöd, ich hasse dich, warum tust du das?!" />
-        <message msg="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Ut imperdiet vel risus tristique mollis. Proin aliquam felis non vehicula ornare.
-                      Fusce scelerisque pellentesque erat quis sollicitudin.
-                      Quisque aliquet, ligula ut volutpat vulputate, ligula lorem dictum velit, et aliquam sapien orci sed magna.
-                      Nam suscipit ex eget urna accumsan pulvinar. Pellentesque fringilla placerat feugiat.
-                      Aenean aliquam vestibulum metus. Nulla augue turpis, consectetur vitae quam ac, porttitor rhoncus nunc.
-                      Nullam non turpis consequat, placerat lectus nec, ornare orci.
-                      Fusce lorem tortor, viverra ac suscipit sit amet, scelerisque id eros.
-                      Suspendisse et ultricies elit, vitae pretium ipsum. Suspendisse vel ex in turpis pulvinar feugiat. "
-        />
-        <messageReceive msg="Du hast Pizza!" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
-        <div class="spacer" style="height: 1rem;"></div>
+      <div class="messagesContainer">
+        <div id="messages" class="messages">
+          <message msg="Hey :D" />
+          <message msg="Du bist blööööd xD" />
+          <messageReceive msg="Du auch" />
+          <message msg="lol" />
+          <messageReceive msg="Du bist voll blöd, ich hasse dich, warum tust du das?!" />
+          <message msg="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Ut imperdiet vel risus tristique mollis. Proin aliquam felis non vehicula ornare.
+                        Fusce scelerisque pellentesque erat quis sollicitudin.
+                        Quisque aliquet, ligula ut volutpat vulputate, ligula lorem dictum velit, et aliquam sapien orci sed magna.
+                        Nam suscipit ex eget urna accumsan pulvinar. Pellentesque fringilla placerat feugiat.
+                        Aenean aliquam vestibulum metus. Nulla augue turpis, consectetur vitae quam ac, porttitor rhoncus nunc.
+                        Nullam non turpis consequat, placerat lectus nec, ornare orci.
+                        Fusce lorem tortor, viverra ac suscipit sit amet, scelerisque id eros.
+                        Suspendisse et ultricies elit, vitae pretium ipsum. Suspendisse vel ex in turpis pulvinar feugiat. "
+          />
+          <messageReceive msg="Du hast Pizza!" />
+          <message msg="und Kuchen :P" />
+          <message msg="und Kuchen :P" />
+          <message msg="und Kuchen :P" />
+          <message msg="und Kuchen :P" />
+          <message msg="und Kuchen :P" />
+        </div>
       </div>
       <newMessage />
-      <error msg="fehler!"/>
+      <error />
     </div>
   </div>
 </template>
@@ -47,36 +47,6 @@ export default {
     error
   }
 }
-
-const wsurl = 'ws://127.0.0.1:8090'
-const socket = new WebSocket(wsurl)
-function element(id){ return document.getElementById(id)}
-
-socket.onopen = () => {
-  socket.send('new session')
-}
-socket.onerror = (error) => {
-  console.log(`WebSocket error: ${error}`)
-}
-socket.onclose = () => show_error('session timed out (refresh)')
-socket.onmessage = (e) => {
-  console.log(e.data)
-  let msg = e.data.split(";", 2)
-  if (msg[0] === 'error') show_error(msg[1])
-  else if (msg[0] === 'message');
-}
-
-function show_error(msg) {
-  let error_style = element('errorBox').style
-  element('errorMessage').innerText = msg
-  error_style.display = "block"
-  error_style.animation = "slide-from-left alternate 0.2s"
-  setTimeout(() => {error_style.animation = ""}, 200)
-}
-
-/*function sendMessage(msg, user){
-  socket.send(`message;${user};${msg}`)
-}*/
 </script>
 
 <style>
@@ -102,14 +72,19 @@ body{
   background-color: #313131;
   box-shadow: 3px 3px 10px #111;
 }
-.messages{
+.messagesContainer{
   position: absolute;
   margin: 0;
+  padding-bottom: 1rem;
   left: 0;
   top: 0;
-  height: calc(100% - 4rem);
+  height: calc(100% - 5rem);
   width: 100%;
   overflow-y: auto;
+}
+.messages{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 55rem){

@@ -1,12 +1,13 @@
 <template>
   <div class="newMessageBanner">
     <textarea id="newMessageInput" class="newMessageInput" placeholder="type a message ..." type="text" v-model="content" />
-    <icon onclick="sendMessage()" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="../sym/ic_send_white_24px.svg" />
+    <icon id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="../sym/ic_send_white_24px.svg" />
   </div>
 </template>
 
 <script>
 import icon from './icon.vue';
+import sendMessage from '../main.js';
 
 export default {
   name: "newMessage",
@@ -18,9 +19,14 @@ export default {
   },
   mounted() {
     ResizeListener(document.getElementById("newMessageInput"));
-    /*EventListener.$on('EVENT_NAME', function (){
-
-    });*/
+    document.getElementById("sendMessageBtn").addEventListener("click", () => {
+      sendMessage.methods.callSendMessage(document.getElementById("newMessageInput").value)
+      document.getElementById("newMessageInput").value = ''
+      //sendMessage.methods.callSendMessage(this.data.message)
+    })
+  },
+  data: function () {
+    return { message: this.content}
   }
 }
 

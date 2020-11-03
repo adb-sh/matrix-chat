@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="content">
-      <div class="messagesContainer">
+      <div id="messagesContainer" class="messagesContainer">
         <div id="messages" class="messages">
           <message msg="Hey :D" />
           <message msg="Du bist blööööd xD" />
@@ -75,10 +75,9 @@ body{
 .messagesContainer{
   position: absolute;
   margin: 0;
-  padding-bottom: 1rem;
   left: 0;
   top: 0;
-  height: calc(100% - 5rem);
+  height: calc(100% - 4rem);
   width: 100%;
   overflow-y: auto;
 }

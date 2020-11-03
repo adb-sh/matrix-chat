@@ -1,6 +1,6 @@
 <template>
   <div class="newMessageBanner">
-    <textarea id="newMessageInput" class="newMessageInput" placeholder="type a message ..." type="text" v-model="content" />
+    <label for="newMessageInput"></label><textarea id="newMessageInput" class="newMessageInput" placeholder="type a message ..." v-model="content" />
     <icon id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="../sym/ic_send_white_24px.svg" />
   </div>
 </template>
@@ -20,9 +20,11 @@ export default {
   mounted() {
     ResizeListener(document.getElementById("newMessageInput"));
     document.getElementById("sendMessageBtn").addEventListener("click", () => {
-      sendMessage.methods.callSendMessage(document.getElementById("newMessageInput").value)
-      document.getElementById("newMessageInput").value = ''
-      //sendMessage.methods.callSendMessage(this.data.message)
+      if (document.getElementById("newMessageInput").value !== '') {
+        sendMessage.methods.callSendMessage(document.getElementById("newMessageInput").value)
+        document.getElementById("newMessageInput").value = ''
+        //sendMessage.methods.callSendMessage(this.data.message)
+      }
     })
   },
   data: function () {
@@ -31,11 +33,14 @@ export default {
 }
 
 export const ResizeListener = id => {
-  id.addEventListener("input", resize);
-}
-function resize() {
-  this.style.height = "auto";
-  this.style.height = `${this.scrollHeight}px`;
+  id.addEventListener("input", function(){
+    this.style.height = '1.25rem'
+    this.style.height = `${this.scrollHeight}px`
+    let msgContainer = document.getElementById("messagesContainer")
+    msgContainer.style.height
+        = `calc(100% - ${this.parentElement.clientHeight}px)`
+    //msgContainer.scrollTo(0, msgContainer.scrollHeight)
+  });
 }
 </script>
 
@@ -52,12 +57,13 @@ function resize() {
   }
   .newMessageInput{
     position: relative;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
     left: 2rem;
-    min-height: 3rem;
+    min-height: 1.25rem;
     max-height: 14rem;
     width: calc(100% - 7rem);
+    height: 1.25rem;
     background-color: #fff0;
     border: 0 solid #fff0;
     color: #fff;

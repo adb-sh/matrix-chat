@@ -1,8 +1,8 @@
 <template>
   <div class="topBanner">
     <div>
-      <div id = "icon-arrow"><img alt="arrow" class="arrow-Top-Left" src="../sym/arrow_back-24px.svg"></div>
-      <div id = "picTop"><img alt="Bild" id="picTopPic" src="../sym/placeholder.png"></div>
+      <div id = "icon-arrow" ><img alt="arrow" class="arrow-Top-Left" src="../sym/arrow_back-24px.svg"></div>
+      <div id = "picTop"><img alt="Bild" id="picTopPic" src="../sym/supervisor_account-24px.svg"></div>
       <div id="container">
         <div id = "chatName"> OpenChat</div>
         <div id = "users">9 Mitglieder</div>
@@ -11,13 +11,11 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-name: "topBanner"
-}
+<script >
+  export default {
+    name: "topBanner"
+  }
 </script>
-
 <style scoped>
 #icon-arrow{
   position: absolute;
@@ -28,9 +26,9 @@ name: "topBanner"
   max-height: 2.3rem;
   max-width: 2.3rem;
   border-radius: 1.5rem;
-  border: #ededed solid 2px;
   text-align: center;
-  background-color: #3a8d9c;
+  background-color: #2d2d2d;
+
 }
 .arrow-Top-Left{
   margin-top: 0.2rem;
@@ -47,8 +45,7 @@ name: "topBanner"
   width: 2.3rem;
   height: 2.3rem;
   border-radius: 1.5rem;
-  border: #ededed solid 2px;
-  background-color: #3a8d9c;
+  background-color: #2d2d2d;
 }
 #container{
   position: absolute;
@@ -72,19 +69,19 @@ name: "topBanner"
   max-height: 2.3rem;
   max-width: 2.3rem;
   border-radius: 1.5rem;
-  border: #ededed solid 2px;
   text-align: center;
-  background-color: #3a8d9c;
+  background-color: #2d2d2d;
+
 }
 .menu-Top-Right {
   margin-top: 0.2rem;
   height: 2rem;
   width: 2rem;
 }
- .topBanner{
-   position: absolute;
-   width: 100%;
-   height: 3rem;
-   background-color: #1d1d1d;
- }
+.topBanner{
+  position: absolute;
+  width: 100%;
+  height: 3rem;
+  background-color: #1d1d1d;
+}
 </style>

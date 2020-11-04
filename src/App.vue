@@ -2,7 +2,7 @@
   <div id="app">
     <div class="content">
       <div class="messages">
-        <div class="spacer" style="height: 1rem;"></div>
+        <div class="spacer" style="height: 4rem;"></div>
         <message msg="Hey :D" />
         <message msg="Du bist blööööd xD" />
         <messageReceive msg="Du auch" />
@@ -19,6 +19,21 @@
                       Suspendisse et ultricies elit, vitae pretium ipsum. Suspendisse vel ex in turpis pulvinar feugiat. "
         />
         <messageReceive msg="Du hast Pizza!" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
+        <message msg="und Kuchen :P" />
         <message msg="und Kuchen :P" />
         <message msg="und Kuchen :P" />
         <message msg="und Kuchen :P" />

@@ -12,8 +12,18 @@ export default {
     sendMessage()
   },
   methods: {
-    callSendMessage(data) {
-      sendMessage(data)
+    sendMessage(message){
+      let msg = {
+        type: "message",
+        time: Date.now(),
+        content: {
+          message: message
+        }
+      }
+      socket.send(JSON.stringify(msg))
+    },
+    sendWebSocket(msg){
+      socket.send(JSON.stringify(msg))
     }
   }
 }

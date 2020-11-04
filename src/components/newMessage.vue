@@ -1,34 +1,46 @@
 <template>
   <div class="newMessageBanner">
-    <label for="newMessageInput"></label><textarea id="newMessageInput" class="newMessageInput" placeholder="type a message ..." v-model="content" />
-    <icon id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
+    <label for="newMessageInput"></label>
+    <textarea  id="newMessageInput" class="newMessageInput" placeholder="type a message ..." v-model="msg.content.text" />
+    <icon v-on:click="sendMessage()" id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
   </div>
 </template>
 
 <script>
 import icon from './icon.vue';
-import sendMessage from '../main.js';
+import main from '../main.js';
 
 export default {
   name: "newMessage",
   components: {
     icon
   },
-  props: {
-    content: String
-  },
   mounted() {
     ResizeListener(document.getElementById("newMessageInput"));
-    document.getElementById("sendMessageBtn").addEventListener("click", () => {
+    /*document.getElementById("sendMessageBtn").addEventListener("click", () => {
       if (document.getElementById("newMessageInput").value !== '') {
-        sendMessage.methods.callSendMessage(document.getElementById("newMessageInput").value)
+        main.methods.sendMessage(document.getElementById("newMessageInput").value)
         document.getElementById("newMessageInput").value = ''
         //sendMessage.methods.callSendMessage(this.data.message)
       }
-    })
+    })*/
   },
-  data: function () {
-    return { message: this.content}
+  methods: {
+    sendMessage(){
+      this.msg.time = Date.now()
+      main.methods.sendWebSocket(this.msg)
+    }
+  },
+  data(){
+    return {
+      msg: {
+        type: "message",
+        time: Date.now(),
+        content: {
+          text: ""
+        }
+      }
+    }
   }
 }
 

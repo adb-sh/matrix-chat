@@ -1,7 +1,7 @@
 <template>
-  <div class="iconContainer" >
+  <button class="iconContainer" >
     <img class="icon" v-bind:src=ic alt="" />
-  </div>
+  </button>
 </template>
 
 <script>
@@ -22,6 +22,7 @@ name: "icon",
     box-shadow: 3px 3px 10px #111;
     cursor: pointer;
     user-select: none;
+    border: none;
   }
   .icon{
     position: absolute;

@@ -1,8 +1,8 @@
 <template>
   <div class="newMessageBanner">
     <label for="newMessageInput"></label>
-    <textarea  id="newMessageInput" class="newMessageInput" placeholder="type a message ..." v-model="msg.content.text" />
-    <icon v-on:click="sendMessage()" id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
+    <textarea @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput" placeholder="type a message ..." v-model="msg.content.text" />
+    <icon @click.native="sendMessage()" id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
   </div>
 </template>
 
@@ -15,20 +15,23 @@ export default {
   components: {
     icon
   },
-  mounted() {
-    ResizeListener(document.getElementById("newMessageInput"));
-    /*document.getElementById("sendMessageBtn").addEventListener("click", () => {
-      if (document.getElementById("newMessageInput").value !== '') {
-        main.methods.sendMessage(document.getElementById("newMessageInput").value)
-        document.getElementById("newMessageInput").value = ''
-        //sendMessage.methods.callSendMessage(this.data.message)
-      }
-    })*/
-  },
   methods: {
     sendMessage(){
-      this.msg.time = Date.now()
-      main.methods.sendWebSocket(this.msg)
+      if (this.msg.content.text !== "") {
+        this.msg.time = Date.now()
+        main.methods.sendWebSocket(this.msg)
+        this.msg.content.text = ""
+        this.resizeMessageBanner()
+      }
+    },
+    resizeMessageBanner(){
+      let id = this.$refs.newMessageInput
+      id.style.height = '1.25rem'
+      id.style.height = `${id.scrollHeight}px`
+      let msgContainer = document.getElementById("messagesContainer")
+      msgContainer.style.height
+          = `calc(100% - ${id.parentElement.clientHeight}px)`
+      //msgContainer.scrollTo(0, msgContainer.scrollHeight)
     }
   },
   data(){
@@ -42,17 +45,6 @@ export default {
       }
     }
   }
-}
-
-export const ResizeListener = id => {
-  id.addEventListener("input", function(){
-    this.style.height = '1.25rem'
-    this.style.height = `${this.scrollHeight}px`
-    let msgContainer = document.getElementById("messagesContainer")
-    msgContainer.style.height
-        = `calc(100% - ${this.parentElement.clientHeight}px)`
-    //msgContainer.scrollTo(0, msgContainer.scrollHeight)
-  });
 }
 </script>
 

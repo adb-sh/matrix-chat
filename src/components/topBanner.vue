@@ -7,7 +7,7 @@
         <div id="chatName">{{roomInfo.name}}</div>
         <div id="users">{{roomInfo.user.length}} members</div>
       </div>
-      <icon class="smallIcon" id="icon-menu" ic="./sym/menu-24px.svg" />
+      <icon v-on:click.native="showChatInfo()" class="smallIcon" id="icon-menu" ic="./sym/menu-24px.svg" />
     </div>
   </div>
 </template>
@@ -18,6 +18,11 @@ export default {
   name: "topBanner",
   components:{
     icon
+  },
+  methods:{
+    showChatInfo(){
+      document.getElementById("chatInformation").style.display = 'block';
+    }
   },
   data(){
     return {

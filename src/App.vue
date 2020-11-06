@@ -37,7 +37,7 @@ body{
   padding: 0;
   min-height: calc(100%);
   width: 50rem;
-  min-width: 15rem;
+  min-width: 18rem;
   background-color: #313131;
   box-shadow: 3px 3px 10px #111;
 }

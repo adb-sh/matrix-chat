@@ -28,7 +28,8 @@ name: "icon",
     position: absolute;
     height: 1.5rem;
     width: auto;
-    top: 0.75rem;
-    left: 0.75rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 </style>

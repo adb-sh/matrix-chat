@@ -1,7 +1,7 @@
 <template>
-  <div class="iconContainer" >
-    <img class="icon" :src="ic" alt="" />
-  </div>
+  <button class="iconContainer" >
+    <img class="icon" v-bind:src=ic alt="" />
+  </button>
 </template>
 
 <script>
@@ -22,12 +22,14 @@ name: "icon",
     box-shadow: 3px 3px 10px #111;
     cursor: pointer;
     user-select: none;
+    border: none;
   }
   .icon{
     position: absolute;
     height: 1.5rem;
     width: auto;
-    top: 0.75rem;
-    left: 0.75rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 </style>

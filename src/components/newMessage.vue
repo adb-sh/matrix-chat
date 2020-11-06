@@ -1,32 +1,52 @@
 <template>
   <div class="newMessageBanner">
-    <textarea name="input" id="newMessageInput" class="newMessageInput" placeholder="type a message ..." type="text" v-model="content" />
-    <icon style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
+    <label for="newMessageInput"></label>
+    <textarea @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
+              autocomplete="off" placeholder="type a message ..." v-model="msg.content.text" />
+    <icon @click.native="sendMessage()" id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;"
+          ic="./sym/ic_send_white_24px.svg" />
   </div>
 </template>
 
 <script>
 import icon from './icon.vue';
+import main from '../main.js';
 
 export default {
   name: "newMessage",
   components: {
     icon
   },
-  props: {
-    content: String,
+  methods: {
+    sendMessage(){
+      if (this.msg.content.text !== "") {
+        this.msg.time = Date.now()
+        main.methods.sendWebSocket(this.msg)
+        this.msg.content.text = ""
+        this.resizeMessageBanner()
+      }
+    },
+    resizeMessageBanner(){
+      let id = this.$refs.newMessageInput
+      id.style.height = '1.25rem'
+      id.style.height = `${id.scrollHeight}px`
+      let msgContainer = document.getElementById("messagesContainer")
+      msgContainer.style.height
+          = `calc(100% - ${id.parentElement.clientHeight}px - 3rem)`
+      //msgContainer.scrollTo(0, msgContainer.scrollHeight)
+    }
   },
-  mounted() {
-    ResizeListener(document.getElementById("newMessageInput"));
+  data(){
+    return {
+      msg: {
+        type: "message",
+        time: Date.now(),
+        content: {
+          text: ""
+        }
+      }
+    }
   }
-}
-
-export const ResizeListener = (id) => {
-  id.addEventListener("input", resize);
-}
-function resize() {
-  this.style.height = "auto";
-  this.style.height = `${this.scrollHeight}px`;
 }
 </script>
 
@@ -43,12 +63,13 @@ function resize() {
   }
   .newMessageInput{
     position: relative;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
     left: 2rem;
-    min-height: 3rem;
+    min-height: 1.25rem;
     max-height: 14rem;
     width: calc(100% - 7rem);
+    height: 1.25rem;
     background-color: #fff0;
     border: 0 solid #fff0;
     color: #fff;

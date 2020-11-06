@@ -1,50 +1,60 @@
 <template>
   <div class="topBanner">
     <div>
-      <div id = "icon-arrow" ><img alt="arrow" class="arrow-Top-Left" src="../sym/arrow_back-24px.svg"></div>
-      <div id = "picTop"><img alt="Bild" id="picTopPic" src="../sym/supervisor_account-24px.svg"></div>
+      <icon class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
+      <icon class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
-        <div id = "chatName"> OpenChat</div>
-        <div id = "users">9 Mitglieder</div>
+        <div id="chatName">{{roomInfo.name}}</div>
+        <div id="users">{{roomInfo.user.length}} members</div>
       </div>
-      <div id = "icon-menu"><img alt="menu" class="menu-Top-Right" src="../sym/menu-24px.svg"></div>
+      <icon class="smallIcon" id="icon-menu" ic="./sym/menu-24px.svg" />
     </div>
   </div>
 </template>
-<script >
-  export default {
-    name: "topBanner"
+<script>
+import icon from '@/components/icon.vue';
+
+export default {
+  name: "topBanner",
+  components:{
+    icon
+  },
+  data(){
+    return {
+      roomInfo: {
+        name: "open chat",
+        user: []
+      }
+    }
   }
+}
 </script>
 <style scoped>
+.topBanner{
+  position: absolute;
+  width: 100%;
+  height: 3rem;
+  background-color: #1d1d1d;
+  box-shadow: 0 3px 10px #111;
+}
+.smallIcon{
+  top: 0.25rem;
+  background-color: #2d2d2d;
+  height: 2.5rem;
+  width: 2.5rem;
+}
 #icon-arrow{
   position: absolute;
-  top: 0.24rem;
   left: 1rem;
-  width: 100%;
-  height: 100%;
-  max-height: 2.3rem;
-  max-width: 2.3rem;
-  border-radius: 1.5rem;
-  text-align: center;
-  background-color: #2d2d2d;
-
-}
-.arrow-Top-Left{
-  margin-top: 0.2rem;
-  height: 2rem;
-  width: 2rem;
 }
 #picTop{
-  top: 0.24rem;
   position: absolute;
-  fill: #42a7b9;
   left: 4rem;
+  background-color: #42a7b9;
 }
-#picTopPic{
-  width: 2.3rem;
-  height: 2.3rem;
-  border-radius: 1.5rem;
+#icon-menu{
+  position: absolute;
+  right: 1rem;
   background-color: #2d2d2d;
 }
 #container{
@@ -53,35 +63,11 @@
   left: 7.5rem;
 }
 #chatName{
-  font-size: medium;
+  font-size: 1rem;
   color: #ededed;
 }
 #users{
-  font-size: x-small;
+  font-size: 0.75rem;
   color: #9c9c9c;
-}
-#icon-menu{
-  position: absolute;
-  top: 0.24rem;
-  right: 1rem;
-  width: 100%;
-  height: 100%;
-  max-height: 2.3rem;
-  max-width: 2.3rem;
-  border-radius: 1.5rem;
-  text-align: center;
-  background-color: #2d2d2d;
-
-}
-.menu-Top-Right {
-  margin-top: 0.2rem;
-  height: 2rem;
-  width: 2rem;
-}
-.topBanner{
-  position: absolute;
-  width: 100%;
-  height: 3rem;
-  background-color: #1d1d1d;
 }
 </style>

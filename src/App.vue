@@ -43,6 +43,7 @@
       </div>
       <newMessage />
       <topBanner />
+      <chatInformations />
     </div>
   </div>
 </template>
@@ -52,6 +53,7 @@ import message from './components/message.vue';
 import messageReceive from './components/messageReceive.vue';
 import newMessage from './components/newMessage.vue';
 import topBanner from './components/topBanner.vue';
+import chatInformations from './components/chatInformations.vue';
 
 export default {
   name: 'App',
@@ -59,7 +61,8 @@ export default {
     message,
     messageReceive,
     newMessage,
-    topBanner
+    topBanner,
+    chatInformations
   }
 }
 </script>

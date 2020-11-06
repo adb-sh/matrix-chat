@@ -26,6 +26,7 @@
       </div>
     </div>
     <newMessage />
+    <topBanner />
   </div>
 </template>
 
@@ -33,13 +34,15 @@
 import message from '@/components/message.vue';
 import messageReceive from '@/components/messageReceive.vue';
 import newMessage from '@/components/newMessage.vue';
+import topBanner from "@/components/topBanner";
 
 export default {
   name: 'chat',
   components: {
     message,
     messageReceive,
-    newMessage
+    newMessage,
+    topBanner
   }
 }
 </script>
@@ -49,8 +52,8 @@ export default {
   position: absolute;
   margin: 0;
   left: 0;
-  top: 0;
-  height: calc(100% - 4rem);
+  top: 3rem;
+  height: calc(100% - 7rem);
   width: 100%;
   overflow-y: auto;
 }

@@ -1,8 +1,10 @@
 <template>
   <div class="newMessageBanner">
     <label for="newMessageInput"></label>
-    <textarea @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput" autocomplete="off" placeholder="type a message ..." v-model="msg.content.text" />
-    <icon @click.native="sendMessage()" id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;" ic="./sym/ic_send_white_24px.svg" />
+    <textarea @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
+              autocomplete="off" placeholder="type a message ..." v-model="msg.content.text" />
+    <icon @click.native="sendMessage()" id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;"
+          ic="./sym/ic_send_white_24px.svg" />
   </div>
 </template>
 
@@ -30,7 +32,7 @@ export default {
       id.style.height = `${id.scrollHeight}px`
       let msgContainer = document.getElementById("messagesContainer")
       msgContainer.style.height
-          = `calc(100% - ${id.parentElement.clientHeight}px)`
+          = `calc(100% - ${id.parentElement.clientHeight}px - 3rem)`
       //msgContainer.scrollTo(0, msgContainer.scrollHeight)
     }
   },

@@ -18,11 +18,12 @@ export default {
     cursor: pointer;
     border: none;
     height: 2.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     background-color: #00BCD4;
     box-shadow: 3px 3px 10px #222;
     border-radius: 1.25rem;
+    margin: 1rem;
   }
   .btnText {
     position: relative;

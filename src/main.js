@@ -1,10 +1,37 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import App from './App.vue'
+import login from './views/login.vue'
+import chat from './views/chat.vue'
 
 Vue.config.productionTip = false
+Vue.use(VueRouter)
+
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: login
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login
+    },
+    {
+      path: '/chat',
+      name: 'chat',
+      component: chat
+    }
+  ]
+})
 
 new Vue({
-  render: h => h(App),
+  el: '#app',
+  router,
+  template: '<App/>',
+  components: {App}
 }).$mount('#app')
 
 export default {
@@ -50,7 +77,13 @@ socket.onmessage = (e) => {
   let msg = JSON.parse(e.data)
   if (msg.type === 'error') show_error(msg.content)
   else if (msg.type === 'message'){
-    element('messages').innerHTML += `<messageReceive msg="${msg.content.message}" />`;
+    //just for now, ik it's dirty
+    element('messages').innerHTML +=
+        `<div class="messageContainer" data-v-032da2b2="">
+            <div class="message" data-v-032da2b2="">
+                ${msg.content.text}
+            </div>
+        </div>`;
   }
 }
 

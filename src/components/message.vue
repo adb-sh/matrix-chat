@@ -33,6 +33,7 @@ export default {
     background-color: #42a7b9;
     border-radius: 1rem 1rem 0 1rem;
     text-align: left;
+    word-break: break-word;
   }
 
   @media (min-width: 45rem){

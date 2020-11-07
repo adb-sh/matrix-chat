@@ -37,6 +37,7 @@ export default {
     icon
   }
 }
+
 </script>
 <style scoped>
 .chatInformation{

@@ -38,6 +38,14 @@ export default {
   mounted() {
     sendMessage()
   },
+  data(){
+    return {
+      roomInfo: {
+        name: "open chat",
+        user: []
+      }
+    }
+  },
   methods: {
     sendMessage(message){
       let msg = {
@@ -76,6 +84,10 @@ socket.onmessage = (e) => {
   console.log(`data received => ${e.data}`)
   let msg = JSON.parse(e.data)
   if (msg.type === 'error') show_error(msg.content)
+  else if (msg.type === 'route') router.push({path: msg.path})
+  else if (msg.type === 'room'){
+    this.roomInfo.user = msg.user
+  }
   else if (msg.type === 'message'){
     //just for now, ik it's dirty
     element('messages').innerHTML +=

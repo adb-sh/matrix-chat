@@ -21,12 +21,19 @@ const wss = new ws.Server({
 });
 
 //WS handler
+let user = [];
 wss.on('connection', (ws, req) => {
     console.log(`${req.socket.remoteAddress} connected`)
     ws.on('message', msgJSON => {
         let msg = JSON.parse(msgJSON)
         console.log(`${req.socket.remoteAddress} => ${msgJSON}`)
         if (msg.type === 'message') wss.clients.forEach(client => client.send(msgJSON))
+        else if (msg.type === 'login' && msg.content.user !== ""){
+            user.push(msg.content.user)
+            ws.send('{"type":"route","path":"/chat"}')
+            let msg = {type: "room", name: "open chat", user: user}
+            ws.send(JSON.stringify(msg))
+        }
     })
     let msg = {
         type: "info",

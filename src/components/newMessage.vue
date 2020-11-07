@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import icon from './icon.vue';
-import main from '../main.js';
+import icon from '@/components/icon.vue';
+import main from '@/main.js';
 
 export default {
   name: "newMessage",

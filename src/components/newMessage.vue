@@ -22,8 +22,21 @@ export default {
       if (this.msg.content.text !== "") {
         this.msg.time = Date.now()
         main.methods.sendWebSocket(this.msg)
+        //just for now, ik it's dirty
+        document.getElementById('messages').innerHTML +=
+            `<div class="messageContainer" data-v-032da2b2="">
+            <div class="message" data-v-032da2b2="">
+                ${this.msg.content.text
+                .replace(/</g, "&lt")
+                .replace(/>/g, "&gt")
+                .replace(/\n/g, "<br>")}
+            </div>
+        </div>`;
         this.msg.content.text = ""
-        this.resizeMessageBanner()
+        document.getElementById("messagesContainer").style.height = "calc(100% - 7rem)"
+        document.getElementById("newMessageInput").style.height = "1.25rem"
+        let msgContainer = document.getElementById("messagesContainer")
+        msgContainer.scrollTo(0, msgContainer.scrollHeight)
       }
     },
     resizeMessageBanner(){
@@ -33,7 +46,6 @@ export default {
       let msgContainer = document.getElementById("messagesContainer")
       msgContainer.style.height
           = `calc(100% - ${id.parentElement.clientHeight}px - 3rem)`
-      //msgContainer.scrollTo(0, msgContainer.scrollHeight)
     }
   },
   data(){
@@ -67,7 +79,7 @@ export default {
     margin-bottom: 1rem;
     left: 2rem;
     min-height: 1.25rem;
-    max-height: 14rem;
+    max-height: 10rem;
     width: calc(100% - 7rem);
     height: 1.25rem;
     background-color: #fff0;

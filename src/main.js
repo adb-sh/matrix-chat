@@ -91,11 +91,13 @@ socket.onmessage = (e) => {
   else if (msg.type === 'message'){
     //just for now, ik it's dirty
     element('messages').innerHTML +=
-        `<div class="messageContainer" data-v-032da2b2="">
-            <div class="message" data-v-032da2b2="">
+        `<div class="messageContainer" data-v-a1576e28="">
+            <div class="message" data-v-a1576e28="">
                 ${msg.content.text}
             </div>
         </div>`;
+    let msgContainer = document.getElementById("messagesContainer")
+    if (msgContainer.scrollHeight < msgContainer.scrollTop + 1000) msgContainer.scrollTo(0, msgContainer.scrollHeight)
   }
 }
 

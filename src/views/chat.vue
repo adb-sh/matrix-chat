@@ -2,9 +2,15 @@
   <div>
     <div ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
-        <p style="margin-left: 1rem; font-style: italic;">You entered the chat</p>
-        <message style="display: none;" />
-        <messageReceive style="display: none;" />
+        <p style="text-align: center; font-style: italic;">you entered the chat</p>
+        <div v-for="(message, i) in chatroom.messages" :key="message.time">
+          <div v-if="message.content.user !== chatroom.username && function(){
+               return i===0 || chatroom.messages[i-1].content.user!==message.content.user;}()"
+               style="margin-left: 2rem; margin-top: 1rem">{{message.content.user}}
+          </div>
+          <messageReceive v-if="message.content.user !== chatroom.username" :msg=message.content.text />
+          <message v-if="message.content.user === chatroom.username" :msg=message.content.text />
+        </div>
       </div>
     </div>
     <newMessage />
@@ -16,7 +22,8 @@
 import message from '@/components/message.vue';
 import messageReceive from '@/components/messageReceive.vue';
 import newMessage from '@/components/newMessage.vue';
-import topBanner from "@/components/topBanner";
+import topBanner from '@/components/topBanner.vue';
+import main from '@/main.js';
 
 export default {
   name: 'chat',
@@ -25,6 +32,11 @@ export default {
     messageReceive,
     newMessage,
     topBanner
+  },
+  data(){
+    return {
+      chatroom: main.data().chatroom
+    }
   }
 }
 </script>

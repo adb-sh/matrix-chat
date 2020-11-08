@@ -22,16 +22,6 @@ export default {
       if (this.msg.content.text !== "") {
         this.msg.time = Date.now()
         main.methods.sendWebSocket(this.msg)
-        //just for now, ik it's dirty
-        document.getElementById('messages').innerHTML +=
-            `<div class="messageContainer" data-v-032da2b2="">
-            <div class="message" data-v-032da2b2="">
-                ${this.msg.content.text
-                .replace(/</g, "&lt")
-                .replace(/>/g, "&gt")
-                .replace(/\n/g, "<br>")}
-            </div>
-        </div>`;
         this.msg.content.text = ""
         document.getElementById("messagesContainer").style.height = "calc(100% - 7rem)"
         document.getElementById("newMessageInput").style.height = "1.25rem"
@@ -54,9 +44,11 @@ export default {
         type: "message",
         time: Date.now(),
         content: {
+          user: "you",
           text: ""
         }
-      }
+      },
+      chatroom: main.data().chatroom
     }
   }
 }

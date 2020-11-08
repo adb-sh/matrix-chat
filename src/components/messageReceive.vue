@@ -32,5 +32,6 @@ export default {
     background-color: #42b983;
     border-radius: 1rem 1rem 1rem 0;
     text-align: left;
+    word-break: break-word;
   }
 </style>

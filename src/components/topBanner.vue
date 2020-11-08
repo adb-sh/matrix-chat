@@ -6,8 +6,8 @@
       </router-link>
       <icon class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
-        <div id="chatName">{{roomInfo.name}}</div>
-        <div id="users">{{roomInfo.user.length}} members</div>
+        <div id="chatName">{{chatroom.name}}</div>
+        <div id="users">{{chatroom.user.length}} members</div>
       </div>
       <icon class="smallIcon" id="icon-menu" ic="./sym/menu-24px.svg" />
     </div>
@@ -15,6 +15,7 @@
 </template>
 <script>
 import icon from '@/components/icon.vue';
+import main from '@/main.js';
 
 export default {
   name: "topBanner",
@@ -23,10 +24,7 @@ export default {
   },
   data(){
     return {
-      roomInfo: {
-        name: "open chat",
-        user: []
-      }
+      chatroom: main.data().chatroom
     }
   }
 }
@@ -37,7 +35,7 @@ export default {
   width: 100%;
   height: 3rem;
   background-color: #1d1d1d;
-  box-shadow: 0 3px 10px #111;
+  box-shadow: 0 0px 5px #111;
 }
 .smallIcon{
   top: 0.25rem;

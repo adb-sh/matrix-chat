@@ -25,6 +25,69 @@
           <div class="status">Online</div>
         </div>
       </div>
+      <div class="contentBox">
+        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+        <div class="information">
+          <div class="userName">Alban</div>
+          <div class="status">Online</div>
+        </div>
+      </div>
+      <div class="contentBox">
+        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+        <div class="information">
+          <div class="userName">Alban</div>
+          <div class="status">Online</div>
+        </div>
+      </div>
+      <div class="contentBox">
+        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+        <div class="information">
+          <div class="userName">Alban</div>
+          <div class="status">Online</div>
+        </div>
+      </div>
+      <div class="contentBox">
+        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+        <div class="information">
+          <div class="userName">Alban</div>
+          <div class="status">Online</div>
+        </div>
+      </div>
+      <div class="contentBox">
+        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+        <div class="information">
+          <div class="userName">Alban</div>
+          <div class="status">Online</div>
+        </div>
+      </div><div class="contentBox">
+      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+      <div class="information">
+        <div class="userName">Alban</div>
+        <div class="status">Online</div>
+      </div>
+    </div><div class="contentBox">
+      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+      <div class="information">
+        <div class="userName">Alban</div>
+        <div class="status">Online</div>
+      </div>
+    </div><div class="contentBox">
+      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+      <div class="information">
+        <div class="userName">Alban</div>
+        <div class="status">Online</div>
+      </div>
+    </div><div class="contentBox">
+      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
+      <div class="information">
+        <div class="userName">Alban</div>
+        <div class="status">Online</div>
+      </div>
+    </div>
+
+
+
+
     </div>
   </div>
 </template>

@@ -35,8 +35,8 @@
 import message from '@/components/message.vue';
 import messageReceive from '@/components/messageReceive.vue';
 import newMessage from '@/components/newMessage.vue';
-import topBanner from "@/components/topBanner";
-import chatInformation from "@/components/chatInformation";
+import topBanner from "@/components/topBanner.vue";
+import chatInformation from "@/components/chatInformation.vue";
 
 export default {
   name: 'chat',

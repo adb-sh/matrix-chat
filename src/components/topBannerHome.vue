@@ -1,11 +1,9 @@
 <template>
-  <div class="topBanner">
+  <div class="topBannerHome">
     <div>
       <router-link to="/login"><icon class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" /></router-link>
-      <icon class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
         <div id="chatName">{{roomInfo.name}}</div>
-        <div id="users">{{roomInfo.user.length}} members</div>
       </div>
       <icon v-on:click.native="showChatInfo()" class="smallIcon" id="icon-menu" ic="./sym/menu-24px.svg" />
     </div>
@@ -15,7 +13,7 @@
 import icon from '@/components/icon.vue';
 
 export default {
-  name: "topBanner",
+  name: "topBannerHome",
   components:{
     icon
   },
@@ -35,7 +33,7 @@ export default {
 }
 </script>
 <style scoped>
-.topBanner{
+.topBannerHome{
   position: absolute;
   width: 100%;
   height: 3rem;
@@ -52,11 +50,6 @@ export default {
   position: absolute;
   left: 1rem;
 }
-#picTop{
-  position: absolute;
-  left: 4rem;
-  background-color: #42a7b9;
-}
 #icon-menu{
   position: absolute;
   right: 1rem;
@@ -64,15 +57,15 @@ export default {
 }
 #container{
   position: absolute;
-  top: 0.55rem;
-  left: 7.5rem;
+  top: 0.5rem;
+  left: 4.2rem;
+  background-color: #2d2d2d;
+  border-radius: 2rem;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
 }
 #chatName{
-  font-size: 1rem;
+  font-size: 1.8rem;
   color: #ededed;
-}
-#users{
-  font-size: 0.75rem;
-  color: #9c9c9c;
 }
 </style>

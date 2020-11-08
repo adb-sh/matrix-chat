@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import App from './App.vue'
 import login from './views/login.vue'
 import chat from './views/chat.vue'
+import home from './views/home.vue'
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
@@ -23,6 +24,11 @@ const router = new VueRouter({
       path: '/chat',
       name: 'chat',
       component: chat
+    },
+    {
+      path: '/room',
+      name: 'room',
+      component: home
     }
   ]
 })

@@ -2,32 +2,19 @@
   <div>
     <div ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
-        <message msg="Hey :D" />
-        <message msg="Du bist blööööd xD" />
-        <messageReceive msg="Du auch" />
-        <message msg="lol" />
-        <messageReceive msg="Du bist voll blöd, ich hasse dich, warum tust du das?!" />
-        <message msg="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Ut imperdiet vel risus tristique mollis. Proin aliquam felis non vehicula ornare.
-                      Fusce scelerisque pellentesque erat quis sollicitudin.
-                      Quisque aliquet, ligula ut volutpat vulputate, ligula lorem dictum velit, et aliquam sapien orci sed magna.
-                      Nam suscipit ex eget urna accumsan pulvinar. Pellentesque fringilla placerat feugiat.
-                      Aenean aliquam vestibulum metus. Nulla augue turpis, consectetur vitae quam ac, porttitor rhoncus nunc.
-                      Nullam non turpis consequat, placerat lectus nec, ornare orci.
-                      Fusce lorem tortor, viverra ac suscipit sit amet, scelerisque id eros.
-                      Suspendisse et ultricies elit, vitae pretium ipsum. Suspendisse vel ex in turpis pulvinar feugiat. "
-        />
-        <messageReceive msg="Du hast Pizza!" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
-        <message msg="und Kuchen :P" />
+        <p style="text-align: center; font-style: italic;">you entered the chat</p>
+        <div v-for="(message, i) in chatroom.messages" :key="message.time">
+          <div v-if="message.content.user !== chatroom.username && function(){
+               return i===0 || chatroom.messages[i-1].content.user!==message.content.user;}()"
+               style="margin-left: 2rem; margin-top: 1rem">{{message.content.user}}
+          </div>
+          <messageReceive v-if="message.content.user !== chatroom.username" :msg=message.content.text />
+          <message v-if="message.content.user === chatroom.username" :msg=message.content.text />
+        </div>
       </div>
     </div>
     <newMessage />
     <topBanner />
-    <chatInformation />
   </div>
 </template>
 
@@ -35,8 +22,8 @@
 import message from '@/components/message.vue';
 import messageReceive from '@/components/messageReceive.vue';
 import newMessage from '@/components/newMessage.vue';
-import topBanner from "@/components/topBanner";
-import chatInformation from "@/components/chatInformation";
+import topBanner from '@/components/topBanner.vue';
+import main from '@/main.js';
 
 export default {
   name: 'chat',
@@ -44,8 +31,12 @@ export default {
     message,
     messageReceive,
     newMessage,
-    topBanner,
-    chatInformation
+    topBanner
+  },
+  data(){
+    return {
+      chatroom: main.data().chatroom
+    }
   }
 }
 </script>

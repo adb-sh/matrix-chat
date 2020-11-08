@@ -5,23 +5,31 @@
       <label for="longurl-input"></label>
       <input v-model="session.content.user" class="input" id="longurl-input" type="text" autocomplete="off" maxlength="20" placeholder="chose nickname">
     </div>
-    <input type="hidden" value="search" name="login">
-    <textbtn text="login" />
+    <textbtn v-on:click.native="login()" text="login" />
   </div>
 </template>
 
 <script>
 import textbtn from '@/components/textbtn';
+import main from "@/main";
 
 export default {
   name: "login.vue",
   components: {
     textbtn
   },
+  methods: {
+    login() {
+      if (this.session.content.user !== "") {
+        this.session.time = Date.now()
+        main.methods.sendWebSocket(this.session)
+      }
+    }
+  },
   data(){
     return {
       session: {
-        type: "session",
+        type: "login",
         time: Date.now(),
         content: {
           user: ""

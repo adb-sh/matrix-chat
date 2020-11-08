@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import icon from './icon.vue';
-import main from '../main.js';
+import icon from '@/components/icon.vue';
+import main from '@/main.js';
 
 export default {
   name: "newMessage",
@@ -23,7 +23,10 @@ export default {
         this.msg.time = Date.now()
         main.methods.sendWebSocket(this.msg)
         this.msg.content.text = ""
-        this.resizeMessageBanner()
+        document.getElementById("messagesContainer").style.height = "calc(100% - 7rem)"
+        document.getElementById("newMessageInput").style.height = "1.25rem"
+        let msgContainer = document.getElementById("messagesContainer")
+        msgContainer.scrollTo(0, msgContainer.scrollHeight)
       }
     },
     resizeMessageBanner(){
@@ -33,7 +36,6 @@ export default {
       let msgContainer = document.getElementById("messagesContainer")
       msgContainer.style.height
           = `calc(100% - ${id.parentElement.clientHeight}px - 3rem)`
-      //msgContainer.scrollTo(0, msgContainer.scrollHeight)
     }
   },
   data(){
@@ -42,9 +44,11 @@ export default {
         type: "message",
         time: Date.now(),
         content: {
+          user: "you",
           text: ""
         }
-      }
+      },
+      chatroom: main.data().chatroom
     }
   }
 }
@@ -67,7 +71,7 @@ export default {
     margin-bottom: 1rem;
     left: 2rem;
     min-height: 1.25rem;
-    max-height: 14rem;
+    max-height: 10rem;
     width: calc(100% - 7rem);
     height: 1.25rem;
     background-color: #fff0;

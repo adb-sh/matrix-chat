@@ -1,0 +1,9 @@
+{
+  "name": "open chat",
+  "short_name": "open chat",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#14181b",
+  "theme_color": "#00BCD4",
+  "orientation": "portrait-primary"
+}

@@ -27,16 +27,21 @@ const router = new VueRouter({
   ]
 })
 
-new Vue({
-  el: '#app',
-  router,
-  template: '<App/>',
-  components: {App}
-}).$mount('#app')
+let chatroom = {
+  name: "open chat",
+  user: [],
+  username: "you",
+  messages: []
+};
 
 export default {
   mounted() {
     sendMessage()
+  },
+  data(){
+    return {
+      chatroom: chatroom
+    }
   },
   methods: {
     sendMessage(message){
@@ -55,9 +60,22 @@ export default {
   }
 }
 
-const wsurl = 'ws://127.0.0.1:8090'
-const socket = new WebSocket(wsurl)
+new Vue({
+  el: '#app',
+  router,
+  template: '<App/>',
+  components: {App},
+  data(){
+    return {
+      chatroom: chatroom
+    }
+  }
+}).$mount('#app')
 
+const wsurl = 'ws://127.0.0.1:8090'
+//const wsurl = 'wss://chat.adb.sh:8080'
+
+const socket = new WebSocket(wsurl)
 function element(id){ return document.getElementById(id)}
 
 socket.onopen = () => {
@@ -76,14 +94,15 @@ socket.onmessage = (e) => {
   console.log(`data received => ${e.data}`)
   let msg = JSON.parse(e.data)
   if (msg.type === 'error') show_error(msg.content)
+  else if (msg.type === 'route') router.push({path: msg.path})
+  else if (msg.type === 'room'){
+    chatroom.user = msg.user
+  }
+  else if (msg.type === "info") chatroom.username = msg.username
   else if (msg.type === 'message'){
-    //just for now, ik it's dirty
-    element('messages').innerHTML +=
-        `<div class="messageContainer" data-v-032da2b2="">
-            <div class="message" data-v-032da2b2="">
-                ${msg.content.text}
-            </div>
-        </div>`;
+    chatroom.messages.push(msg)
+    let msgContainer = document.getElementById("messagesContainer")
+    if (msgContainer.scrollHeight < msgContainer.scrollTop + 1000) msgContainer.scrollTo(0, msgContainer.scrollHeight)
   }
 }
 

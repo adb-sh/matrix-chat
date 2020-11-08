@@ -15,6 +15,7 @@
     </div>
     <newMessage />
     <topBanner />
+    <chatInformation />
   </div>
 </template>
 
@@ -24,10 +25,12 @@ import messageReceive from '@/components/messageReceive.vue';
 import newMessage from '@/components/newMessage.vue';
 import topBanner from '@/components/topBanner.vue';
 import main from '@/main.js';
+import ChatInformation from "@/components/chatInformation";
 
 export default {
   name: 'chat',
   components: {
+    ChatInformation,
     message,
     messageReceive,
     newMessage,

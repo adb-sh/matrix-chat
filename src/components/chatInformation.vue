@@ -1,28 +1,23 @@
 <template>
-  <div class="chatInformation">
+  <div id="chatInformation">
     <h1>open chat</h1>
     <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
     <div id="box">
       <div class="informationBox">
-      <div class="picBoxBig"><div class="placeholderBig"><p>O P</p></div></div>
+      <div class="picBoxBig"><div class="placeholderBig"><p>{{chatroom.name.substr(0,2)}}</p></div></div>
       <div class="roomInformation">
-        <div class="roomName">Open Chat room</div>
-        <div class="users">2 members</div>
+        <div class="roomName">{{chatroom.name}}</div>
+        <div class="users">{{chatroom.user.length}} members</div>
       </div>
       </div>
-      <div id="textMembers">Members</div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">TechCrafter07</div>
-          <div class="status">Online</div>
-        </div>
-      </div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">Alban</div>
-          <div class="status">Online</div>
+      <h2 v-if="chatroom.user.length !== 0">members</h2>
+      <div v-for="user in chatroom.user" :key="user">
+        <div class="contentBox">
+          <div class="picBox"><div class="picPlaceholder"><p>{{user.substr(0,2)}}</p></div></div>
+          <div class="information">
+            <div class="userName">{{user}}</div>
+            <div class="status">online</div>
+          </div>
         </div>
       </div>
     </div>
@@ -30,30 +25,38 @@
 </template>
 <script>
 import icon from './icon.vue';
+import main from '@/main.js'
 
 export default {
   name: "chatInformation",
   components:{
     icon
+  },
+  data(){
+    return {
+      chatroom: main.data().chatroom
+    }
   }
 }
 
 </script>
 <style scoped>
-.chatInformation{
+#chatInformation{
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
   top: 5rem;
   width: calc(100% - 8rem);
+  max-width: 30rem;
   height: calc(100% - 10rem);
   background-color: #1d1d1d;
   box-shadow: 6px 6px 20px #111;
   border-radius: 1rem;
   text-align: center;
+  display: none;
 }
 @media (max-width: 30rem) {
-  .chatInformation{
+  #chatInformation{
     transform: unset;
     top: 0;
     left: 0;
@@ -71,16 +74,14 @@ export default {
 #box{
   position: relative;
   width: calc(100% - 2rem);
-  background-color: #2d2d2d;
   padding: 0.001rem 1rem 1rem;
-  overflow: auto;
+  overflow-y: auto;
   max-height: calc(100% - 8rem);
 }
 .informationBox{
   margin-top: 0.2rem;
   height: 5rem;
   padding: 0.2rem;
-  border-bottom: 2px solid #9c9c9c;
 }
 .picBoxBig{
   text-align: center;
@@ -107,17 +108,9 @@ export default {
   font-size: 1.2rem;
   color: #9c9c9c;
 }
-#textMembers{
-  font-size: 1.5rem;
-  text-align: left;
-  margin-left: 0.2rem;
-  margin-top: 0.3rem;
-  margin-bottom: 0.2rem;
-}
 .contentBox{
   margin-top: 0.2rem;
   height: 3.2rem;
-  border-bottom: 2px solid #9c9c9c ;
   padding: 0.2rem;
   max-height: 48px;
 }

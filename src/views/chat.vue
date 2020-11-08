@@ -27,7 +27,7 @@
     </div>
     <newMessage />
     <topBanner />
-    <chatInformation />
+    <chatInformation name="TechCrafter07" status="Online" />
   </div>
 </template>
 
@@ -46,6 +46,10 @@ export default {
     newMessage,
     topBanner,
     chatInformation
+  },
+  props:{
+    name: String,
+    status: String
   }
 }
 </script>

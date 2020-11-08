@@ -1,8 +1,7 @@
 <template>
   <div>
     <topBannerHome />
-    <room roomName="Test" onlineUsers="5" />
-    <room roomName="Test2" onlineUsers="5" />
+    <router-link to="/chat"><room roomName="Test" onlineUsers="5" /></router-link>
   </div>
 </template>
 <script>

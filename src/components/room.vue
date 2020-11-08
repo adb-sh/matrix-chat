@@ -8,13 +8,6 @@
         <div class="status">{{onlineUsers}} Online</div>
       </div>
     </div>
-    <div class="contentBox">
-      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-      <div class="information">
-        <div class="roomName">Open Chatroom 2</div>
-        <div class="status">3 Online</div>
-      </div>
-    </div>
     </div>
   </div>
 </template>

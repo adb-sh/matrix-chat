@@ -1,7 +1,7 @@
 <template>
   <div class="topBanner">
     <div>
-      <router-link to="/login"><icon class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" /></router-link>
+      <router-link to="/room"><icon class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" /></router-link>
       <icon class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
         <div id="chatName">{{roomInfo.name}}</div>

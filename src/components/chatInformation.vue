@@ -14,78 +14,10 @@
       <div class="contentBox">
         <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
         <div class="information">
-          <div class="userName">TechCrafter07</div>
-          <div class="status">Online</div>
+          <div class="userName">{{name}}</div>
+          <div class="status">{{status}}</div>
         </div>
       </div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">Alban</div>
-          <div class="status">Online</div>
-        </div>
-      </div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">Alban</div>
-          <div class="status">Online</div>
-        </div>
-      </div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">Alban</div>
-          <div class="status">Online</div>
-        </div>
-      </div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">Alban</div>
-          <div class="status">Online</div>
-        </div>
-      </div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">Alban</div>
-          <div class="status">Online</div>
-        </div>
-      </div>
-      <div class="contentBox">
-        <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-        <div class="information">
-          <div class="userName">Alban</div>
-          <div class="status">Online</div>
-        </div>
-      </div><div class="contentBox">
-      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-      <div class="information">
-        <div class="userName">Alban</div>
-        <div class="status">Online</div>
-      </div>
-    </div><div class="contentBox">
-      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-      <div class="information">
-        <div class="userName">Alban</div>
-        <div class="status">Online</div>
-      </div>
-    </div><div class="contentBox">
-      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-      <div class="information">
-        <div class="userName">Alban</div>
-        <div class="status">Online</div>
-      </div>
-    </div><div class="contentBox">
-      <div class="picBox"><div class="picPlaceholder"><p>O P</p></div></div>
-      <div class="information">
-        <div class="userName">Alban</div>
-        <div class="status">Online</div>
-      </div>
-    </div>
-
-
 
 
     </div>
@@ -98,6 +30,10 @@ export default {
   name: "chatInformation",
   components:{
     icon
+  },
+  props:{
+    name: String,
+    status: String
   }
 }
 

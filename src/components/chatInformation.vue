@@ -1,5 +1,5 @@
 <template>
-  <div class="chatInformation">
+  <div id="chatInformation">
     <h1>open chat</h1>
     <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
     <div id="box">
@@ -7,7 +7,7 @@
       <div class="picBoxBig"><div class="placeholderBig"><p>O P</p></div></div>
       <div class="roomInformation">
         <div class="roomName">Open Chat room</div>
-        <div class="users">2 members</div>
+        <div class="users">2 members in group</div>
       </div>
       </div>
       <div id="textMembers">Members</div>
@@ -40,7 +40,7 @@ export default {
 
 </script>
 <style scoped>
-.chatInformation{
+#chatInformation{
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
@@ -53,7 +53,7 @@ export default {
   text-align: center;
 }
 @media (max-width: 30rem) {
-  .chatInformation{
+  #chatInformation{
     transform: unset;
     top: 0;
     left: 0;

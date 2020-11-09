@@ -1,10 +1,12 @@
 <template>
   <div class="newMessageBanner">
-    <label for="newMessageInput"></label>
-    <textarea @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
-              autocomplete="off" placeholder="type a message ..." v-model="msg.content.text" />
-    <icon @click.native="sendMessage()" id="sendMessageBtn" style="position: absolute; right: 1rem; bottom: 0.5rem;"
-          ic="./sym/ic_send_white_24px.svg" />
+    <form v-on:submit.prevent="sendMessage()">
+      <label for="newMessageInput"></label>
+      <textarea v-on:keyup.shift.enter="sendMessage()" v-on:input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
+                autocomplete="off" placeholder="type a message ..." v-model="msg.content.text" />
+      <icon @click.native="sendMessage()" title="press shift + enter to submit" id="sendMessageBtn"
+            ic="./sym/ic_send_white_24px.svg" />
+    </form>
   </div>
 </template>
 
@@ -55,32 +57,47 @@ export default {
 </script>
 
 <style scoped>
-  .newMessageBanner{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: min-content;
-    min-height: 4rem;
-    background-color: #1d1d1d;
-    border-radius: 1rem 1rem 0 0;
-  }
-  .newMessageInput{
-    position: relative;
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    left: 2rem;
-    min-height: 1.25rem;
-    max-height: 10rem;
-    width: calc(100% - 7rem);
-    height: 1.25rem;
-    background-color: #fff0;
-    border: 0 solid #fff0;
-    color: #fff;
-    font-size: 1rem;
-    resize: none;
-    vertical-align: middle;
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-  }
-
+.newMessageBanner{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: min-content;
+  min-height: 4rem;
+  background-color: #1d1d1d;
+  border-radius: 1rem 1rem 0 0;
+}
+.newMessageInput{
+  position: relative;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  left: 2rem;
+  min-height: 1.25rem;
+  max-height: 10rem;
+  width: calc(100% - 7rem);
+  height: 1.25rem;
+  background-color: #fff0;
+  border: 0 solid #fff0;
+  color: #fff;
+  font-size: 1rem;
+  resize: none;
+  vertical-align: middle;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+}
+#sendMessageBtn{
+  position: absolute;
+  right: 1rem;
+  bottom: 0.5rem;
+}
+#sendMessageBtn:hover::after{
+  content: "press shift + enter to submit";
+  position: absolute;
+  padding: 1rem;
+  bottom: 4rem;
+  right: 0;
+  width: 14rem;
+  background-color: #eee;
+  color: #000;
+  border-radius: 1rem;
+}
 </style>

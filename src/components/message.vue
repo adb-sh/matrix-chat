@@ -34,6 +34,7 @@ export default {
     border-radius: 1rem 1rem 0 1rem;
     text-align: left;
     word-break: break-word;
+    white-space: pre-line;
   }
 
   @media (min-width: 45rem){

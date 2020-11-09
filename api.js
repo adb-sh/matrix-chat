@@ -36,7 +36,7 @@ wss.on('connection', (ws, req) => {
                 ws.send(JSON.stringify({type: "error", content: "your message was empty"}))
             else{
                 msg.content.user = thisuser
-                msg.content.text = msg.content.text.replace(/</g, "&lt").replace(/>/g, "&gt").replace(/\n/g, "<br>")
+                //msg.content.text = msg.content.text.replace(/</g, "&lt").replace(/>/g, "&gt").replace(/\n/g, "<br>")
                 wss.clients.forEach(client => client.send(JSON.stringify(msg)))
             }
         else if (msg.type === 'login' && msg.content.user !== ""){

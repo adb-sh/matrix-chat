@@ -33,5 +33,6 @@ export default {
     border-radius: 1rem 1rem 1rem 0;
     text-align: left;
     word-break: break-word;
+    white-space: pre-line;
   }
 </style>

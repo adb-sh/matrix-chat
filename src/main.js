@@ -72,8 +72,8 @@ new Vue({
   }
 }).$mount('#app')
 
-const wsurl = 'ws://127.0.0.1:8090'
-//const wsurl = 'wss://chat.adb.sh:8080'
+//const wsurl = 'ws://127.0.0.1:8090'
+const wsurl = 'wss://chat.adb.sh:8080'
 
 const socket = new WebSocket(wsurl)
 function element(id){ return document.getElementById(id)}
@@ -102,7 +102,9 @@ socket.onmessage = (e) => {
   else if (msg.type === 'message'){
     chatroom.messages.push(msg)
     let msgContainer = document.getElementById("messagesContainer")
-    if (msgContainer.scrollHeight < msgContainer.scrollTop + 1000) msgContainer.scrollTo(0, msgContainer.scrollHeight)
+    if (msg.content.user === chatroom.username || msgContainer.scrollHeight < msgContainer.scrollTop + 1000)
+      setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 50)
+    else document.getElementById("scrollDown").style.display = "block"
   }
 }
 

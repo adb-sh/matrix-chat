@@ -56,6 +56,8 @@ wss.on('connection', (ws, req) => {
     ws.on('close', () => {
         user.splice(user.indexOf(thisuser), 1);
         console.log(`${req.socket.remoteAddress} (${thisuser}) closed`)
+        wss.clients.forEach(client =>
+            client.send(JSON.stringify({type: "room", name: "open chat", user: user})))
     })
 
     ws.send(JSON.stringify({type: "info", time: Date.now(), content: "connected"}))

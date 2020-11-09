@@ -25,8 +25,8 @@ export default {
         this.msg.content.text = ""
         document.getElementById("messagesContainer").style.height = "calc(100% - 7rem)"
         document.getElementById("newMessageInput").style.height = "1.25rem"
-        let msgContainer = document.getElementById("messagesContainer")
-        msgContainer.scrollTo(0, msgContainer.scrollHeight)
+        //let msgContainer = document.getElementById("messagesContainer")
+        //msgContainer.scrollTo(0, msgContainer.scrollHeight)
       }
     },
     resizeMessageBanner(){

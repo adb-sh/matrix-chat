@@ -31,6 +31,7 @@ name: "error",
     background-color: #E53935;
     border-radius: 15px;
     box-shadow: 3px 3px 10px #111;
+    animation: slide-from-left alternate 0.2s;
   }
   #errorBox{
     display: none;

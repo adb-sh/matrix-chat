@@ -34,13 +34,19 @@ wss.on('connection', (ws, req) => {
                 ws.send('{"type":"route","path":"/login"}')
             }else if (msg.content.text === "")
                 ws.send(JSON.stringify({type: "error", content: "your message was empty"}))
+            else if (msg.content.text.length >= 1000)
+                ws.send(JSON.stringify({type: "error", content: "your message is too long"}))
             else{
                 msg.content.user = thisuser
                 //msg.content.text = msg.content.text.replace(/</g, "&lt").replace(/>/g, "&gt").replace(/\n/g, "<br>")
                 wss.clients.forEach(client => client.send(JSON.stringify(msg)))
             }
         else if (msg.type === 'login' && msg.content.user !== ""){
-            if (msg.content.user.length >= 20) ws.send(JSON.stringify({type: "error", content: "username is too long"}))
+            if (thisuser !== ""){
+                ws.send(JSON.stringify({type: "error", content: "you are already logged in"}))
+                ws.send('{"type":"route","path":"/chat"}')
+            }
+            else if (msg.content.user.length >= 20) ws.send(JSON.stringify({type: "error", content: "username is too long"}))
             else if (msg.content.user === "you" || user.indexOf(msg.content.user) !== -1)
                 ws.send(JSON.stringify({type: "error", content: "username already exist"}))
             else{

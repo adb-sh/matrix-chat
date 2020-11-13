@@ -1,17 +1,17 @@
 <template>
   <div id="login">
-    <h1 class="title">open chat</h1>
-    <div class="input-field" id="longurl">
-      <label for="longurl-input"></label>
-      <input v-model="session.content.user" class="input" id="longurl-input" type="text" autocomplete="off" maxlength="20" placeholder="chose nickname">
-    </div>
-    <textbtn v-on:click.native="login()" text="login" />
+    <h1 class="title">[chat]</h1>
+    <form @submit.prevent="login()">
+      <input v-model="session.user" class="input" name="user" type="text" maxlength="30" placeholder="username"><br>
+      <input v-model="session.password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
+      <textbtn type="submit" text="login" />
+    </form>
   </div>
 </template>
 
 <script>
 import textbtn from '@/components/textbtn';
-import main from "@/main";
+import matrix from '@/matrix.js';
 
 export default {
   name: "login.vue",
@@ -19,22 +19,13 @@ export default {
     textbtn
   },
   methods: {
-    login() {
-      if (this.session.content.user !== "") {
-        this.session.time = Date.now()
-        main.methods.sendWebSocket(this.session)
-      }
+    login(){
+      matrix.methods.login()
     }
   },
   data(){
     return {
-      session: {
-        type: "login",
-        time: Date.now(),
-        content: {
-          user: ""
-        }
-      }
+      session: matrix.data().session
     }
   }
 }
@@ -59,6 +50,7 @@ input{
   border: 1px solid #fff;
   text-align: center;
   font-size: 1.1rem;
+  margin-top: 1rem;
 }
 input:focus{
   color: #000;

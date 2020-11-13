@@ -1,9 +1,7 @@
 <template>
   <div class="topBanner">
     <div>
-      <router-link to="login">
-        <icon class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
-      </router-link>
+      <icon @click.native="$router.back()" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
       <icon class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
         <div id="chatName">{{chatroom.name}}</div>
@@ -37,6 +35,8 @@ export default {
 <style scoped>
 .topBanner{
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 3rem;
   background-color: #1d1d1d;

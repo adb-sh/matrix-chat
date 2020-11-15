@@ -2,12 +2,11 @@
   <div class="topBanner">
     <div>
       <icon @click.native="$router.back()" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
-      <icon class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
+      <icon v-on:click.native="showChatInfo()" class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
         <div id="chatName">{{chatroom.name}}</div>
         <div id="users">{{chatroom.user.length}} members</div>
       </div>
-      <icon v-on:click.native="showChatInfo()" class="smallIcon" id="icon-menu" ic="./sym/menu-24px.svg" />
     </div>
   </div>
 </template>
@@ -40,7 +39,6 @@ export default {
   width: 100%;
   height: 3rem;
   background-color: #1d1d1d;
-  box-shadow: 0 0px 5px #111;
 }
 .smallIcon{
   top: 0.25rem;
@@ -50,22 +48,19 @@ export default {
 }
 #icon-arrow{
   position: absolute;
-  left: 1rem;
+  left: 0.5rem;
+  background-color: unset;
+  box-shadow: none;
 }
 #picTop{
   position: absolute;
-  left: 4rem;
+  left: 3.5rem;
   background-color: #42a7b9;
-}
-#icon-menu{
-  position: absolute;
-  right: 1rem;
-  background-color: #2d2d2d;
 }
 #container{
   position: absolute;
   top: 0.55rem;
-  left: 7.5rem;
+  left: 7rem;
 }
 #chatName{
   font-size: 1rem;

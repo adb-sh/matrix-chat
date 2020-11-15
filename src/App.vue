@@ -33,17 +33,17 @@ body{
 .content{
   position: absolute;
   top: 0;
-  left: calc(50% - 25rem);
+  left: calc(50% - 35rem);
   padding: 0;
   min-height: calc(100%);
-  width: 50rem;
+  width: 70rem;
   min-width: 18rem;
   background-color: #313131;
   box-shadow: 3px 3px 10px #111;
 }
-@media (max-width: 55rem){
+@media (max-width: 75rem){
   .content{
-    width: calc(100%);
+    width: 100%;
     left: 0;
   }
 }

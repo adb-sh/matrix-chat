@@ -1,6 +1,6 @@
 {
-  "name": "open chat",
-  "short_name": "open chat",
+  "name": "matrix chat",
+  "short_name": "[chat]",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#14181b",

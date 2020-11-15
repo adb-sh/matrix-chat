@@ -26,6 +26,11 @@ const router = new VueRouter({
       component: chat
     },
     {
+      path: '/rooms/*',
+      name: 'room',
+      component: rooms
+    },
+    {
       path: '/rooms',
       name: 'rooms',
       component: rooms

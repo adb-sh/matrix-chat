@@ -28,6 +28,7 @@ import topBanner from '@/components/topBanner.vue';
 import main from '@/main.js';
 import ChatInformation from "@/components/chatInformation";
 import Icon from "@/components/icon";
+import matrix from '@/matrix.js';
 
 export default {
   name: 'chat',
@@ -48,7 +49,8 @@ export default {
   },
   data(){
     return {
-      chatroom: main.data().chatroom
+      chatroom: main.data().chatroom,
+      sesssion: matrix.data().session
     }
   }
 }

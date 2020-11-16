@@ -1,10 +1,10 @@
 <template>
   <div class="topBanner">
     <div>
-      <icon @click.native="$router.back()" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
+      <icon @click.native="session.currentRoom = undefined" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
       <icon v-on:click.native="showChatInfo()" class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
-        <div id="chatName">{{chatroom.name}}</div>
+        <div id="chatName">{{session.currentRoom.name}}</div>
         <div id="users">{{chatroom.user.length}} members</div>
       </div>
     </div>
@@ -13,11 +13,12 @@
 <script>
 import icon from '@/components/icon.vue';
 import main from '@/main.js';
+import matrix from '@/matrix.js';
 
 export default {
   name: "topBanner",
   components:{
-    icon
+    icon,
   },
   methods:{
     showChatInfo(){
@@ -26,7 +27,8 @@ export default {
   },
   data(){
     return {
-      chatroom: main.data().chatroom
+      chatroom: main.data().chatroom,
+      session: matrix.data().session
     }
   }
 }

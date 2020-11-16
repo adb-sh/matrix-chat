@@ -2,7 +2,7 @@
   <div class="newMessageBanner">
     <form v-on:submit.prevent="sendMessage()">
       <label for="newMessageInput"></label>
-      <textarea v-on:keyup.shift.enter="sendMessage()" v-on:input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
+      <textarea v-on:keyup.shift.enter="sendMessage()" @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
                 autocomplete="off" placeholder="type a message ..." v-model="msg.content.text" />
       <icon @click.native="sendMessage()" title="press shift + enter to submit" id="sendMessageBtn"
             ic="./sym/ic_send_white_24px.svg" />

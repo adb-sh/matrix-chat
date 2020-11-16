@@ -1,5 +1,5 @@
 import matrix from 'matrix-js-sdk';
-import Vue from 'vue'
+//import Vue from 'vue'
 import main from '@/main.js';
 const matrix_cli = matrix.createClient("https://adb.sh");
 
@@ -8,15 +8,14 @@ let session = {
     password: "",
     access_token: "",
     rooms: [],
-    current_room: "open chat"
+    currentRoom: undefined
 };
 let rooms = [];
 
 export default {
     data(){
         return {
-            session: session,
-            rooms: rooms
+            session: session
         }
     },
     methods: {
@@ -27,7 +26,7 @@ export default {
                 initial_device_display_name: "matrix chat",
             }).then((response) => {
                 console.log(`access token => ${response.access_token}`);
-                session = {access_token: response.access_token}
+                session.access_token = response.access_token
                 if (response.error){
                     main.methods.error(response.error)
                     console.log(`login error => ${response.error}`)
@@ -53,18 +52,29 @@ export default {
     }
 }
 
-new Vue({
+/*new Vue({
     el: '#roomList',
+    refs:{
+        rooms: [{name: "lol"},{name: "lol123"}]
+    },
     data() {
         return {
-            rooms: [],
+            rooms: [{name: "lol"},{name: "lol123"}],
         }
     }
-})
+})*/
 
-matrix_cli.on("event", function(event){
+matrix_cli.on("event", event => {
     console.log(event.getType());
     console.log(event);
-    session.rooms = matrix_cli.getRooms()
-    console.log(session.rooms)
+    session.rooms = []
+    matrix_cli.getRooms().forEach(room => {
+        session.rooms.push({name: room.name, roomId: room.roomId})
+    })
+    console.log(matrix_cli.getRooms())
 })
+
+matrix_cli.on("Room.timeline", event => {
+    if (event.getType() !== "m.room.message") return;
+    console.log(event.event.content.body);
+});

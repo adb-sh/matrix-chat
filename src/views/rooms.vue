@@ -2,42 +2,43 @@
   <div>
     <div id="roomList" class="roomList">
       <h1>[chat]</h1>
-      <h2>rooms</h2>
-      <div class="roomListElement" v-for="(room, index) in rooms" :key="index">
-        <router-link @click="getRooms()" :to="`/rooms/${room.roomId}`">
-          <div class="roomListName">{{room.name}}</div>
-        </router-link>
+      <h2>{{session.rooms.length}} rooms:</h2>
+      <div v-for="(room, index) in session.rooms" :key="index" @click="openChat(room)" class="roomListElement">
+        <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
+        <div class="roomListName">{{room.name}}</div>
       </div>
-      <textbtn @click.native="getRooms()" text="update" />
     </div>
-    <chat class="chat" v-if="this.$router.currentRoute.fullPath.split('/',3)[2]" />
+    <chat class="chat" v-if="session.currentRoom" />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
+    <div class="roomListSmall">
+      <h1>[c]</h1>
+      <h2>—</h2>
+      <div v-for="(room, index) in session.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
+        <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import matrix from '@/matrix.js';
-import textbtn from "@/components/textbtn";
 import chat from '@/views/chat.vue'
 
 export default {
   name: "rooms",
-  props: {
-    rooms: String
-  },
   components:{
-    textbtn,
     chat
   },
   methods:{
-    getRooms(){
-      //matrix.methods.getRooms()
-      //console.log(matrix.methods.getRooms())
+    openChat(room){
+      this.session.currentRoom = room;
+      this.$router.push(`/rooms/${room.roomId}`)
+      this.$forceUpdate()
     }
   },
   data(){
     return {
-      session: matrix.data().session
+      session: matrix.data().session,
     }
   }
 }
@@ -48,7 +49,7 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  width: 20rem;
+  width: 18rem;
   height: 100%;
   background-color: #222;
   text-align: center;
@@ -58,19 +59,34 @@ export default {
   position: absolute;
   right: 0;
   top: 0;
-  width: calc(100% - 20rem);
+  width: calc(100% - 18rem);
   height: 100%;
   background-color: #313131;
 }
 .roomListElement{
   position: relative;
   height: 3rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   font-size: 1.2rem;
+  cursor: pointer;
+  background-color: #222;
 }
 .roomListName{
   position: absolute;
-  left: 5rem;
+  left: 4.5rem;
+  top: 1rem;
+  color: #fff;
+}
+.roomListSmall{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4rem;
+  height: 100%;
+  background-color: #222;
+  text-align: center;
+  display: none;
+  overflow-y: auto;
 }
 .noRoomSelected{
   position: absolute;
@@ -79,15 +95,37 @@ export default {
   left: 20rem;
   text-align: center;
 }
+.roomImgPlaceholder{
+  position: absolute;
+  left: 1rem;
+  top: 0;
+  height: 2rem;
+  width: 3rem;
+  padding-top: 1rem;
+  background-color: #42a7b9;
+  border-radius: 1.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
 
-/*@media (max-width: 45rem) {
+@media (max-width: 48rem) {
   .roomList{
-    width: 4rem;
+    display: none;
   }
   .chat{
     width: calc(100% - 4rem);
   }
-}*/
+  .roomListSmall{
+    display: block;
+  }
+  .roomImgPlaceholder{
+    left: 0.5rem;
+  }
+  .noRoomSelected{
+    left: 4rem;
+    width: calc(100% - 4rem);
+  }
+}
 
 @media (max-width: 30rem) {
   .roomList{
@@ -98,6 +136,12 @@ export default {
   }
   .noRoomSelected{
     display: none;
+  }
+  .roomListSmall{
+    display: none;
+  }
+  .roomList{
+    display: block;
   }
 }
 </style>

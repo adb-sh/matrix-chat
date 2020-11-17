@@ -1,5 +1,4 @@
 import matrix from 'matrix-js-sdk';
-//import Vue from 'vue'
 import main from '@/main.js';
 const matrix_cli = matrix.createClient("https://adb.sh");
 
@@ -10,7 +9,6 @@ let session = {
     rooms: [],
     currentRoom: undefined
 };
-let rooms = [];
 
 export default {
     data(){
@@ -27,6 +25,7 @@ export default {
             }).then((response) => {
                 console.log(`access token => ${response.access_token}`);
                 session.access_token = response.access_token
+                document.cookie = `access_token=${session.access_token}; user=${session.user};`;
                 if (response.error){
                     main.methods.error(response.error)
                     console.log(`login error => ${response.error}`)
@@ -37,44 +36,49 @@ export default {
                     console.log(state)
                 })
             });
-            /*let i=0;
-            let checkRooms = setInterval(()=>{
-                rooms = matrix_cli.getRooms()
-                console.log("asdasd"+rooms.length)
-                if (rooms.length !== 0 || i>10) clearInterval(checkRooms)
-                i++;
-            },500)*/
-        },
-        getRooms(){
-            rooms.push(matrix_cli.getRooms())
-            return rooms
         }
     }
 }
 
-/*new Vue({
-    el: '#roomList',
-    refs:{
-        rooms: [{name: "lol"},{name: "lol123"}]
-    },
-    data() {
-        return {
-            rooms: [{name: "lol"},{name: "lol123"}],
-        }
-    }
-})*/
-
 matrix_cli.on("event", event => {
     console.log(event.getType());
     console.log(event);
-    session.rooms = []
-    matrix_cli.getRooms().forEach(room => {
-        session.rooms.push({name: room.name, roomId: room.roomId})
+    matrix_cli.getRooms().forEach(newRoom => {
+        let room = session.rooms.find(room => room.roomId === newRoom.roomId)
+        if (!room){
+            session.rooms.push({name: newRoom.name, roomId: newRoom.roomId, messages: []})
+            console.log(`new room => ${newRoom.name}`)
+        }
+        else if (room.name !== newRoom.name){
+            console.log(`roomname changed from ${room.name} to ${newRoom.name}`)
+            room.name = newRoom.name
+        }
     })
-    console.log(matrix_cli.getRooms())
+    console.log(session)
 })
 
 matrix_cli.on("Room.timeline", event => {
     if (event.getType() !== "m.room.message") return;
-    console.log(event.event.content.body);
+    console.log(`new message => ${event.event.content.body}`);
+    let room = session.rooms.find(room => room.roomId === event.event.room_id)
+    if (!room){
+        session.rooms.push({name: "undefined", roomId: event.event.room_id, messages: [event.event]})
+        console.log(`undefined room name for => ${event.event.room_id}`)
+    }
+    else room.messages.push(event.event)
 });
+/*
+if (getCookie("access_token")){
+
+    main.methods.router({path: "rooms/"})
+}
+else main.methods.router({path: "login"})
+*/
+/*function getCookie(key){
+    let cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        if (cookie.split('=')[0] === key)
+            return cookie.split('=')[1];
+    })
+    return false;
+}*/

@@ -2,14 +2,14 @@
   <div>
     <div ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
-        <p style="text-align: center; font-style: italic;">you entered the chat</p>
-        <div v-for="(message, i) in chatroom.messages" :key="message.time">
-          <div v-if="message.content.user !== chatroom.username && function(){
-               return i===0 || chatroom.messages[i-1].content.user!==message.content.user;}()"
-               style="margin-left: 2rem; margin-top: 1rem">{{message.content.user}}
+        <p v-if="session.currentRoom.messages.length === 0" class="emptyRoom">this room im empty</p>
+        <div v-for="(message, i) in session.currentRoom.messages" :key="message.origin_server_ts">
+          <div v-if="message.sender !== session.user && function(){
+               return i===0 || session.currentRoom.messages[i-1].sender!==message.sender;}()"
+               style="margin-left: 2rem; margin-top: 1rem">{{message.sender}}
           </div>
-          <messageReceive v-if="message.content.user !== chatroom.username" :msg=message.content.text />
-          <message v-if="message.content.user === chatroom.username" :msg=message.content.text />
+          <messageReceive v-if="message.sender !== session.user" :msg=message.content.body />
+          <message v-if="message.sender === session.user" :msg=message.content.body />
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@ export default {
   data(){
     return {
       chatroom: main.data().chatroom,
-      sesssion: matrix.data().session
+      session: matrix.data().session
     }
   }
 }
@@ -77,5 +77,9 @@ export default {
   bottom: 5rem;
   right: 1rem;
   display: none;
+}
+.emptyRoom{
+  text-align: center;
+  font-style: italic;
 }
 </style>

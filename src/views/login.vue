@@ -2,8 +2,8 @@
   <div id="login">
     <h1 class="title">[chat]</h1>
     <form @submit.prevent="login()">
-      <input v-model="session.user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
-      <input v-model="session.password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
+      <input v-model="session.login.user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
+      <input v-model="session.login.password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
       <textbtn type="submit" text="login" />
     </form>
   </div>

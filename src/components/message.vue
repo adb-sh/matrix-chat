@@ -26,7 +26,7 @@ export default {
     margin-left:auto; margin-right:0;
     position: relative;
     width: max-content;
-    min-width: 5rem;
+    min-width: 2rem;
     max-width: calc(100% - 3rem);
     padding: 0.7rem 1rem 0.45rem 1rem;
     right: 0;

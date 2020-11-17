@@ -12,7 +12,11 @@ let session = {
     password: "",
     accessToken: "",
     rooms: [],
-    currentRoom: undefined
+    currentRoom: undefined,
+    login:{
+        user: "",
+        password: ""
+    }
 };
 
 console.log(document.cookie)
@@ -45,16 +49,25 @@ export default {
             if (session.accessToken !== ""){
                 main.methods.error("you are already logged in")
                 return;
+            } else if (session.login.user === ""){
+                main.methods.error('username is empty')
+                return;
+            } else if (session.login.password === ""){
+                main.methods.error('password is empty')
+                return;
+            } else if (!(session.login.user.includes("@") && session.login.user.includes(":"))){
+                main.methods.error('username is in wrong style')
+                return;
             }
-            matrix_cli = matrix.createClient("https://adb.sh");
             matrix_cli.login("m.login.password", {
-                user: session.user,
-                password: session.password,
+                user: session.login.user,
+                password: session.login.password,
                 initial_device_display_name: "matrix chat",
             }).then((response) => {
                 document.cookie = `accessToken=${response.access_token}`;
-                document.cookie = `userId=${session.user}`;
+                document.cookie = `userId=${session.login.user}`;
                 session = {
+                    user: session.login.user,
                     password: "",
                     accessToken: response.access_token,
                     rooms: [],
@@ -71,6 +84,21 @@ export default {
                     console.log(state)
                 })
             });
+        },
+        sendMessage(msg){
+            let msgSend = {
+                type: msg.type,
+                content: {
+                    body: msg.content.body,
+                    msgtype: msg.content.msgtype
+                }
+            }
+            matrix_cli.sendEvent(session.currentRoom.roomId, msgSend.type, msgSend.content, "").then(()=>{
+                console.log("message sent successfully")
+            }).catch(err => {
+                console.log(`error while sending message => ${err}`)
+                main.methods.error("message could not be sent")
+            })
         }
     }
 }
@@ -108,4 +136,11 @@ matrix_cli.on("Room.timeline", event => {
         console.log(`undefined room name for => ${event.event.room_id}`)
     }
     else room.messages.push(event.event)
+
+    let msgContainer = document.getElementById("messagesContainer")
+    if (session.currentRoom && session.currentRoom.roomId === event.event.room_id){
+        if (event.event.sender === session.user || msgContainer.scrollHeight < msgContainer.scrollTop + 1000)
+            setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 10)
+        else document.getElementById("scrollDown").style.display = "block"
+    }
 });

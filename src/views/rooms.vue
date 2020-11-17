@@ -3,7 +3,7 @@
     <div id="roomList" class="roomList">
       <h1>[chat]</h1>
       <h2>{{session.rooms.length}} rooms:</h2>
-      <div v-for="(room, index) in session.rooms" :key="index" @click="openChat(room)" class="roomListElement">
+      <div v-for="room in session.rooms" :key="room.roomId" @click="openChat(room)" class="roomListElement">
         <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
         <div class="roomListName">{{room.name}}</div>
       </div>
@@ -34,6 +34,8 @@ export default {
       this.session.currentRoom = room;
       this.$router.push(`/rooms/${room.roomId}`)
       this.$forceUpdate()
+      let msgContainer = document.getElementById("messagesContainer")
+      setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 10)
     }
   },
   data(){

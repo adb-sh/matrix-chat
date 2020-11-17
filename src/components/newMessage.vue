@@ -2,9 +2,9 @@
   <div class="newMessageBanner">
     <form v-on:submit.prevent="sendMessage()">
       <label for="newMessageInput"></label>
-      <textarea v-on:keyup.shift.enter="sendMessage()" @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
-                autocomplete="off" placeholder="type a message ..." v-model="msg.content.text" />
-      <icon @click.native="sendMessage()" title="press shift + enter to submit" id="sendMessageBtn"
+      <textarea @keyup.enter.exact="sendMessage()" @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
+                autocomplete="off" placeholder="type a message ..." v-model="msg.content.body" />
+      <icon type="submit" title="press enter to submit" id="sendMessageBtn"
             ic="./sym/ic_send_white_24px.svg" />
     </form>
   </div>
@@ -13,6 +13,7 @@
 <script>
 import icon from '@/components/icon.vue';
 import main from '@/main.js';
+import matrix from '@/matrix.js';
 
 export default {
   name: "newMessage",
@@ -21,10 +22,10 @@ export default {
   },
   methods: {
     sendMessage(){
-      if (this.msg.content.text !== "") {
-        this.msg.time = Date.now()
-        main.methods.sendWebSocket(this.msg)
-        this.msg.content.text = ""
+      if (this.msg.content.body !== "") {
+        let msgSend = Object.assign({}, this.msg)
+        matrix.methods.sendMessage(msgSend)
+        this.msg.content.body = ""
         document.getElementById("messagesContainer").style.height = "calc(100% - 7rem)"
         document.getElementById("newMessageInput").style.height = "1.25rem"
         //let msgContainer = document.getElementById("messagesContainer")
@@ -43,14 +44,14 @@ export default {
   data(){
     return {
       msg: {
-        type: "message",
-        time: Date.now(),
+        type: "m.room.message",
         content: {
-          user: "you",
-          text: ""
+          body: "",
+          msgtype: "m.text"
         }
       },
-      chatroom: main.data().chatroom
+      chatroom: main.data().chatroom,
+      session: matrix.data().session
     }
   }
 }
@@ -88,16 +89,5 @@ export default {
   position: absolute;
   right: 1rem;
   bottom: 0.5rem;
-}
-#sendMessageBtn:hover::after{
-  content: "press shift + enter to submit";
-  position: absolute;
-  padding: 1rem;
-  bottom: 4rem;
-  right: 0;
-  width: 14rem;
-  background-color: #eee;
-  color: #000;
-  border-radius: 1rem;
 }
 </style>

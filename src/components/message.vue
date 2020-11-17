@@ -36,11 +36,4 @@ export default {
     word-break: break-word;
     white-space: pre-line;
   }
-
-  @media (min-width: 45rem){
-    .message{
-      margin-left: 0; margin-right: auto;
-      border-radius: 1rem 1rem 1rem 0;
-    }
-  }
 </style>

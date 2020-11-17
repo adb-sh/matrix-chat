@@ -1,14 +1,38 @@
 import matrix from 'matrix-js-sdk';
 import main from '@/main.js';
-const matrix_cli = matrix.createClient("https://adb.sh");
+//import Vue from 'vue';
 
+var matrix_cli = matrix.createClient({
+    baseUrl: "https://adb.sh",
+    accessToken: getCookie("accessToken"),
+    userId: getCookie("userId")
+})
 let session = {
     user: "",
     password: "",
-    access_token: "",
+    accessToken: "",
     rooms: [],
     currentRoom: undefined
 };
+
+console.log(document.cookie)
+
+if (getCookie("accessToken") && getCookie("userId")){
+    session = {
+        user: getCookie("userId"),
+        password: "",
+        accessToken: getCookie("accessToken"),
+        rooms: [],
+        currentRoom: undefined
+    };
+    //Vue.$router.push("/rooms/")
+    window.location.href = '/#/rooms/';
+    matrix_cli.startClient();
+    matrix_cli.once('sync', function (state){
+        console.log(state)
+    })
+}
+else window.location.href = '/#/login';
 
 export default {
     data(){
@@ -18,19 +42,30 @@ export default {
     },
     methods: {
         login(){
+            if (session.accessToken !== ""){
+                main.methods.error("you are already logged in")
+                return;
+            }
+            matrix_cli = matrix.createClient("https://adb.sh");
             matrix_cli.login("m.login.password", {
                 user: session.user,
                 password: session.password,
                 initial_device_display_name: "matrix chat",
             }).then((response) => {
+                document.cookie = `accessToken=${response.access_token}`;
+                document.cookie = `userId=${session.user}`;
+                session = {
+                    password: "",
+                    accessToken: response.access_token,
+                    rooms: [],
+                    currentRoom: undefined
+                };
                 console.log(`access token => ${response.access_token}`);
-                session.access_token = response.access_token
-                document.cookie = `access_token=${session.access_token}; user=${session.user};`;
                 if (response.error){
                     main.methods.error(response.error)
                     console.log(`login error => ${response.error}`)
                 }
-                main.methods.router({path: "rooms/"})
+                window.location.href = '/#/rooms/';
                 matrix_cli.startClient();
                 matrix_cli.once('sync', function (state){
                     console.log(state)
@@ -38,6 +73,13 @@ export default {
             });
         }
     }
+}
+
+function getCookie(key) {
+   let cookie = document.cookie.replace(/ /g, '').split(';')
+        .find(cookie => cookie.split('=')[0] === key);
+   if (cookie) return cookie.split('=')[1];
+   return false;
 }
 
 matrix_cli.on("event", event => {
@@ -67,18 +109,3 @@ matrix_cli.on("Room.timeline", event => {
     }
     else room.messages.push(event.event)
 });
-/*
-if (getCookie("access_token")){
-
-    main.methods.router({path: "rooms/"})
-}
-else main.methods.router({path: "login"})
-*/
-/*function getCookie(key){
-    let cookies = document.cookie.split(';');
-    cookies.forEach(cookie => {
-        if (cookie.split('=')[0] === key)
-            return cookie.split('=')[1];
-    })
-    return false;
-}*/

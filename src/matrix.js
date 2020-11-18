@@ -113,34 +113,46 @@ function getCookie(key) {
 matrix_cli.on("event", event => {
     console.log(event.getType());
     console.log(event);
-    matrix_cli.getRooms().forEach(newRoom => {
-        let room = session.rooms.find(room => room.roomId === newRoom.roomId)
-        if (!room){
-            session.rooms.push({name: newRoom.name, roomId: newRoom.roomId, messages: []})
-            console.log(`new room => ${newRoom.name}`)
+    if (event.getType() === "m.room.name") {
+        matrix_cli.getRooms().forEach(newRoom => {
+            let room = session.rooms.find(room => room.roomId === newRoom.roomId)
+            if (!room) {
+                session.rooms.push({name: newRoom.name, roomId: newRoom.roomId, messages: [], members: []})
+                console.log(`new room => ${newRoom.name}`)
+            } else if (room.name !== newRoom.name) {
+                console.log(`roomname changed from ${room.name} to ${newRoom.name}`)
+                room.name = newRoom.name
+            }
+        })
+    }
+    else if (event.getType() === "m.room.member"){
+        let room = session.rooms.find(room => room.roomId === event.event.room_id)
+        if (!room) {
+            session.rooms.push({name: "undefined", roomId: event.event.room_id, messages: [], members: []})
+            console.log(`new user => ${event.event.sender}`)
+        } else {
+            room.members.push({sender: event.event.sender, content: event.event.content})
         }
-        else if (room.name !== newRoom.name){
-            console.log(`roomname changed from ${room.name} to ${newRoom.name}`)
-            room.name = newRoom.name
-        }
-    })
+    }
     console.log(session)
 })
 
 matrix_cli.on("Room.timeline", event => {
-    if (event.getType() !== "m.room.message") return;
-    console.log(`new message => ${event.event.content.body}`);
-    let room = session.rooms.find(room => room.roomId === event.event.room_id)
-    if (!room){
-        session.rooms.push({name: "undefined", roomId: event.event.room_id, messages: [event.event]})
-        console.log(`undefined room name for => ${event.event.room_id}`)
-    }
-    else room.messages.push(event.event)
+    if (event.getType() === "m.room.message") {
+        console.log(`new message => ${event.event.content.body}`);
+        let room = session.rooms.find(room => room.roomId === event.event.room_id)
+        if (!room) {
+            session.rooms.push({name: "undefined", roomId: event.event.room_id, messages: [event.event], members: []})
+            console.log(`undefined room name for => ${event.event.room_id}`)
+        } else room.messages.push(event.event)
 
-    let msgContainer = document.getElementById("messagesContainer")
-    if (session.currentRoom && session.currentRoom.roomId === event.event.room_id){
-        if (event.event.sender === session.user || msgContainer.scrollHeight < msgContainer.scrollTop + 1000)
-            setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 10)
-        else document.getElementById("scrollDown").style.display = "block"
+        let msgContainer = document.getElementById("messagesContainer")
+        if (session.currentRoom && session.currentRoom.roomId === event.event.room_id) {
+            if (event.event.sender === session.user || msgContainer.scrollHeight < msgContainer.scrollTop + 1000)
+                setTimeout(() => {
+                    msgContainer.scrollTo(0, msgContainer.scrollHeight)
+                }, 10)
+            else document.getElementById("scrollDown").style.display = "block"
+        }
     }
 });

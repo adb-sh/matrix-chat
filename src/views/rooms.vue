@@ -8,8 +8,6 @@
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chat class="chat" v-if="session.currentRoom" />
-    <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <div class="roomListSmall">
       <h1>[c]</h1>
       <h2>—</h2>
@@ -17,17 +15,22 @@
         <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
       </div>
     </div>
+    <chat class="chat" v-if="session.currentRoom" />
+    <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
+    <chatInformation v-if="session.currentRoom"/>
   </div>
 </template>
 
 <script>
 import matrix from '@/matrix.js';
-import chat from '@/views/chat.vue'
+import chat from '@/views/chat.vue';
+import chatInformation from "@/components/chatInformation";
 
 export default {
   name: "rooms",
   components:{
-    chat
+    chat,
+    chatInformation
   },
   methods:{
     openChat(room){

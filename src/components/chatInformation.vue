@@ -1,31 +1,32 @@
 <template>
   <div id="chatInformation">
-    <h1>open chat</h1>
     <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
     <div id="box">
       <div class="informationBox">
-      <div class="picBoxBig"><div class="placeholderBig"><p>{{chatroom.name.substr(0,2)}}</p></div></div>
+      <div class="picBoxBig"><div class="placeholderBig"><p>{{session.currentRoom.name.substr(0,2)}}</p></div></div>
       <div class="roomInformation">
-        <div class="roomName">{{chatroom.name}}</div>
-        <div class="users">{{chatroom.user.length}} members</div>
+        <div class="roomName">{{session.currentRoom.name}}</div>
+        <div class="users">{{session.currentRoom.members.length}} members</div>
       </div>
       </div>
-      <h2 v-if="chatroom.user.length !== 0">members</h2>
-      <div v-for="user in chatroom.user" :key="user">
+      <h2 v-if="session.currentRoom.members.length !== 0">members:</h2>
+      <div v-for="member in session.currentRoom.members" :key="member.sender">
         <div class="contentBox">
-          <div class="picBox"><div class="picPlaceholder"><p>{{user.substr(0,2)}}</p></div></div>
-          <div class="information">
-            <div class="userName">{{user}}</div>
-            <div class="status">online</div>
+            <img v-if="member.content.avatar_url" class="picBox"
+                 :src="`https://adb.sh/_matrix/media/r0/thumbnail/adb.sh/${member.content.avatar_url.split('/',4)[3]}?width=64&height=64&method=crop`"/>
+            <div v-else class="picBox"><p>{{member.content.displayname.substr(0,2)}}</p></div>
           </div>
-        </div>
+          <div class="information">
+            <div class="userName">{{member.content.displayname}}</div>
+            <div class="status">{{member.sender}}</div>
+          </div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import icon from './icon.vue';
-import main from '@/main.js'
+import matrix from '@/matrix.js'
 
 export default {
   name: "chatInformation",
@@ -34,7 +35,7 @@ export default {
   },
   data(){
     return {
-      chatroom: main.data().chatroom
+      session: matrix.data().session
     }
   }
 }
@@ -46,7 +47,7 @@ export default {
   left: 50%;
   transform: translate(-50%, 0);
   top: 5rem;
-  width: calc(100% - 8rem);
+  width: calc(100% - 4rem);
   max-width: 30rem;
   height: calc(100% - 10rem);
   background-color: #1d1d1d;
@@ -77,6 +78,7 @@ export default {
   padding: 0.001rem 1rem 1rem;
   overflow-y: auto;
   max-height: calc(100% - 8rem);
+  margin-top: 2rem;
 }
 .informationBox{
   margin-top: 0.2rem;
@@ -87,7 +89,7 @@ export default {
   text-align: center;
   background-color: #42b983 ;
   width: 5rem;
-  height:5rem;
+  height: 5rem;
   border-radius: 5rem;
 }
 .placeholderBig{
@@ -115,15 +117,15 @@ export default {
   max-height: 48px;
 }
 .picBox{
-  text-align: center;
+  position: absolute;
+  left: 1rem;
   background-color: #00BCD4;
   width: 3rem;
   height:3rem;
   border-radius: 2rem;
 }
-.picPlaceholder{
-  padding-top: 0.001rem;
-  margin-bottom: 1rem;
+img.picBox{
+  background-color: unset;
 }
 .information{
   position: relative;

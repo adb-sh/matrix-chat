@@ -5,7 +5,7 @@
       <icon v-on:click.native="showChatInfo()" class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
       <div id="container">
         <div id="chatName">{{session.currentRoom.name}}</div>
-        <div id="users">{{chatroom.user.length}} members</div>
+        <div id="users">{{session.currentRoom.members.length}} members</div>
       </div>
     </div>
   </div>

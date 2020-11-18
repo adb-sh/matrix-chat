@@ -16,7 +16,6 @@
     <newMessage />
     <icon v-on:click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
     <topBanner />
-    <chatInformation />
   </div>
 </template>
 
@@ -26,7 +25,6 @@ import messageReceive from '@/components/messageReceive.vue';
 import newMessage from '@/components/newMessage.vue';
 import topBanner from '@/components/topBanner.vue';
 import main from '@/main.js';
-import ChatInformation from "@/components/chatInformation";
 import Icon from "@/components/icon";
 import matrix from '@/matrix.js';
 
@@ -34,7 +32,6 @@ export default {
   name: 'chat',
   components: {
     Icon,
-    ChatInformation,
     message,
     messageReceive,
     newMessage,

@@ -2,7 +2,7 @@
   <div>
     <div ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
-        <p v-if="session.currentRoom.messages.length === 0" class="emptyRoom">this room im empty</p>
+        <p v-if="session.currentRoom.messages.length === 0" class="emptyRoom">this room is empty</p>
         <div v-for="(message, i) in session.currentRoom.messages" :key="message.origin_server_ts">
           <div v-if="message.sender !== session.user && function(){
                return i===0 || session.currentRoom.messages[i-1].sender!==message.sender;}()"

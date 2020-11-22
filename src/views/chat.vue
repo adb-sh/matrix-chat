@@ -1,15 +1,18 @@
 <template>
   <div>
-    <div ref="msgContainer" id="messagesContainer" class="messagesContainer">
+    <div @scroll="loadMessages()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
-        <p v-if="session.currentRoom.messages.length === 0" class="emptyRoom">this room is empty</p>
+        <p v-if="session.currentRoom.messages.length === 0" class="info">this room is empty</p>
         <div v-for="(message, i) in session.currentRoom.messages" :key="message.origin_server_ts">
-          <div v-if="message.sender !== session.user && function(){
-               return i===0 || session.currentRoom.messages[i-1].sender!==message.sender;}()"
+          <div v-if="i===0 || getDate(session.currentRoom.messages[i-1].origin_server_ts)!==getDate(message.origin_server_ts)"
+               style="margin-left: 2rem; margin-top: 1rem" class="info">{{getDate(message.origin_server_ts)}}
+          </div>
+          <div v-if="(message.sender !== session.user) && (i===0 || session.currentRoom.messages[i-1].sender!==message.sender)"
                style="margin-left: 2rem; margin-top: 1rem">{{message.sender}}
           </div>
-          <messageReceive v-if="message.sender !== session.user" :msg=message.content.body />
-          <message v-if="message.sender === session.user" :msg=message.content.body />
+          <messageReceive v-if="message.sender !== session.user" :msg=message.content.body
+                          :time=getTime(message.origin_server_ts) />
+          <message v-if="message.sender === session.user" :msg=message.content.body :time=getTime(message.origin_server_ts) />
         </div>
       </div>
     </div>
@@ -42,6 +45,20 @@ export default {
       let msgContainer = document.getElementById("messagesContainer")
       msgContainer.scrollTo(0, msgContainer.scrollHeight)
       document.getElementById("scrollDown").style.display = "none"
+    },
+    getTime(time){
+      let date = new Date(time);
+      return `${date.getHours()}:${(date.getMinutes()<10)?"0"+date.getMinutes():date.getMinutes()}`;
+    },
+    getDate(time){
+      let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      let date = new Date(time);
+      return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    },
+    loadMessages(){
+      if (this.$refs.msgContainer.scrollTop === 0){
+        console.log("load messages")
+      }
     }
   },
   data(){
@@ -75,8 +92,9 @@ export default {
   right: 1rem;
   display: none;
 }
-.emptyRoom{
+.info{
   text-align: center;
   font-style: italic;
+  margin: 1rem;
 }
 </style>

@@ -51,6 +51,8 @@ input{
   text-align: center;
   font-size: 1.1rem;
   margin-top: 1rem;
+  appearance: none;
+  outline: none;
 }
 input:focus{
   color: #000;

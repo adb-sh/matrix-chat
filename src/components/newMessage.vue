@@ -79,6 +79,8 @@ export default {
   height: 1.25rem;
   background-color: #fff0;
   border: 0 solid #fff0;
+  appearance: none;
+  outline: none;
   color: #fff;
   font-size: 1rem;
   resize: none;

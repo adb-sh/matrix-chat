@@ -1,7 +1,8 @@
 <template>
   <div class="messageContainer">
-    <div class="message">
+    <div class="message" :title="time">
       {{msg}}
+      <div class="time">{{time}}</div>
     </div>
   </div>
 </template>
@@ -10,7 +11,8 @@
 export default {
   name: "message",
   props: {
-    msg: String
+    msg: String,
+    time: String,
   }
 }
 </script>
@@ -35,5 +37,11 @@ export default {
     text-align: left;
     word-break: break-word;
     white-space: pre-line;
+  }
+  .time{
+    position: relative;
+    bottom: -0.2rem;
+    font-size: 0.7rem;
+    text-align: right;
   }
 </style>

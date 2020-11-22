@@ -105,9 +105,8 @@ export default {
 
 function getCookie(key) {
    let cookie = document.cookie.replace(/ /g, '').split(';')
-        .find(cookie => cookie.split('=')[0] === key);
-   if (cookie) return cookie.split('=')[1];
-   return false;
+       .find(cookie => cookie.split('=')[0] === key);
+   return cookie?cookie.split('=')[1]:false;
 }
 
 matrix_cli.on("event", event => {

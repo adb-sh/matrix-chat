@@ -38,7 +38,7 @@ export default {
       this.$router.push(`/rooms/${room.roomId}`)
       this.$forceUpdate()
       let msgContainer = document.getElementById("messagesContainer")
-      setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 20)
+      setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 50)
     }
   },
   data(){

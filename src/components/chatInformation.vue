@@ -1,27 +1,29 @@
 <template>
   <div id="chatInformation">
-    <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
     <div id="box">
-      <div class="informationBox">
-      <div class="picBoxBig"><div class="placeholderBig"><p>{{session.currentRoom.name.substr(0,2)}}</p></div></div>
-      <div class="roomInformation">
-        <div class="roomName">{{session.currentRoom.name}}</div>
-        <div class="users">{{session.currentRoom.members.length}} members</div>
-      </div>
-      </div>
-      <h2 v-if="session.currentRoom.members.length !== 0">members:</h2>
-      <div v-for="member in session.currentRoom.members" :key="member.sender">
-        <div class="contentBox">
-            <img v-if="member.content.avatar_url" class="picBox"
-                 :src="`https://adb.sh/_matrix/media/r0/thumbnail/adb.sh/${member.content.avatar_url.split('/',4)[3]}?width=64&height=64&method=crop`"/>
+      <div class="scrollContainer">
+        <div class="informationBox">
+        <div class="picBoxBig"><div class="placeholderBig">{{session.currentRoom.name.substr(0,2)}}</div></div>
+        <div class="roomInformation">
+          <div class="roomName">{{session.currentRoom.name}}</div>
+          <div class="users">{{session.currentRoom.members.length}} members</div>
+        </div>
+        </div>
+        <h2 v-if="session.currentRoom.members.length !== 0">members:</h2>
+        <div v-for="member in session.currentRoom.members" :key="member.sender">
+          <div class="contentBox">
+              <img v-if="member.content.avatar_url" class="picBox"
+                   :src="`https://adb.sh/_matrix/media/r0/thumbnail/adb.sh/${member.content.avatar_url.split('/',4)[3]}?width=64&height=64&method=crop`"/>
             <div v-else class="picBox"><p>{{member.content.displayname.substr(0,2)}}</p></div>
-          </div>
-          <div class="information">
-            <div class="userName">{{member.content.displayname}}</div>
-            <div class="status">{{member.sender}}</div>
-          </div>
+            </div>
+            <div class="information">
+              <div class="userName">{{member.content.displayname}}</div>
+              <div class="status">{{member.sender}}</div>
+            </div>
+        </div>
       </div>
     </div>
+    <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
   </div>
 </template>
 <script>
@@ -65,6 +67,12 @@ export default {
     height: 100%;
   }
 }
+@media (max-height: 40rem) {
+  #chatInformation{
+    top: 0;
+    height: 100%;
+  }
+}
 .closeBtn{
   position: absolute;
   top: 0;
@@ -73,28 +81,25 @@ export default {
   box-shadow: none;
 }
 #box{
-  position: relative;
+  position: absolute;
+  top: 0;
   width: calc(100% - 2rem);
-  padding: 0.001rem 1rem 1rem;
+  padding: 0 1rem 0 1rem;
   overflow-y: auto;
-  max-height: calc(100% - 8rem);
-  margin-top: 2rem;
+  overflow-x: hidden;
+  height: 100%;
 }
-.informationBox{
-  margin-top: 0.2rem;
-  height: 5rem;
-  padding: 0.2rem;
+.scrollContainer{
+  padding: 1rem 0 1rem 0;
 }
 .picBoxBig{
   text-align: center;
-  background-color: #42b983 ;
+  background-color: #42a7b9;
+  padding-top: 1.5rem;
   width: 5rem;
-  height: 5rem;
+  height: 3.5rem;
   border-radius: 5rem;
-}
-.placeholderBig{
-  padding-top: 1rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
 }
 .roomInformation{
   position: relative;
@@ -119,7 +124,7 @@ export default {
 .picBox{
   position: absolute;
   left: 1rem;
-  background-color: #00BCD4;
+  background-color: #42a7b9;
   width: 3rem;
   height:3rem;
   border-radius: 2rem;

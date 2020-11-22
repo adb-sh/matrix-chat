@@ -12,7 +12,7 @@
       <h1>[c]</h1>
       <h2>—</h2>
       <div v-for="(room, index) in session.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
-        <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
+        <div class="roomImgPlaceholder small">{{room.name.substr(0,2)}}</div>
       </div>
     </div>
     <chat class="chat" v-if="session.currentRoom" />
@@ -38,7 +38,7 @@ export default {
       this.$router.push(`/rooms/${room.roomId}`)
       this.$forceUpdate()
       let msgContainer = document.getElementById("messagesContainer")
-      setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 10)
+      setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 20)
     }
   },
   data(){
@@ -71,7 +71,7 @@ export default {
 .roomListElement{
   position: relative;
   height: 3rem;
-  margin-top: 0.5rem;
+  margin: 0.5rem 0 0.5rem 0;
   font-size: 1.2rem;
   cursor: pointer;
   background-color: #222;
@@ -92,6 +92,7 @@ export default {
   text-align: center;
   display: none;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .noRoomSelected{
   position: absolute;
@@ -103,14 +104,15 @@ export default {
 .roomImgPlaceholder{
   position: absolute;
   left: 1rem;
-  top: 0;
   height: 2rem;
   width: 3rem;
   padding-top: 1rem;
   background-color: #42a7b9;
   border-radius: 1.5rem;
   text-align: center;
-  vertical-align: middle;
+}
+.roomImgPlaceholder.small{
+  margin-left: calc(50% - 2rem);
 }
 
 @media (max-width: 48rem) {

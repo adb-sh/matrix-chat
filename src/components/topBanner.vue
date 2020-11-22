@@ -2,7 +2,7 @@
   <div class="topBanner">
     <div>
       <icon @click.native="session.currentRoom = undefined" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
-      <icon v-on:click.native="showChatInfo()" class="smallIcon" id="picTop" ic="./sym/supervisor_account-24px.svg" />
+      <div @click="showChatInfo()" class="smallIcon" id="picTop">{{session.currentRoom.name.substr(0,2)}}</div>
       <div id="container">
         <div id="chatName">{{session.currentRoom.name}}</div>
         <div id="users">{{session.currentRoom.members.length}} members</div>
@@ -45,10 +45,17 @@ export default {
 .smallIcon{
   top: 0.25rem;
   background-color: #2d2d2d;
-  height: 2.5rem;
+  padding-top: 0.75rem;
+  height: 1.75rem;
   width: 2.5rem;
+  box-shadow: none;
+  border-radius: 1.25rem;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
 }
 #icon-arrow{
+  height: 2.5rem;
   position: absolute;
   left: 0.5rem;
   background-color: unset;

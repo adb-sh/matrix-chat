@@ -22,6 +22,21 @@ export default {
 body{
   margin: 0;
 }
+*{
+  scrollbar-width: thin;
+  scrollbar-color: #42b983 #2220;
+}
+*::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+*::-webkit-scrollbar-track {
+  background: none;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #42b983;
+  border-radius: 0.25rem;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   position: absolute;

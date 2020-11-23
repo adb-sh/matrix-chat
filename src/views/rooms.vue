@@ -8,16 +8,17 @@
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
+    <chat class="chat" v-if="session.currentRoom" />
+    <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <div class="roomListSmall">
       <h1>[c]</h1>
       <h2>—</h2>
       <div v-for="(room, index) in session.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
-        <div class="roomImgPlaceholder small">{{room.name.substr(0,2)}}</div>
+        <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
+        <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chat class="chat" v-if="session.currentRoom" />
-    <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
-    <chatInformation v-if="session.currentRoom"/>
+    <chatInformation v-if="session.currentRoom" :room="session.currentRoom"/>
   </div>
 </template>
 
@@ -93,6 +94,20 @@ export default {
   display: none;
   overflow-y: auto;
   overflow-x: hidden;
+  animation: ease;
+  animation-duration: 0.2s;
+  scrollbar-width: none;
+}
+.roomListSmall:hover{
+  width: 18rem;
+  scrollbar-width: thin;
+  box-shadow: 0 0 20px #111;
+}
+.roomListSmall::-webkit-scrollbar {
+  width: 0;
+}
+.roomListSmall:hover::-webkit-scrollbar {
+  width: 0.5rem;
 }
 .noRoomSelected{
   position: absolute;

@@ -3,24 +3,23 @@
     <div id="box">
       <div class="scrollContainer">
         <div class="informationBox">
-        <div class="picBoxBig"><div class="placeholderBig">{{session.currentRoom.name.substr(0,2)}}</div></div>
+        <div class="picBoxBig"><div class="placeholderBig">{{room.name.substr(0,2)}}</div></div>
         <div class="roomInformation">
-          <div class="roomName">{{session.currentRoom.name}}</div>
-          <div class="users">{{session.currentRoom.members.length}} members</div>
+          <div class="roomName">{{room.name}}</div>
+          <div class="users">{{room.members.length}} members</div>
         </div>
         </div>
-        <h2 v-if="session.currentRoom.members.length !== 0">members:</h2>
-        <div v-for="member in session.currentRoom.members" :key="member.sender">
-          <div class="contentBox">
-              <img v-if="member.content.avatar_url" class="picBox"
-                   :src="`https://adb.sh/_matrix/media/r0/thumbnail/adb.sh/${member.content.avatar_url.split('/',4)[3]}?width=64&height=64&method=crop`"/>
-            <div v-else class="picBox"><p>{{member.content.displayname.substr(0,2)}}</p></div>
-            </div>
-            <div class="information">
-              <div class="userName">{{member.content.displayname}}</div>
-              <div class="status">{{member.sender}}</div>
-            </div>
+        <h2 v-if="room.members.length !== 0">members:</h2>
+        <div v-for="member in room.members.slice(0,20)" :key="member.sender" class="contentBox">
+          <!---<img v-if="member.content.avatar_url" class="picBox"
+               :src="`https://adb.sh/_matrix/media/r0/thumbnail/adb.sh/${member.content.avatar_url.split('/',4)[3]}?width=64&height=64&method=crop`"/>-->
+          <div class="picBox"><p>{{member.content.displayname?member.content.displayname.substr(0,2):member.sender.substr(1,2)}}</p></div>
+          <div class="information">
+            <div class="userName">{{member.content.displayname?member.content.displayname:member.sender}}</div>
+            <div v-if="member.content.displayname" class="status">{{member.sender}}</div>
+          </div>
         </div>
+        <p v-if="room.members.length>20">and {{room.members.length-20}} other members</p>
       </div>
     </div>
     <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
@@ -28,17 +27,14 @@
 </template>
 <script>
 import icon from './icon.vue';
-import matrix from '@/matrix.js'
 
 export default {
   name: "chatInformation",
   components:{
     icon
   },
-  data(){
-    return {
-      session: matrix.data().session
-    }
+  props:{
+    room: {}
   }
 }
 
@@ -91,6 +87,9 @@ export default {
 }
 .scrollContainer{
   padding: 1rem 0 1rem 0;
+  position: absolute;
+  width: 100%;
+  height: auto;
 }
 .picBoxBig{
   text-align: center;
@@ -116,33 +115,38 @@ export default {
   color: #9c9c9c;
 }
 .contentBox{
-  margin-top: 0.2rem;
-  height: 3.2rem;
-  padding: 0.2rem;
-  max-height: 48px;
+  position: relative;
+  margin-top: 0.5rem;
+  height: 3rem;
+  width: 100%;
 }
 .picBox{
   position: absolute;
-  left: 1rem;
+  left: 0;
+  top: 0;
   background-color: #42a7b9;
   width: 3rem;
-  height:3rem;
-  border-radius: 2rem;
+  height: 3rem;
+  border-radius: 1.5rem;
 }
 img.picBox{
   background-color: unset;
 }
 .information{
-  position: relative;
-  text-align: left;
-  margin-top: -2.4rem;
-  margin-left: 3.7rem;
+  position: absolute;
+  left: 4rem;
+  top: 0;
+  width: calc(100% - 4rem);
 }
 .userName{
+  position: absolute;
+  top: 0.75rem;
   color: white;
 }
 .status{
+  position: absolute;
   font-size: 0.8rem;
+  top: 1.75rem;
   color: #9c9c9c;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div @scroll="loadMessages()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
+    <div @scroll="scrollHandler()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
         <p v-if="session.currentRoom.messages.length === 0" class="info">this room is empty</p>
         <div v-for="(message, i) in session.currentRoom.messages" :key="message.origin_server_ts">
@@ -17,7 +17,7 @@
       </div>
     </div>
     <newMessage />
-    <icon v-on:click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
+    <icon v-if="showScrollBtn" v-on:click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
     <topBanner />
   </div>
 </template>
@@ -44,7 +44,6 @@ export default {
     scrollToBottom(){
       let msgContainer = document.getElementById("messagesContainer")
       msgContainer.scrollTo(0, msgContainer.scrollHeight)
-      document.getElementById("scrollDown").style.display = "none"
     },
     getTime(time){
       let date = new Date(time);
@@ -55,16 +54,19 @@ export default {
       let date = new Date(time);
       return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
     },
-    loadMessages(){
+    scrollHandler(){
       if (this.$refs.msgContainer.scrollTop === 0){
         console.log("load messages")
       }
+      let msgContainer = document.getElementById("messagesContainer")
+      this.showScrollBtn = msgContainer.scrollHeight - msgContainer.scrollTop > msgContainer.offsetHeight + 200;
     }
   },
   data(){
     return {
       chatroom: main.data().chatroom,
-      session: matrix.data().session
+      session: matrix.data().session,
+      showScrollBtn: false
     }
   }
 }
@@ -90,7 +92,7 @@ export default {
   background-color: #fff;
   bottom: 5rem;
   right: 1rem;
-  display: none;
+  display: block;
 }
 .info{
   text-align: center;

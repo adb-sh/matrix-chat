@@ -22,6 +22,7 @@ let session = {
 console.log(document.cookie)
 
 if (getCookie("accessToken") && getCookie("userId")){
+    document.cookie = `expires=${ new Date(Date.now()+86400*10*1000)}`;
     session = {
         user: getCookie("userId"),
         password: "",
@@ -66,6 +67,7 @@ export default {
             }).then((response) => {
                 document.cookie = `accessToken=${response.access_token}`;
                 document.cookie = `userId=${session.login.user}`;
+                document.cookie = `max-expires=${ new Date(Date.now()+86400*10*1000)}`;
                 session = {
                     user: session.login.user,
                     password: "",

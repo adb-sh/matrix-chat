@@ -10,9 +10,8 @@
           <div v-if="(message.sender !== session.user) && (i===0 || session.currentRoom.messages[i-1].sender!==message.sender)"
                style="margin-left: 2rem; margin-top: 1rem">{{message.sender}}
           </div>
-          <messageReceive v-if="message.sender !== session.user" :msg=message.content.body
-                          :time=getTime(message.origin_server_ts) />
-          <message v-if="message.sender === session.user" :msg=message.content.body :time=getTime(message.origin_server_ts) />
+          <message :msgClass="message.sender === session.user?'messageSend':'messageReceive'"
+                   :msg=message.content.body :time=getTime(message.origin_server_ts) />
         </div>
       </div>
     </div>
@@ -24,7 +23,6 @@
 
 <script>
 import message from '@/components/message.vue';
-import messageReceive from '@/components/messageReceive.vue';
 import newMessage from '@/components/newMessage.vue';
 import topBanner from '@/components/topBanner.vue';
 import main from '@/main.js';
@@ -36,7 +34,6 @@ export default {
   components: {
     Icon,
     message,
-    messageReceive,
     newMessage,
     topBanner
   },

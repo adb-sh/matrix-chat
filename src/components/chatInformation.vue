@@ -10,7 +10,7 @@
         </div>
         </div>
         <h2 v-if="room.members.length !== 0">members:</h2>
-        <div v-for="member in room.members.slice(0,20)" :key="member.sender" class="contentBox">
+        <div v-for="member in room.members.slice(0,20)" :key="member.sender" class="contentBox" :title="member.sender">
           <!---<img v-if="member.content.avatar_url" class="picBox"
                :src="`https://adb.sh/_matrix/media/r0/thumbnail/adb.sh/${member.content.avatar_url.split('/',4)[3]}?width=64&height=64&method=crop`"/>-->
           <div class="picBox"><p>{{member.content.displayname?member.content.displayname.substr(0,2):member.sender.substr(1,2)}}</p></div>

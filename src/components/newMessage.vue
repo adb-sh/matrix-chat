@@ -39,6 +39,12 @@ export default {
       let msgContainer = document.getElementById("messagesContainer")
       msgContainer.style.height
           = `calc(100% - ${id.parentElement.clientHeight}px - 3rem)`
+    },
+    toggleEmojiPicker() {
+      this.showEmojiPicker= !this.showEmojiPicker;
+    },
+    onSelectEmoji(emoji) {
+      this.msg.content.body += emoji.data;
     }
   },
   data(){
@@ -51,7 +57,8 @@ export default {
         }
       },
       chatroom: main.data().chatroom,
-      session: matrix.data().session
+      session: matrix.data().session,
+      showEmojiPicker: false
     }
   }
 }

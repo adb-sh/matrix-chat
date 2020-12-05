@@ -44,7 +44,7 @@ export default {
     },
     getTime(time){
       let date = new Date(time);
-      return `${date.getHours()}:${(date.getMinutes()<10)?"0"+date.getMinutes():date.getMinutes()}`;
+      return `${date.getHours()}:${(date.getMinutes()<10)?"0":""}${date.getMinutes()}`;
     },
     getDate(time){
       let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];

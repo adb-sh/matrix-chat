@@ -3,7 +3,7 @@
     <form v-on:submit.prevent="sendMessage()">
       <label for="newMessageInput"></label>
       <textarea @keyup.enter.exact="sendMessage()" @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
-                autocomplete="off" placeholder="type a message ..." v-model="msg.content.body" />
+                autocomplete="off" rows="1" placeholder="type a message ..." v-model="msg.content.body" />
       <icon type="submit" title="press enter to submit" id="sendMessageBtn"
             ic="./sym/ic_send_white_24px.svg" />
     </form>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="roomList" class="roomList">
-      <h1>[chat]</h1>
+      <h1>[chat]{{scrollOnUpdate}}</h1>
       <h2>{{session.rooms.length}} rooms:</h2>
       <div v-for="room in session.rooms" :key="room.roomId" @click="openChat(room)" class="roomListElement">
         <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
@@ -44,7 +44,7 @@ export default {
   },
   data(){
     return {
-      session: matrix.data().session,
+      session: matrix.data().session
     }
   }
 }

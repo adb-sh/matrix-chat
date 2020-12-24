@@ -63,8 +63,12 @@ export default {
     return {
       chatroom: main.data().chatroom,
       session: matrix.data().session,
-      showScrollBtn: false
+      showScrollBtn: false,
+      scrollOnUpdate: true
     }
+  },
+  updated(){
+    //this.scrollToBottom();
   }
 }
 </script>

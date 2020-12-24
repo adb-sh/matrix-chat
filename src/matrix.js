@@ -2,36 +2,38 @@ import matrix from 'matrix-js-sdk';
 import main from '@/main.js';
 // import Vue from 'vue';
 
-const client = matrix.createClient({
-  baseUrl: 'https://adb.sh',
-  accessToken: getCookie('accessToken'),
-  userId: getCookie('userId'),
-});
+let client = matrix.createClient({});
 let session = {
   user: '',
-  password: '',
+  baseUrl: '',
   accessToken: '',
   rooms: [],
   currentRoom: undefined,
   login: {
     user: '',
     password: '',
+    baseUrl: 'https://adb.sh',
   },
 };
 
-console.log(document.cookie);
+console.log(`cookie => ${document.cookie}`);
 
-if (getCookie('accessToken') && getCookie('userId')) {
+if (getCookie('accessToken') && getCookie('userId') && getCookie('baseUrl')) {
   document.cookie = `expires=${new Date(Date.now() + 86400 * 10 * 1000)}`;
   session = {
     user: getCookie('userId'),
-    password: '',
+    baseUrl: getCookie('baseUrl'),
     accessToken: getCookie('accessToken'),
     rooms: [],
     currentRoom: undefined,
   };
   // Vue.$router.push("/rooms/")
   window.location.href = '/#/rooms/';
+  client = matrix.createClient({
+    baseUrl: getCookie('baseUrl'),
+    accessToken: getCookie('accessToken'),
+    userId: getCookie('userId'),
+  });
   client.startClient();
   client.once('sync', (state) => {
     console.log(state);
@@ -59,6 +61,9 @@ export default {
         main.methods.error('username is in wrong style');
         return;
       }
+      client = matrix.createClient({
+        baseUrl: session.login.baseUrl
+      });
       client.login('m.login.password', {
         user: session.login.user,
         password: session.login.password,
@@ -66,10 +71,11 @@ export default {
       }).then((response) => {
         document.cookie = `accessToken=${response.access_token}`;
         document.cookie = `userId=${session.login.user}`;
-        document.cookie = `max-expires=${new Date(Date.now() + 86400 * 10 * 1000)}`;
+        document.cookie = `baseUrl=${session.login.baseUrl}`;
+        document.cookie = `expires=${new Date(Date.now() + 86400 * 10 * 1000)}`;
         session = {
           user: session.login.user,
-          password: '',
+          baseUrl: session.login.baseUrl,
           accessToken: response.access_token,
           rooms: [],
           currentRoom: undefined,
@@ -80,11 +86,19 @@ export default {
           console.log(`login error => ${response.error}`);
         }
         window.location.href = '/#/rooms/';
-        client.startClient();
+        window.location.reload();
+        /*client.startClient();
         client.once('sync', (state) => {
           console.log(state);
-        });
+        });*/
       });
+    },
+    logout(){
+      document.cookie = `accessToken=`;
+      document.cookie = `userId=`;
+      document.cookie = `baseUrl=`;
+      document.cookie = `expires=${new Date(0)}`;
+      window.location.reload();
     },
     sendMessage(msg) {
       const msgSend = {

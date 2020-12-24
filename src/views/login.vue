@@ -1,11 +1,17 @@
 <template>
   <div id="login">
     <h1 class="title">[chat]</h1>
-    <form @submit.prevent="login()">
+    <form v-if="session.login" @submit.prevent="login()">
       <input v-model="session.login.user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
       <input v-model="session.login.password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
+      <input v-model="session.login.baseUrl" class="input" name="homeserver" maxlength="50" placeholder="https://matrix.org"><br>
       <textbtn type="submit" text="login" />
     </form>
+    <div v-else>
+      <p>you are already logged in</p>
+      <textbtn @click.native="$router.push('room')" text="chat" />
+      <textbtn @click.native="logout()" text="logout" />
+    </div>
   </div>
 </template>
 
@@ -20,7 +26,10 @@ export default {
   },
   methods: {
     login(){
-      matrix.methods.login()
+      matrix.methods.login();
+    },
+    logout(){
+      matrix.methods.logout();
     }
   },
   data(){

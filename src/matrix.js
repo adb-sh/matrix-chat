@@ -125,8 +125,8 @@ function getCookie(key) {
 }
 
 client.on('event', (event) => {
-  console.log(event.getType());
-  console.log(event);
+  //console.log(event.getType());
+  //console.log(event);
   if (event.getType() === 'm.room.name') {
     client.getRooms().forEach((newRoom) => {
       const room = session.rooms.find((room) => room.roomId === newRoom.roomId);
@@ -136,7 +136,7 @@ client.on('event', (event) => {
         });
         console.log(`new room => ${newRoom.name}`);
       } else if (room.name !== newRoom.name) {
-        console.log(`roomname changed from ${room.name} to ${newRoom.name}`);
+        //console.log(`roomname changed from ${room.name} to ${newRoom.name}`);
         room.name = newRoom.name;
       }
     });
@@ -146,17 +146,16 @@ client.on('event', (event) => {
       session.rooms.push({
         name: 'undefined', roomId: event.event.room_id, messages: [], members: [],
       });
-      console.log(`new user => ${event.event.sender}`);
+      //console.log(`new user => ${event.event.sender}`);
     } else {
       room.members.push({ sender: event.event.sender, content: event.event.content });
     }
   }
-  console.log(session);
 });
 
 client.on('Room.timeline', (event, room) => {
   if (event.getType() === 'm.room.message') {
-    console.log(`message => ${event.event.content.body}`);
+    //console.log(`message => ${event.event.content.body}`);
     const thisRoom = session.rooms.find((thisRoom) => thisRoom.roomId === room.roomId);
     if (!thisRoom) {
       session.rooms.push({
@@ -176,9 +175,4 @@ client.on('Room.timeline', (event, room) => {
       } else document.getElementById('scrollDown').style.display = 'block';
     }
   }
-});
-
-client.on('Room.member', (member) => {
-  console.log('this is a member');
-  console.log(member);
 });

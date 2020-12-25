@@ -15,8 +15,8 @@ export default {
     mxcURL: String,
     username: String,
     userId: String,
-    width: Number,
-    height: Number,
+    width: String,
+    height: String,
     resizeMethod: String
   },
   methods: {

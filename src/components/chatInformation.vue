@@ -14,7 +14,7 @@
           <userThumbnail :mxcURL="member.content.avatar_url" :userId="member.sender" :username="member.content.displayname"
                          width="64" height="64" resizeMethod="scale" class="userThumbnail" />
           <div class="information">
-            <div class="userName">{{member.content.displayname || member.content.displayname ?member.content.displayname:member.sender}}</div>
+            <div class="userName">{{member.content.displayname?member.content.displayname:member.sender}}</div>
             <div class="status"></div>
           </div>
         </div>

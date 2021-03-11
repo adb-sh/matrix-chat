@@ -4,6 +4,7 @@ export class cookieHandler {
     this.reload();
   }
   getCookie(key){
+    if (!this.cookies) return undefined;
     let cookie = this.cookies.find(cookie => cookie.split('=')[0] === key);
     return cookie ? cookie.split('=')[1] : false;
   }
@@ -21,7 +22,7 @@ export class cookieHandler {
     return cookies;
   }
   reload(){
-    this.cookies = this.parseCookie(document.cookie)
+    if (document.cookie) this.cookies = this.parseCookie(document.cookie);
   }
   store(){
     document.cookie = this.toString();

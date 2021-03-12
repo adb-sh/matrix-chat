@@ -10,8 +10,7 @@ Vue.use(VueRouter);
 
 export let matrix = new MatrixHandler();
 
-let cookie = new cookieHandler().getCookie();
-console.log(`cookie => ${cookie}`)
+let cookie = new cookieHandler().getCookies();
 if (cookie && cookie.baseUrl && cookie.accessToken && cookie.userId) {
   matrix.tokenLogin(cookie.baseUrl, cookie.accessToken, cookie.userId);
 }

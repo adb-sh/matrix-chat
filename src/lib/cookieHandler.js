@@ -1,20 +1,18 @@
 export class cookieHandler {
-  constructor(expires) {
-    this.expires = expires;
+  constructor() {
+    this.cookies = {};
     this.reload();
   }
-  getCookie(key){
-    if (!this.cookies) return undefined;
-    let cookie = this.cookies.find(cookie => cookie.split('=')[0] === key);
-    return cookie ? cookie.split('=')[1] : false;
+  getCookies(){
+    return this.cookies;
   }
-  setCookie(object){
-    object.forEach((value, key) => {
-      this.cookies[key] = value;
+  setCookie(cookies){
+    Object.keys(cookies).forEach(key => {
+      this.cookies[key] = cookies[key];
     })
   }
   parseCookie(string){
-    let cookies;
+    let cookies = {};
     string.replace(/ /g, '').split(';').forEach(cookie => {
       let arr = cookie.split('=');
       cookies[arr[0]] = arr[1];
@@ -23,15 +21,26 @@ export class cookieHandler {
   }
   reload(){
     if (document.cookie) this.cookies = this.parseCookie(document.cookie);
+    console.log('cookie loaded')
+    console.log(this.cookies);
   }
   store(){
-    document.cookie = this.toString();
+    Object.keys(this.cookies).forEach(key => {
+      document.cookie = `${key}=${this.cookies[key]};`;
+    });
+    console.log('cookie stored');
+    console.log(this.cookies);
   }
   toString(cookies = this.cookies){
     let string = '';
-    cookies.forEach((value, key) => {
-      string += `${key}=${value}; `;
+    Object.keys(cookies).forEach(key => {
+      string += `${key}=${cookies[key]}; `;
     })
     return string;
+  }
+  expires(days){
+    this.setCookie({
+      expires: new Date(Date.now() + 86400 * 10000 * days)
+    });
   }
 }

@@ -19,6 +19,7 @@
 <script>
 import textbtn from '@/components/textbtn';
 import {matrix} from '@/main.js';
+import {cookieHandler} from "@/lib/cookieHandler";
 
 export default {
   name: "login.vue",
@@ -42,7 +43,17 @@ export default {
       }
       matrix.login(this.user, this.password, this.homeServer, (error) => {
         this.loginError = `login failed: ${error}`;
-      }, ()=> this.$router.push('/rooms/'));
+      }, (token)=> {
+        let cookie = new cookieHandler();
+        cookie.setCookie({
+          baseUrl: this.homeServer,
+          userId: this.user,
+          accessToken: token
+        });
+        cookie.expires(15);
+        cookie.store();
+        this.$router.push('/rooms/');
+      });
     },
     logout(){
       matrix.logout();

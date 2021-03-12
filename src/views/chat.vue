@@ -2,7 +2,7 @@
   <div>
     <div @scroll="scrollHandler()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
-        <p v-if="session.currentRoom.messages.length === 0" class="info">this room is empty</p>
+        <p v-if="room.messages.length === 0" class="info">this room is empty</p>
         <!--<div v-for="(message, i) in session.currentRoom.messages" :key="message.origin_server_ts" class="event">
           <div v-if="i===0 || getDate(session.currentRoom.messages[i-1].origin_server_ts)!==getDate(message.origin_server_ts)"
                style="margin-left: 2rem; margin-top: 1rem" class="info">{{getDate(message.origin_server_ts)}}
@@ -16,10 +16,10 @@
           <userThumbnail v-if="(message.sender !== session.user) && (i===session.currentRoom.messages.length-1 || session.currentRoom.messages[i+1].sender!==message.sender)"
                          :userId="message.sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
         </div>-->
-        <div class="eventGroup" v-for="group in splitEventsToGroups(session.currentRoom.messages)" :key="group[0].origin_server_ts">
+        <div class="eventGroup" v-for="group in splitEventsToGroups(room.messages)" :key="group[0].origin_server_ts">
           <div class="username" v-if="group[0].sender !== session.user">{{group[0].sender}}</div>
           <div class="thumbnailContainer">
-            <userThumbnail v-if="group[0].sender !== session.user && session.currentRoom.members.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
+            <userThumbnail v-if="group[0].sender !== session.user && room.members.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
           </div>
           <div class="event" v-for="message in group" :key="message.origin_server_ts">
             <message :type="message.sender === session.user?'send':'receive'"
@@ -39,9 +39,7 @@
 import message from '@/components/message.vue';
 import newMessage from '@/components/newMessage.vue';
 import topBanner from '@/components/topBanner.vue';
-import main from '@/main.js';
 import Icon from "@/components/icon";
-import matrix from '@/matrix.js';
 import userThumbnail from '@/components/userThumbnail';
 
 export default {
@@ -52,6 +50,10 @@ export default {
     newMessage,
     topBanner,
     userThumbnail
+  },
+  props: {
+    room: {},
+    user: String
   },
   methods:{
     scrollToBottom(){
@@ -90,8 +92,6 @@ export default {
   },
   data(){
     return {
-      chatroom: main.data().chatroom,
-      session: matrix.data().session,
       showScrollBtn: false,
       scrollOnUpdate: true
     }

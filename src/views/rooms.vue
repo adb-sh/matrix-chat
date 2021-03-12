@@ -1,31 +1,33 @@
 <template>
-  <div>
+  <div v-if="matrix.loading">
+    loading...
+  </div>
+  <div v-else>
     <div id="roomList" class="roomList">
       <h1>[chat]</h1>
-      <h2>{{session.rooms.length}} rooms:</h2>
-      <div v-for="room in session.rooms" :key="room.roomId" @click="openChat(room)" class="roomListElement">
+      <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" class="roomListElement">
         <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chat class="chat" v-if="session.currentRoom" />
+    <chat class="chat" v-if="currentRoom" :room="currentRoom" :user="matrix.user" />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <div class="roomListSmall">
       <h1>[c]</h1>
       <h2>—</h2>
-      <div v-for="(room, index) in session.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
+      <div v-for="(room, index) in matrix.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
         <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chatInformation v-if="session.currentRoom" :room="session.currentRoom"/>
+    <chatInformation v-if="currentRoom" :room="currentRoom"/>
   </div>
 </template>
 
 <script>
-import matrix from '@/matrix.js';
 import chat from '@/views/chat.vue';
 import chatInformation from "@/components/chatInformation";
+import {matrix} from "@/main";
 
 export default {
   name: "rooms",
@@ -35,17 +37,21 @@ export default {
   },
   methods:{
     openChat(room){
-      this.session.currentRoom = room;
-      this.$router.push(`/rooms/${room.roomId}`)
-      this.$forceUpdate()
-      let msgContainer = document.getElementById("messagesContainer")
-      setTimeout(() => {msgContainer.scrollTo(0, msgContainer.scrollHeight)}, 50)
+      this.currentRoom = room;
+      chat.data().room = room;
+      chat.data().user = matrix.user;
+      this.$router.push(`/rooms/${room.roomId}`);
+      this.$forceUpdate();
     }
   },
   data(){
     return {
-      session: matrix.data().session
+      matrix,
+      currentRoom: undefined
     }
+  },
+  mounted() {
+    if (matrix.client === undefined) this.$router.push('/login');
   }
 }
 </script>

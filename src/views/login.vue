@@ -50,7 +50,7 @@ export default {
           userId: this.user,
           accessToken: token
         });
-        cookie.expires(15);
+        cookie.setExpire(15);
         cookie.store();
         this.$router.push('/rooms/');
       });

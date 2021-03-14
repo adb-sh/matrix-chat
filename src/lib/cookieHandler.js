@@ -2,6 +2,8 @@ export class cookieHandler {
   constructor() {
     this.cookies = {};
     this.reload();
+    this.expires = undefined;
+    this.SameSite = 'Strict';
   }
   getCookies(){
     return this.cookies;
@@ -26,7 +28,7 @@ export class cookieHandler {
   }
   store(){
     Object.keys(this.cookies).forEach(key => {
-      document.cookie = `${key}=${this.cookies[key]};`;
+      document.cookie = `${key}=${this.cookies[key]}; expires=${this.expires}; SameSite=${this.SameSite}; Secure;`;
     });
     console.log('cookie stored');
     console.log(this.cookies);
@@ -38,9 +40,7 @@ export class cookieHandler {
     })
     return string;
   }
-  expires(days){
-    this.setCookie({
-      expires: new Date(Date.now() + 86400 * 10000 * days)
-    });
+  setExpire(days){
+    this.expires = new Date(Date.now() + 86400 * 10000 * days);
   }
 }

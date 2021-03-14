@@ -2,7 +2,7 @@
   <div>
     <div @scroll="scrollHandler()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
       <div id="messages" class="messages">
-        <p v-if="room.messages.length === 0" class="info">this room is empty</p>
+        <p v-if="room.timeline.length === 0" class="info">this room is empty</p>
         <!--<div v-for="(message, i) in session.currentRoom.messages" :key="message.origin_server_ts" class="event">
           <div v-if="i===0 || getDate(session.currentRoom.messages[i-1].origin_server_ts)!==getDate(message.origin_server_ts)"
                style="margin-left: 2rem; margin-top: 1rem" class="info">{{getDate(message.origin_server_ts)}}
@@ -16,15 +16,15 @@
           <userThumbnail v-if="(message.sender !== session.user) && (i===session.currentRoom.messages.length-1 || session.currentRoom.messages[i+1].sender!==message.sender)"
                          :userId="message.sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
         </div>-->
-        <div class="eventGroup" v-for="group in splitEventsToGroups(room.messages)" :key="group[0].origin_server_ts">
-          <div class="username" v-if="group[0].sender !== session.user">{{group[0].sender}}</div>
+        <div class="eventGroup" v-for="group in splitTimelineToGroups(room.timeline)" :key="group[0].origin_server_ts">
+          <div class="username" v-if="group[0].sender !== user">{{group[0].sender}}</div>
           <div class="thumbnailContainer">
-            <userThumbnail v-if="group[0].sender !== session.user && room.members.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
+            <userThumbnail v-if="group[0].sender !== user && room._membersPromise.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
           </div>
-          <div class="event" v-for="message in group" :key="message.origin_server_ts">
-            <message :type="message.sender === session.user?'send':'receive'"
-                     :group="session.currentRoom.members.length > 2"
-                     :msg=message.content.body :time=getTime(message.origin_server_ts) />
+          <div class="event" v-for="event in group" :key="event.origin_server_ts">
+            <message :type="event.sender === user?'send':'receive'"
+                     :group="room._membersPromise.length > 2"
+                     :msg=event.content.body :time=getTime(event.origin_server_ts) />
           </div>
         </div>
       </div>
@@ -76,18 +76,18 @@ export default {
       let msgContainer = document.getElementById("messagesContainer")
       this.showScrollBtn = msgContainer.scrollHeight - msgContainer.scrollTop > msgContainer.offsetHeight + 200;
     },
-    splitEventsToGroups(events){
+    splitTimelineToGroups(timeline){
       let payload = [[]];
-      let group = 0;
-      for(let i=0; i<events.length; i++){
-        payload[group].push(events[i]);
-        if (events[i].sender !== (events[i+1]?events[i+1].sender:undefined) ||
-            this.getDate(events[i].origin_server_ts) !== this.getDate(events[i+1]?events[i+1].origin_server_ts:undefined)){
-          if (i < events.length-1) payload.push([]);
-          group++;
+      timeline.forEach((object, i) => {
+        let event = object.event;
+        let nextEvent = timeline[i+1]?timeline[i+1].event:undefined;
+        payload[payload.length-1].push(event);
+        if (!nextEvent) return payload;
+        if (event.sender !== nextEvent.sender ||
+            this.getDate(event.origin_server_ts) !== this.getDate(nextEvent.origin_server_ts)){
+          payload.push([]);
         }
-      }
-      return payload;
+      })
     }
   },
   data(){

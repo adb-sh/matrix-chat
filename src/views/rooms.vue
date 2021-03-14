@@ -20,20 +20,20 @@
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chatInformation v-if="currentRoom" :room="currentRoom"/>
+    <!--<chatInformation v-if="currentRoom" :room="currentRoom"/>-->
   </div>
 </template>
 
 <script>
 import chat from '@/views/chat.vue';
-import chatInformation from "@/components/chatInformation";
+//import chatInformation from "@/components/chatInformation";
 import {matrix} from "@/main";
 
 export default {
   name: "rooms",
   components:{
     chat,
-    chatInformation
+    //chatInformation
   },
   methods:{
     openChat(room){

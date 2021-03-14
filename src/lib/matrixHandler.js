@@ -52,6 +52,7 @@ export class MatrixHandler {
     this.client.once('sync', (state) => {
       console.log(state);
       this.rooms = this.client.getRooms();
+      console.log(this.rooms)
       this.loading = false;
       callback();
     });

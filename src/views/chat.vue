@@ -16,7 +16,7 @@
           <userThumbnail v-if="(message.sender !== session.user) && (i===session.currentRoom.messages.length-1 || session.currentRoom.messages[i+1].sender!==message.sender)"
                          :userId="message.sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
         </div>-->
-        <div class="eventGroup" v-for="group in splitTimelineToGroups(room.timeline)" :key="group[0].origin_server_ts">
+        <div class="eventGroup" v-for="group in splitArray(room.timeline, obj => obj.event.sender, obj => obj.event)" :key="group[0].origin_server_ts">
           <div class="username" v-if="group[0].sender !== user">{{group[0].sender}}</div>
           <div class="thumbnailContainer">
             <userThumbnail v-if="group[0].sender !== user && room._membersPromise.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
@@ -29,16 +29,16 @@
         </div>
       </div>
     </div>
-    <newMessage />
+    <!--<newMessage />-->
     <icon v-if="showScrollBtn" @click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
-    <topBanner />
+    <!--<topBanner />-->
   </div>
 </template>
 
 <script>
 import message from '@/components/message.vue';
-import newMessage from '@/components/newMessage.vue';
-import topBanner from '@/components/topBanner.vue';
+//import newMessage from '@/components/newMessage.vue';
+//import topBanner from '@/components/topBanner.vue';
 import Icon from "@/components/icon";
 import userThumbnail from '@/components/userThumbnail';
 
@@ -47,8 +47,8 @@ export default {
   components: {
     Icon,
     message,
-    newMessage,
-    topBanner,
+    //newMessage,
+    //topBanner,
     userThumbnail
   },
   props: {
@@ -76,18 +76,15 @@ export default {
       let msgContainer = document.getElementById("messagesContainer")
       this.showScrollBtn = msgContainer.scrollHeight - msgContainer.scrollTop > msgContainer.offsetHeight + 200;
     },
-    splitTimelineToGroups(timeline){
+    splitArray(arr, key, get=obj=>obj){
       let payload = [[]];
-      timeline.forEach((object, i) => {
-        let event = object.event;
-        let nextEvent = timeline[i+1]?timeline[i+1].event:undefined;
-        payload[payload.length-1].push(event);
-        if (!nextEvent) return payload;
-        if (event.sender !== nextEvent.sender ||
-            this.getDate(event.origin_server_ts) !== this.getDate(nextEvent.origin_server_ts)){
-          payload.push([]);
-        }
+      arr.forEach((obj, i) => {
+        let nextObj = arr[i+1];
+        payload[payload.length-1].push(get(obj));
+        if (!nextObj) return payload;
+        if (key(obj) !== key(nextObj)) payload.push([]);
       })
+      return payload;
     }
   },
   data(){

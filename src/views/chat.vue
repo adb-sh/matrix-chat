@@ -1,46 +1,36 @@
 <template>
   <div>
-    <div @scroll="scrollHandler()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
-      <div id="messages" class="messages">
-        <p v-if="room.timeline.length === 0" class="info">this room is empty</p>
-        <!--<div v-for="(message, i) in session.currentRoom.messages" :key="message.origin_server_ts" class="event">
-          <div v-if="i===0 || getDate(session.currentRoom.messages[i-1].origin_server_ts)!==getDate(message.origin_server_ts)"
-               style="margin-left: 2rem; margin-top: 1rem" class="info">{{getDate(message.origin_server_ts)}}
-          </div>
-          <div v-if="(message.sender !== session.user) && (i===0 || session.currentRoom.messages[i-1].sender!==message.sender)"
-               style="margin-left: 3rem; margin-top: 1rem">{{message.sender}}
-          </div>
-          <message :type="message.sender === session.user?'send':'receive'"
-                   :group="session.currentRoom.members.length > 2"
-                   :msg=message.content.body :time=getTime(message.origin_server_ts) />
-          <userThumbnail v-if="(message.sender !== session.user) && (i===session.currentRoom.messages.length-1 || session.currentRoom.messages[i+1].sender!==message.sender)"
-                         :userId="message.sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
-        </div>-->
-        <div class="timeGroup" v-for="timeGroup in splitArray(room.timeline, obj => getDate(obj.event.origin_server_ts), obj => obj.event)" :key="timeGroup[0].origin_server_ts">
-          <div class="time">{{getDate(timeGroup[0].origin_server_ts)}}</div>
-          <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].origin_server_ts">
-            <div class="username" v-if="group[0].sender !== user">{{group[0].sender}}</div>
-            <div class="thumbnailContainer">
-              <userThumbnail v-if="group[0].sender !== user && room._membersPromise.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
-            </div>
-            <div class="event" v-for="event in group" :key="event.origin_server_ts">
-              <message :type="event.sender === user?'send':'receive'"
-                       :group="room._membersPromise.length > 2"
-                       :msg=event.content.body :time=getTime(event.origin_server_ts) />
+    <div ref="chatContainer" class="chatContainer">
+      <div @scroll="scrollHandler()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
+        <div id="messages" class="messages" ref="messages">
+          <p v-if="room.timeline.length === 0" class="info">this room is empty</p>
+          <div class="timeGroup" v-for="timeGroup in splitArray(room.timeline,
+          obj => getDate(obj.event.origin_server_ts),obj => obj.event)" :key="timeGroup[0].origin_server_ts">
+            <div class="time">{{getDate(timeGroup[0].origin_server_ts)}}</div>
+            <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].origin_server_ts">
+              <div class="username" v-if="group[0].sender !== user">{{group[0].sender}}</div>
+              <div class="thumbnailContainer">
+                <userThumbnail v-if="group[0].sender !== user && room._membersPromise.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
+              </div>
+              <div class="event" v-for="event in group" :key="event.origin_server_ts">
+                <message v-if="event.content.msgtype==='m.text'" :type="event.sender === user?'send':'receive'"
+                         :group="room._membersPromise.length > 2"
+                         :msg=event.content.body :time=getTime(event.origin_server_ts) />
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <icon v-if="showScrollBtn" @click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
     </div>
-    <!--<newMessage />-->
-    <icon v-if="showScrollBtn" @click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
+    <newMessage :onResize="(height)=>resize(height)" :roomId="room.roomId"/>
     <!--<topBanner />-->
   </div>
 </template>
 
 <script>
 import message from '@/components/message.vue';
-//import newMessage from '@/components/newMessage.vue';
+import newMessage from '@/components/newMessage.vue';
 //import topBanner from '@/components/topBanner.vue';
 import Icon from "@/components/icon";
 import userThumbnail from '@/components/userThumbnail';
@@ -50,7 +40,7 @@ export default {
   components: {
     Icon,
     message,
-    //newMessage,
+    newMessage,
     //topBanner,
     userThumbnail
   },
@@ -75,8 +65,8 @@ export default {
       if (this.$refs.msgContainer.scrollTop === 0){
         console.log("load messages")
       }
-      let msgContainer = document.getElementById("messagesContainer")
-      this.showScrollBtn = msgContainer.scrollHeight - msgContainer.scrollTop > msgContainer.offsetHeight + 200;
+      let msg = this.$refs.msgContainer;
+      this.showScrollBtn = msg.scrollHeight - msg.scrollTop > msg.offsetHeight + 200;
     },
     splitArray(arr, key, get=obj=>obj){
       let payload = [[]];
@@ -87,6 +77,9 @@ export default {
         if (key(obj) !== key(nextObj)) payload.push([]);
       })
       return payload;
+    },
+    resize(height){
+      this.$refs.chatContainer.style.height = `calc(100% - ${height}px - 3rem)`;
     }
   },
   data(){
@@ -101,38 +94,56 @@ export default {
 }
 </script>
 
-<style scoped>
-.messagesContainer{
+<style scoped lang="scss">
+.chatContainer{
   position: absolute;
   margin: 0;
   left: 0;
   top: 3rem;
+  width: 100%;
   height: calc(100% - 7rem);
-  width: 100%;
-  overflow-y: auto;
-}
-.messages{
-  position: relative;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-#scrollDown{
-  position: absolute;
-  background-color: #fff;
-  bottom: 5rem;
-  right: 1rem;
-  display: block;
-}
-.info{
-  text-align: center;
-  font-style: italic;
-  margin: 1rem;
-}
-.eventGroup{
-  position: relative;
-  width: 100%;
-  height: fit-content;
-  margin-top: 0.75rem;
+  .messagesContainer{
+    height: 100%;
+    overflow-y: auto;
+    .messages{
+      position: relative;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      .eventGroup{
+        position: relative;
+        width: 100%;
+        height: fit-content;
+        margin-top: 0.75rem;
+      }
+      .info{
+        text-align: center;
+        font-style: italic;
+        margin: 1rem;
+      }
+      .time{
+        top: 0.25rem;
+        position: sticky;
+        z-index: 100;
+        background-color: #2d2d2d;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        width: fit-content;
+        left: 50%;
+        transform: translate(-50%,0);
+        margin-top: 0.5rem;
+      }
+    }
+
+  }
+  #scrollDown{
+    position: absolute;
+    background-color: #fff;
+    bottom: 1rem;
+    right: 1rem;
+    display: block;
+    height: 2rem;
+    width: 2rem;
+  }
 }
 .userThumbnail{
   position: absolute;
@@ -151,17 +162,5 @@ export default {
 }
 .username{
   margin-left: 1rem;
-}
-.time{
-  top: 0.25rem;
-  position: sticky;
-  z-index: 100;
-  background-color: #2d2d2d;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  width: fit-content;
-  left: 50%;
-  transform: translate(-50%,0);
-  margin-top: 0.5rem;
 }
 </style>

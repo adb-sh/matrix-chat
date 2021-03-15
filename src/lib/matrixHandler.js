@@ -62,4 +62,11 @@ export class MatrixHandler {
       }
     })
   }
+  async sendEvent(msg, roomId){
+    await this.client.sendEvent(roomId, msg.type, msg.content, '').then(() => {
+      console.log('message sent successfully');
+    }).catch((err) => {
+      console.log(`error while sending message => ${err}`);
+    });
+  }
 }

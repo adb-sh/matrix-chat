@@ -7,7 +7,6 @@
 
 <script>
 import parseMXC from '@modular-matrix/parse-mxc';
-import matrix from '@/matrix.js';
 
 export default {
   name: "userThumbnail.vue",
@@ -27,7 +26,6 @@ export default {
   },
   data(){
     return {
-      homeserver: matrix.data().session.baseUrl
     }
   }
 }

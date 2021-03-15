@@ -10,7 +10,9 @@
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chat class="chat" v-if="currentRoom" :room="currentRoom" :user="matrix.user" :close-chat="()=>currentRoom=undefined"/>
+    <chat class="chat" v-if="currentRoom" :room="currentRoom" :user="matrix.user"
+          :close-chat="()=>currentRoom=undefined"
+          :open-chat-info="()=>showChatInfo=true"/>
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <div class="roomListSmall">
       <h1>[c]</h1>
@@ -19,20 +21,20 @@
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <!--<chatInformation v-if="currentRoom" :room="currentRoom"/>-->
+    <chatInformation v-if="currentRoom && showChatInfo" :room="currentRoom"/>
   </div>
 </template>
 
 <script>
 import chat from '@/views/chat.vue';
-//import chatInformation from "@/components/chatInformation";
+import chatInformation from "@/components/chatInformation";
 import {matrix} from "@/main";
 
 export default {
   name: "rooms",
   components:{
     chat,
-    //chatInformation
+    chatInformation
   },
   methods:{
     openChat(room){
@@ -45,7 +47,8 @@ export default {
   data(){
     return {
       matrix,
-      currentRoom: undefined
+      currentRoom: undefined,
+      showChatInfo: false
     }
   },
   mounted() {

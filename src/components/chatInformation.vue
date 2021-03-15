@@ -6,11 +6,11 @@
         <div class="picBoxBig"><div class="placeholderBig">{{room.name.substr(0,2)}}</div></div>
         <div class="roomInformation">
           <div class="roomName">{{room.name}}</div>
-          <div class="users">{{room.members.length}} members</div>
+          <div class="users">{{members.length}} members</div>
         </div>
         </div>
-        <h2 v-if="room.members.length !== 0">members:</h2>
-        <div v-for="member in room.members.slice(0,20)" :key="member.sender" class="contentBox" :title="member.sender">
+        <h2 v-if="members.length !== 0">members:</h2>
+        <div v-for="member in members.slice(0,20)" :key="member.sender" class="contentBox" :title="member.sender">
           <userThumbnail :mxcURL="member.content.avatar_url" :userId="member.sender" :username="member.content.displayname"
                          width="64" height="64" resizeMethod="scale" class="userThumbnail" />
           <div class="information">
@@ -18,7 +18,7 @@
             <div class="status"></div>
           </div>
         </div>
-        <p v-if="room.members.length>20">and {{room.members.length-20}} other members</p>
+        <p v-if="members.length>20">and {{members.length-20}} other members</p>
       </div>
     </div>
     <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
@@ -36,6 +36,11 @@ export default {
   },
   props:{
     room: {}
+  },
+  data(){
+    return{
+      members: Object.keys(this.room.currentState.members)
+    }
   }
 }
 
@@ -53,7 +58,6 @@ export default {
   box-shadow: 6px 6px 20px #111;
   border-radius: 1rem;
   text-align: center;
-  display: none;
 }
 @media (max-width: 30rem) {
   #chatInformation{

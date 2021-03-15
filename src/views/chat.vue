@@ -2,6 +2,7 @@
   <div>
     <div ref="chatContainer" class="chatContainer">
       <div @scroll="scrollHandler()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
+        <div v-if="loadingStatus" @click="loadEvents()" class="loadMore">{{loadingStatus}}</div>
         <div id="messages" class="messages" ref="messages">
           <p v-if="room.timeline.length === 0" class="chatInfo">this room is empty</p>
           <div class="timeGroup" v-for="timeGroup in splitArray(room.timeline,
@@ -30,7 +31,7 @@
       <icon v-if="showScrollBtn" @click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
     </div>
     <newMessage :onResize="height=>resize(height)" :roomId="room.roomId"/>
-    <topBanner :room="room" :close-chat="()=>closeChat()" />
+    <topBanner :room="room" :close-chat="()=>closeChat()" :open-chat-info="()=>openChatInfo()"/>
   </div>
 </template>
 
@@ -38,8 +39,9 @@
 import message from '@/components/message.vue';
 import newMessage from '@/components/newMessage.vue';
 import topBanner from '@/components/topBanner.vue';
-import Icon from "@/components/icon";
+import Icon from '@/components/icon';
 import userThumbnail from '@/components/userThumbnail';
+import {matrix} from '@/main';
 
 export default {
   name: 'chat',
@@ -53,7 +55,8 @@ export default {
   props: {
     room: [Object, undefined],
     user: String,
-    closeChat: Function
+    closeChat: Function,
+    openChatInfo: Function
   },
   methods:{
     scrollToBottom(){
@@ -61,17 +64,15 @@ export default {
     },
     getTime(time){
       let date = new Date(time);
-      return `${date.getHours()}:${(date.getMinutes()<10)?"0":""}${date.getMinutes()}`;
+      return `${date.getHours()}:${(date.getMinutes()<10)?'0':''}${date.getMinutes()}`;
     },
     getDate(time){
-      let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       let date = new Date(time);
       return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
     },
     scrollHandler(){
-      if (this.$refs.msgContainer.scrollTop === 0){
-        console.log("load messages")
-      }
+      if (this.$refs.msgContainer.scrollTop === 0) this.loadEvents();
       let msg = this.$refs.msgContainer;
       this.showScrollBtn = msg.scrollHeight - msg.scrollTop > msg.offsetHeight + 200;
     },
@@ -90,6 +91,11 @@ export default {
     },
     isGroup(){
       return Object.keys(this.room.currentState.members).length > 2;
+    },
+    async loadEvents(){
+      this.loadingStatus = 'loading ...';
+      await matrix.client.paginateEventTimeline(this.room.getLiveTimeline(), {backwards: true})
+        .then(state => this.loadingStatus = state?'load more':false);
     }
   },
   data(){
@@ -101,7 +107,8 @@ export default {
         join: 'joined the room',
         leave: 'left the room',
         ban: 'was banned'
-      }
+      },
+      loadingStatus: 'load more'
     }
   },
   updated(){
@@ -190,5 +197,16 @@ export default {
 }
 .username{
   margin-left: 1rem;
+}
+.loadMore{
+  position: relative;
+  background-color: #2d2d2d;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: fit-content;
+  left: 50%;
+  transform: translate(-50%,0);
+  margin-top: 0.5rem;
+  cursor: pointer;
 }
 </style>

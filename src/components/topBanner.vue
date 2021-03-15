@@ -2,7 +2,7 @@
   <div class="topBanner">
     <div>
       <icon @click.native="closeChat()" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
-      <div @click="showChatInfo()" class="smallIcon" id="picTop">{{room.name.substr(0,2)}}</div>
+      <div @click="openChatInfo()" class="smallIcon" id="picTop">{{room.name.substr(0,2)}}</div>
       <div id="container">
         <div id="chatName">{{room.name}}</div>
         <div id="users">{{Object.keys(room.currentState.members).length}} members</div>
@@ -22,12 +22,8 @@ export default {
   },
   props:{
     room: [Object, undefined],
-    closeChat: Function
-  },
-  methods:{
-    showChatInfo(){
-      document.getElementById("chatInformation").style.display = 'block';
-    }
+    closeChat: Function,
+    openChatInfo: Function
   },
   data(){
     return {

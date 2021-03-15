@@ -43,7 +43,7 @@ export default {
       }
       matrix.login(this.user, this.password, this.homeServer, (error) => {
         this.loginError = `login failed: ${error}`;
-      }, (token)=> {
+      }, token => {
         let cookie = new cookieHandler();
         cookie.setCookie({
           baseUrl: this.homeServer,

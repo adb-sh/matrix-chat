@@ -16,15 +16,18 @@
           <userThumbnail v-if="(message.sender !== session.user) && (i===session.currentRoom.messages.length-1 || session.currentRoom.messages[i+1].sender!==message.sender)"
                          :userId="message.sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
         </div>-->
-        <div class="eventGroup" v-for="group in splitArray(room.timeline, obj => obj.event.sender, obj => obj.event)" :key="group[0].origin_server_ts">
-          <div class="username" v-if="group[0].sender !== user">{{group[0].sender}}</div>
-          <div class="thumbnailContainer">
-            <userThumbnail v-if="group[0].sender !== user && room._membersPromise.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
-          </div>
-          <div class="event" v-for="event in group" :key="event.origin_server_ts">
-            <message :type="event.sender === user?'send':'receive'"
-                     :group="room._membersPromise.length > 2"
-                     :msg=event.content.body :time=getTime(event.origin_server_ts) />
+        <div class="timeGroup" v-for="timeGroup in splitArray(room.timeline, obj => getDate(obj.event.origin_server_ts), obj => obj.event)" :key="timeGroup[0].origin_server_ts">
+          <div class="time">{{getDate(timeGroup[0].origin_server_ts)}}</div>
+          <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].origin_server_ts">
+            <div class="username" v-if="group[0].sender !== user">{{group[0].sender}}</div>
+            <div class="thumbnailContainer">
+              <userThumbnail v-if="group[0].sender !== user && room._membersPromise.length > 2" :userId="group[0].sender" width="64" height="64" resizeMethod="scale" class="userThumbnail" />
+            </div>
+            <div class="event" v-for="event in group" :key="event.origin_server_ts">
+              <message :type="event.sender === user?'send':'receive'"
+                       :group="room._membersPromise.length > 2"
+                       :msg=event.content.body :time=getTime(event.origin_server_ts) />
+            </div>
           </div>
         </div>
       </div>
@@ -57,8 +60,7 @@ export default {
   },
   methods:{
     scrollToBottom(){
-      let msgContainer = document.getElementById("messagesContainer")
-      msgContainer.scrollTo(0, msgContainer.scrollHeight)
+      this.$nextTick(() => this.$refs.msgContainer.scrollTop = this.$refs.msgContainer.scrollHeight);
     },
     getTime(time){
       let date = new Date(time);
@@ -148,6 +150,18 @@ export default {
   width: 3rem;
 }
 .username{
-  margin-left: 3rem;
+  margin-left: 1rem;
+}
+.time{
+  top: 0.25rem;
+  position: sticky;
+  z-index: 100;
+  background-color: #2d2d2d;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: fit-content;
+  left: 50%;
+  transform: translate(-50%,0);
+  margin-top: 0.5rem;
 }
 </style>

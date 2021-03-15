@@ -1,11 +1,11 @@
 <template>
   <div class="topBanner">
     <div>
-      <icon @click.native="session.currentRoom = undefined" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
-      <div @click="showChatInfo()" class="smallIcon" id="picTop">{{session.currentRoom.name.substr(0,2)}}</div>
+      <icon @click.native="closeChat()" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
+      <div @click="showChatInfo()" class="smallIcon" id="picTop">{{room.name.substr(0,2)}}</div>
       <div id="container">
-        <div id="chatName">{{session.currentRoom.name}}</div>
-        <div id="users">{{session.currentRoom.members.length}} members</div>
+        <div id="chatName">{{room.name}}</div>
+        <div id="users">{{Object.keys(room.currentState.members).length}} members</div>
       </div>
     </div>
   </div>
@@ -19,6 +19,10 @@ export default {
   name: "topBanner",
   components:{
     icon,
+  },
+  props:{
+    room: [Object, undefined],
+    closeChat: Function
   },
   methods:{
     showChatInfo(){

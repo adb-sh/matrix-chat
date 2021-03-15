@@ -1,7 +1,7 @@
 <template>
   <img v-if="mxcURL" :src="thumbnailUrl()" class="userThumbnail" />
   <div v-else class="userThumbnail">
-    <p>{{username?username.substr(0,2):userId.substr(1,2)}}</p>
+    {{username?username.substr(0,2):userId.substr(1,2)}}
   </div>
 </template>
 

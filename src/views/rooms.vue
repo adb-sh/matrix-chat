@@ -10,11 +10,10 @@
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chat class="chat" v-if="currentRoom" :room="currentRoom" :user="matrix.user" />
+    <chat class="chat" v-if="currentRoom" :room="currentRoom" :user="matrix.user" :close-chat="()=>currentRoom=undefined"/>
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <div class="roomListSmall">
       <h1>[c]</h1>
-      <h2>—</h2>
       <div v-for="(room, index) in matrix.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
         <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
         <div class="roomListName">{{room.name}}</div>
@@ -38,10 +37,9 @@ export default {
   methods:{
     openChat(room){
       this.currentRoom = room;
-      chat.data().room = room;
-      chat.data().user = matrix.user;
       this.$router.push(`/rooms/${room.roomId}`);
       this.$forceUpdate();
+      //chat.methods.scrollToBottom();
     }
   },
   data(){

@@ -1,15 +1,16 @@
 <template>
   <div id="login">
     <h1 class="title">[chat]</h1>
-    <form v-if="session.login" @submit.prevent="login()">
-      <input v-model="session.login.user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
-      <input v-model="session.login.password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
-      <input v-model="session.login.baseUrl" class="input" name="homeserver" maxlength="50" placeholder="https://matrix.org"><br>
+    <form v-if="showLogin" @submit.prevent="login()">
+      <input v-model="user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
+      <input v-model="password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
+      <input v-model="homeServer" class="input" name="homeserver" maxlength="50" placeholder="https://matrix.org"><br>
+      <div v-if="loginError" class="info">{{loginError}}</div>
       <textbtn type="submit" text="login" />
     </form>
     <div v-else>
       <p>you are already logged in</p>
-      <textbtn @click.native="$router.push('room')" text="chat" />
+      <textbtn @click.native="$router.push('rooms')" text="chat" />
       <textbtn @click.native="logout()" text="logout" />
     </div>
   </div>
@@ -17,7 +18,8 @@
 
 <script>
 import textbtn from '@/components/textbtn';
-import matrix from '@/matrix.js';
+import {matrix} from '@/main.js';
+import {cookieHandler} from "@/lib/cookieHandler";
 
 export default {
   name: "login.vue",
@@ -26,15 +28,44 @@ export default {
   },
   methods: {
     login(){
-      matrix.methods.login();
+      if (matrix.client !== undefined) {
+        this.loginError = 'you are already logged in';
+        return;
+      } if (this.user === '') {
+        this.loginError = 'username is empty';
+        return;
+      } if (this.password === '') {
+        this.loginError = 'password is empty';
+        return;
+      } if (!(this.user.match(/^@[a-zA-Z0-9]+:[a-z0-9]+\.[a-z]/))) {
+        this.loginError = 'username is in wrong style';
+        return;
+      }
+      matrix.login(this.user, this.password, this.homeServer, (error) => {
+        this.loginError = `login failed: ${error}`;
+      }, token => {
+        let cookie = new cookieHandler();
+        cookie.setCookie({
+          baseUrl: this.homeServer,
+          userId: this.user,
+          accessToken: token
+        });
+        cookie.setExpire(15);
+        cookie.store();
+        this.$router.push('/rooms/');
+      });
     },
     logout(){
-      matrix.methods.logout();
+      matrix.logout();
     }
   },
   data(){
     return {
-      session: matrix.data().session
+      user: "",
+      password: "",
+      homeServer: "https://adb.sh",
+      loginError: "",
+      showLogin: (matrix.client === undefined)
     }
   }
 }
@@ -59,7 +90,7 @@ input{
   border: 1px solid #fff;
   text-align: center;
   font-size: 1.1rem;
-  margin-top: 1rem;
+  margin: 0.5rem;
   appearance: none;
   outline: none;
 }

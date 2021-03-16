@@ -1,34 +1,44 @@
 <template>
   <div class="topBanner">
     <div>
-      <icon @click.native="session.currentRoom = undefined" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
-      <div @click="showChatInfo()" class="smallIcon" id="picTop">{{session.currentRoom.name.substr(0,2)}}</div>
+      <icon @click.native="closeChat()" class="smallIcon" id="icon-arrow" ic="./sym/arrow_back-24px.svg" />
+      <userThumbnail @click.native="openChatInfo()" class="userThumbnail"
+                     :mxcURL="getUrl()" :fallback="room.roomId" :size="3"/>
       <div id="container">
-        <div id="chatName">{{session.currentRoom.name}}</div>
-        <div id="users">{{session.currentRoom.members.length}} members</div>
+        <div id="chatName">{{room.name}}</div>
+        <div id="users">{{Object.keys(room.currentState.members).length}} members</div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import icon from '@/components/icon.vue';
-import main from '@/main.js';
-import matrix from '@/matrix.js';
+import {matrix} from "@/main";
+import userThumbnail from "@/components/userThumbnail";
+import sdk from 'matrix-js-sdk'
 
 export default {
   name: "topBanner",
   components:{
     icon,
+    userThumbnail
   },
-  methods:{
-    showChatInfo(){
-      document.getElementById("chatInformation").style.display = 'block';
-    }
+  props:{
+    room: [Object, undefined],
+    closeChat: Function,
+    openChatInfo: Function
   },
   data(){
     return {
-      chatroom: main.data().chatroom,
-      session: matrix.data().session
+    }
+  },
+  methods: {
+    getRoom(roomId) {
+      return matrix.client.getRoom(roomId);
+    },
+    getUrl(){
+      let avatarState = this.room.getLiveTimeline().getState(sdk.EventTimeline.FORWARDS).getStateEvents("m.room.avatar");
+      return avatarState.length>0?avatarState[avatarState.length-1].getContent().url:undefined;
     }
   }
 }
@@ -39,7 +49,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 3rem;
+  height: 3.5rem;
   background-color: #1d1d1d;
 }
 .smallIcon{
@@ -61,10 +71,12 @@ export default {
   background-color: unset;
   box-shadow: none;
 }
-#picTop{
+.userThumbnail{
   position: absolute;
+  top: 0.25rem;
   left: 3.5rem;
-  background-color: #42a7b9;
+  width: 3rem;
+  height: 3rem;
 }
 #container{
   position: absolute;

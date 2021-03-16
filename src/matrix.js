@@ -1,8 +1,8 @@
-import matrix from 'matrix-js-sdk';
+/*import matrix from 'matrix-js-sdk';
 import main from '@/main.js';
 // import Vue from 'vue';
 
-let client = matrix.createClient({});
+let client = undefined;
 let session = {
   user: '',
   baseUrl: '',
@@ -44,23 +44,12 @@ export default {
   data() {
     return {
       session,
+      client
     };
   },
   methods: {
     login() {
-      if (session.accessToken !== '') {
-        main.methods.error('you are already logged in');
-        return;
-      } if (session.login.user === '') {
-        main.methods.error('username is empty');
-        return;
-      } if (session.login.password === '') {
-        main.methods.error('password is empty');
-        return;
-      } if (!(session.login.user.includes('@') && session.login.user.includes(':'))) {
-        main.methods.error('username is in wrong style');
-        return;
-      }
+
       client = matrix.createClient({
         baseUrl: session.login.baseUrl
       });
@@ -72,6 +61,7 @@ export default {
         document.cookie = `accessToken=${response.access_token}`;
         document.cookie = `userId=${session.login.user}`;
         document.cookie = `baseUrl=${session.login.baseUrl}`;
+        document.cookie = `SameSite=Strict`;
         document.cookie = `expires=${new Date(Date.now() + 86400 * 10 * 1000)}`;
         session = {
           user: session.login.user,
@@ -86,12 +76,12 @@ export default {
           console.log(`login error => ${response.error}`);
         }
         window.location.href = '/#/rooms/';
-        window.location.reload();
+        window.location.reload();*/
         /*client.startClient();
         client.once('sync', (state) => {
           console.log(state);
         });*/
-      });
+/*      });
     },
     logout(){
       document.cookie = `accessToken=`;
@@ -124,7 +114,7 @@ function getCookie(key) {
   return cookie ? cookie.split('=')[1] : false;
 }
 
-client.on('event', (event) => {
+/*client.on('event', (event) => {
   //console.log(event.getType());
   //console.log(event);
   if (event.getType() === 'm.room.name') {
@@ -175,4 +165,4 @@ client.on('Room.timeline', (event, room) => {
       } else document.getElementById('scrollDown').style.display = 'block';
     }
   }
-});
+});*/

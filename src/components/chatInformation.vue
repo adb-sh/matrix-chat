@@ -6,27 +6,31 @@
         <div class="picBoxBig"><div class="placeholderBig">{{room.name.substr(0,2)}}</div></div>
         <div class="roomInformation">
           <div class="roomName">{{room.name}}</div>
-          <div class="users">{{room.members.length}} members</div>
+          <div class="users">{{getMembers().length}} members</div>
         </div>
         </div>
-        <h2 v-if="room.members.length !== 0">members:</h2>
-        <div v-for="member in room.members.slice(0,20)" :key="member.sender" class="contentBox" :title="member.sender">
-          <userThumbnail :mxcURL="member.content.avatar_url" :userId="member.sender" :username="member.content.displayname"
-                         width="64" height="64" resizeMethod="scale" class="userThumbnail" />
+        <h2 v-if="getMembers().length !== 0">members:</h2>
+        <div v-for="member in getMembers().slice(0,20)" :key="member" class="contentBox" :title="member">
+          <userThumbnail
+              :mxcURL="getUser(member).avatarUrl"
+              :fallback="getUser(member).displayName"
+              class="userThumbnail" :size="3"
+          />
           <div class="information">
-            <div class="userName">{{member.content.displayname?member.content.displayname:member.sender}}</div>
-            <div class="status"></div>
+            <div class="userName">{{getUser(member).displayName || member}}</div>
+            <div class="status">{{getStatus(getUser(member))}}</div>
           </div>
         </div>
-        <p v-if="room.members.length>20">and {{room.members.length-20}} other members</p>
+        <p v-if="getMembers().length>20">and {{getMembers().length-20}} other members</p>
       </div>
     </div>
-    <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
+    <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white_24px.svg" />
   </div>
 </template>
 <script>
 import icon from './icon.vue';
 import userThumbnail from './userThumbnail';
+import {matrix} from "@/main";
 
 export default {
   name: "chatInformation",
@@ -35,7 +39,18 @@ export default {
     userThumbnail
   },
   props:{
-    room: {}
+    room: {},
+    closeChatInfo: Function
+  },
+  methods: {
+    getUser(userId){
+      return matrix.client.getUser(userId);
+    },
+    getMembers(){
+      return Object.keys(this.room.currentState.members)
+    },
+    getStatus(){
+    }
   }
 }
 
@@ -53,7 +68,6 @@ export default {
   box-shadow: 6px 6px 20px #111;
   border-radius: 1rem;
   text-align: center;
-  display: none;
 }
 @media (max-width: 30rem) {
   #chatInformation{
@@ -125,7 +139,8 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  background-color: #42a7b9;
+  width: 3rem;
+  height: 3rem;
 }
 .information{
   position: absolute;

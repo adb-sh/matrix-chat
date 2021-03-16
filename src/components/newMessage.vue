@@ -1,47 +1,58 @@
 <template>
-  <div class="newMessageBanner">
-    <form v-on:submit.prevent="sendMessage()">
+    <form class="newMessageBanner" ref="newMessageBanner" v-on:submit.prevent="sendMessage()">
       <label for="newMessageInput"></label>
-      <textarea @keyup.enter.exact="sendMessage()" @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
-                autocomplete="off" rows="1" placeholder="type a message ..." v-model="msg.content.body" />
-      <icon type="submit" title="press enter to submit" id="sendMessageBtn"
-            ic="./sym/ic_send_white_24px.svg" />
+      <textarea
+          @keyup.enter.exact="sendMessage()"
+          @input="resizeMessageBanner()"
+          v-model="msg.content.body"
+          ref="newMessageInput"
+          id="newMessageInput"
+          class="newMessageInput"
+          autocomplete="off"
+          rows="1"
+          placeholder="type a message ..."
+      />
+      <icon
+          type="submit"
+          title="press enter to submit"
+          class="sendMessageBtn"
+          ic="./sym/ic_send_white_24px.svg"
+      />
     </form>
-  </div>
 </template>
 
 <script>
 import icon from '@/components/icon.vue';
-import main from '@/main.js';
-import matrix from '@/matrix.js';
+import {matrix} from '@/main.js';
 
 export default {
   name: "newMessage",
   components: {
     icon
   },
+  props: {
+    onResize: Function,
+    roomId: String
+  },
   methods: {
-    sendMessage(){
+    async sendMessage(){
       if (this.msg.content.body !== "") {
-        let msgSend = Object.assign({}, this.msg)
-        matrix.methods.sendMessage(msgSend)
-        this.msg.content.body = ""
-        document.getElementById("messagesContainer").style.height = "calc(100% - 7rem)"
-        document.getElementById("newMessageInput").style.height = "1.25rem"
-        //let msgContainer = document.getElementById("messagesContainer")
-        //msgContainer.scrollTo(0, msgContainer.scrollHeight)
+        let msgSend = Object.assign({}, this.msg);
+        await matrix.sendEvent(msgSend, this.roomId);
+        this.msg.content.body = "";
+        let id = this.$refs.newMessageInput;
+        id.style.height = "1.25rem";
+        this.onResize(id.parentElement.clientHeight);
       }
     },
     resizeMessageBanner(){
-      let id = this.$refs.newMessageInput
-      id.style.height = '1.25rem'
-      id.style.height = `${id.scrollHeight}px`
-      let msgContainer = document.getElementById("messagesContainer")
-      msgContainer.style.height
-          = `calc(100% - ${id.parentElement.clientHeight}px - 3rem)`
+      let id = this.$refs.newMessageInput;
+      id.style.height = '1.25rem';
+      id.style.height = `${id.scrollHeight}px`;
+      this.onResize(id.parentElement.clientHeight);
     },
     toggleEmojiPicker() {
-      this.showEmojiPicker= !this.showEmojiPicker;
+      this.showEmojiPicker = !this.showEmojiPicker;
     },
     onSelectEmoji(emoji) {
       this.msg.content.body += emoji.data;
@@ -56,8 +67,6 @@ export default {
           msgtype: "m.text"
         }
       },
-      chatroom: main.data().chatroom,
-      session: matrix.data().session,
       showEmojiPicker: false
     }
   }
@@ -71,16 +80,16 @@ export default {
   left: 0;
   width: 100%;
   height: min-content;
-  min-height: 4rem;
+  min-height: 3.5rem;
   background-color: #1d1d1d;
   border-radius: 1rem 1rem 0 0;
 }
 .newMessageInput{
   position: relative;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
   left: 2rem;
-  min-height: 1.25rem;
+  min-height: 1.5rem;
   max-height: 10rem;
   width: calc(100% - 7rem);
   height: 1.25rem;
@@ -94,9 +103,10 @@ export default {
   vertical-align: middle;
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
-#sendMessageBtn{
+.sendMessageBtn{
   position: absolute;
   right: 1rem;
-  bottom: 0.5rem;
+  bottom: 0.25rem;
+  background-color: unset;
 }
 </style>

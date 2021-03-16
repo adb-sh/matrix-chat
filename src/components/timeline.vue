@@ -1,10 +1,11 @@
 <template>
   <div class="timeline">
-    <div class="timeGroup"
-         v-for="timeGroup in splitArray(timeline,obj => getDate(obj.event.origin_server_ts),obj => obj.event)"
-         :key="timeGroup[0].origin_server_ts"
+    <div
+      class="timeGroup"
+      v-for="timeGroup in splitArray(timeline,obj => getDate(obj.event.origin_server_ts),obj => obj.event)"
+      :key="timeGroup[0].origin_server_ts"
     >
-      <div class="time">{{getDate(timeGroup[0].origin_server_ts)}}</div>
+      <div class="date">{{getDate(timeGroup[0].origin_server_ts)}}</div>
       <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].origin_server_ts">
         <div class="thumbnailContainer">
           <div class="filler"></div>
@@ -17,18 +18,26 @@
             :title="group[0].sender"
           />
         </div>
-        <div :class="groupTimeline?'indent username':'username'"
-             v-if="group[0].sender !== user && groupTimeline">{{getUser(group[0].sender).displayName || group[0].sender}}
+        <div
+          :class="groupTimeline?'indent username':'username'"
+          v-if="group[0].sender !== user && groupTimeline"
+        >
+          {{getUser(group[0].sender).displayName || group[0].sender}}
         </div>
-        <div :class="groupTimeline?'indent event':'event'"
-             v-for="event in group" :key="event.origin_server_ts"
-             :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`"
+        <div
+          :class="groupTimeline?'indent event':'event'"
+           v-for="event in group"
+          :key="event.origin_server_ts"
+          :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`"
         >
           <message v-if="event.content.msgtype==='m.text'"
                    :type="event.sender === user?'send':'receive'"
                    :msg=event.content.body :time=getTime(event.origin_server_ts)
           />
-          <div v-else-if="event.type==='m.room.member'" class="info">{{membershipEvents[event.content.membership]}}</div>
+          <div v-else-if="event.type==='m.room.member'" class="info">
+            {{membershipEvents[event.content.membership]}}
+            <span class="time">{{getTime(event.origin_server_ts)}}</span>
+          </div>
           <div v-else class="info">unknown event</div>
         </div>
       </div>
@@ -80,7 +89,7 @@ export default {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   .timeGroup {
-    .time {
+    .date {
       top: 0.25rem;
       position: sticky;
       z-index: 100;
@@ -122,6 +131,10 @@ export default {
           font-style: italic;
           margin-top: 0.5rem;
           margin-bottom: 0.5rem;
+          margin-left: 0.5rem;
+          .time{
+            font-size: 0.7rem;
+          }
         }
       }
       .indent{

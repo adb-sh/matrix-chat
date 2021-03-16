@@ -47,12 +47,12 @@ export default {
     margin-top: 0.25rem;
   }
   .messageReceive{
-    margin-left: 1rem;
     background-color: #42b983;
     border-radius: 1rem 1rem 1rem 0;
   }
   .messageSend{
-    margin-left:auto; margin-right:1rem;
+    margin-left:auto;
+    margin-right:0;
     background-color: #42a7b9;
     border-radius: 1rem 1rem 0 1rem;
   }

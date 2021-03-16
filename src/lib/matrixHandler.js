@@ -8,6 +8,7 @@ export class MatrixHandler {
     this.rooms = [];
     this.loading = undefined;
     this.user = undefined;
+    this.baseUrl = undefined;
   }
   login(user, password, baseUrl, onError, callback = ()=>{}){
     if (this.client){ console.log('there is already an active session'); return; }
@@ -28,6 +29,7 @@ export class MatrixHandler {
         console.log(`access token => ${response.access_token}`);
         callback(response.access_token);
         this.user = user;
+        this.baseUrl = baseUrl;
         this.startSync()
       }
     }).catch(error => {
@@ -40,6 +42,7 @@ export class MatrixHandler {
     if (this.client){ console.log('there is already an active session'); return; }
     this.client = new matrix.createClient({baseUrl, accessToken, userId});
     this.user = userId;
+    this.baseUrl = baseUrl;
     this.startSync();
   }
   logout(){

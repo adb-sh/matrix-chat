@@ -21,7 +21,7 @@
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chatInformation v-if="currentRoom && showChatInfo" :room="currentRoom"/>
+    <chatInformation v-if="currentRoom && showChatInfo" :room="currentRoom" :close-chat-info="()=>showChatInfo=false"/>
   </div>
 </template>
 

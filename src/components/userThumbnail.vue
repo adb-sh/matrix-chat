@@ -7,6 +7,7 @@
 
 <script>
 import parseMXC from '@modular-matrix/parse-mxc';
+import {matrix} from "@/main";
 
 export default {
   name: "userThumbnail.vue",
@@ -16,12 +17,13 @@ export default {
     userId: String,
     width: String,
     height: String,
-    resizeMethod: String
+    resizeMethod: String,
+    homeserver: String
   },
   methods: {
     thumbnailUrl(){
       let mxc = parseMXC.parse(this.mxcURL);
-      return `${this.homeserver}/_matrix/media/v1/thumbnail/${mxc.homeserver}/${mxc.id}?width=${this.width}&height=${this.height}&method=${this.resizeMethod}`;
+      return `${this.homeserver||matrix.baseUrl}/_matrix/media/v1/thumbnail/${mxc.homeserver}/${mxc.id}?width=${this.width}&height=${this.height}&method=${this.resizeMethod}`;
     }
   },
   data(){

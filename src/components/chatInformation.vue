@@ -6,27 +6,28 @@
         <div class="picBoxBig"><div class="placeholderBig">{{room.name.substr(0,2)}}</div></div>
         <div class="roomInformation">
           <div class="roomName">{{room.name}}</div>
-          <div class="users">{{members.length}} members</div>
+          <div class="users">{{getMembers().length}} members</div>
         </div>
         </div>
-        <h2 v-if="members.length !== 0">members:</h2>
-        <div v-for="member in members.slice(0,20)" :key="member.sender" class="contentBox" :title="member.sender">
-          <userThumbnail :mxcURL="member.content.avatar_url" :userId="member.sender" :username="member.content.displayname"
+        <h2 v-if="getMembers().length !== 0">members:</h2>
+        <div v-for="member in getMembers().slice(0,20)" :key="member" class="contentBox" :title="member">
+          <userThumbnail :mxcURL="getUser(member).avatarUrl" :userId="member" :username="getUser(member).displayName"
                          width="64" height="64" resizeMethod="scale" class="userThumbnail" />
           <div class="information">
-            <div class="userName">{{member.content.displayname || member.content.displayname ?member.content.displayname:member.sender}}</div>
+            <div class="userName">{{getUser(member).displayName || member}}</div>
             <div class="status"></div>
           </div>
         </div>
-        <p v-if="members.length>20">and {{members.length-20}} other members</p>
+        <p v-if="getMembers().length>20">and {{getMembers().length-20}} other members</p>
       </div>
     </div>
-    <icon class="closeBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
+    <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white_24px.svg" />
   </div>
 </template>
 <script>
 import icon from './icon.vue';
 import userThumbnail from './userThumbnail';
+import {matrix} from "@/main";
 
 export default {
   name: "chatInformation",
@@ -35,11 +36,15 @@ export default {
     userThumbnail
   },
   props:{
-    room: {}
+    room: {},
+    closeChatInfo: Function
   },
-  data(){
-    return{
-      members: Object.keys(this.room.currentState.members)
+  methods: {
+    getUser(userId){
+      return matrix.client.getUser(userId);
+    },
+    getMembers(){
+      return Object.keys(this.room.currentState.members)
     }
   }
 }

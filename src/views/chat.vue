@@ -13,10 +13,11 @@
                 <div class="thumbnailContainer">
                   <div class="filler"></div>
                   <userThumbnail v-if="group[0].sender !== user && isGroup()" :userId="group[0].sender"
-                                 width="64" height="64" resizeMethod="scale" class="userThumbnail" />
+                                 width="64" height="64" resizeMethod="scale" class="userThumbnail"
+                                 :mxcURL="getUser(group[0].sender).avatarUrl" />
                 </div>
-                <div class="username" v-if="group[0].sender !== user && isGroup()">{{group[0].sender}}</div>
-                <div class="event" v-for="event in group" :key="event.origin_server_ts">
+                <div class="username" v-if="group[0].sender !== user && isGroup()">{{getUser(group[0].sender).displayName || group[0].sender}}</div>
+                <div class="event" v-for="event in group" :key="event.origin_server_ts" :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`">
                   <message v-if="event.content.msgtype==='m.text'" :type="event.sender === user?'send':'receive'"
                            :group="false"
                            :msg=event.content.body :time=getTime(event.origin_server_ts) />
@@ -96,6 +97,9 @@ export default {
       this.loadingStatus = 'loading ...';
       await matrix.client.paginateEventTimeline(this.room.getLiveTimeline(), {backwards: true})
         .then(state => this.loadingStatus = state?'load more':false);
+    },
+    getUser(userId){
+      return matrix.client.getUser(userId);
     }
   },
   data(){

@@ -1,5 +1,5 @@
 <template>
-    <div :class="`${type==='send'?'messageSend':'messageReceive'} ${group?'groupMessage':''}`" class="message" :title="time">
+    <div :class="`${type==='send'?'messageSend':'messageReceive'} ${group?'groupMessage':''}`" class="message">
       <div v-html="solveTextLinks(msg.replace(/</g, '&lt')
          .replace(/>/g, '&gt'))"></div>
       <div class="time">{{time}}</div>

@@ -1,5 +1,5 @@
 <template>
-    <div :class="`${type==='send'?'messageSend':'messageReceive'} ${group?'groupMessage':''}`" class="message">
+    <div :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <div v-html="solveTextLinks(msg.replace(/</g, '&lt')
          .replace(/>/g, '&gt'))"></div>
       <div class="time">{{time}}</div>
@@ -12,8 +12,7 @@ export default {
   props: {
     msg: String,
     time: String,
-    type: String,
-    group: Boolean
+    type: String
   },
   methods:{
     solveTextLinks(text){
@@ -55,13 +54,6 @@ export default {
     margin-right:0;
     background-color: #42a7b9;
     border-radius: 1rem 1rem 0 1rem;
-  }
-  .messageReceive.groupMessage{
-    margin-left: 3rem;
-    max-width: calc(100% - 7rem);
-  }
-  .messageSend.groupMessage{
-    max-width: calc(100% - 6rem);
   }
   .time{
     position: relative;

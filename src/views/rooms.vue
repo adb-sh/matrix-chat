@@ -6,18 +6,33 @@
     <div id="roomList" class="roomList">
       <h1>[chat]</h1>
       <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" class="roomListElement">
-        <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
+        <userThumbnail
+          class="roomImg"
+          :mxcURL="getUrl(room)"
+          :fallback="room.roomId"
+          :size="3"
+        />
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
-    <chat class="chat" v-if="currentRoom" :room="currentRoom" :user="matrix.user"
-          :close-chat="()=>currentRoom=undefined"
-          :open-chat-info="()=>showChatInfo=true"/>
+    <chat
+      class="chat"
+      v-if="currentRoom"
+      :room="currentRoom"
+      :user="matrix.user"
+      :close-chat="()=>currentRoom=undefined"
+      :open-chat-info="()=>showChatInfo=true"
+    />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <div class="roomListSmall">
       <h1>[c]</h1>
       <div v-for="(room, index) in matrix.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
-        <div class="roomImgPlaceholder">{{room.name.substr(0,2)}}</div>
+        <userThumbnail
+            class="roomImg"
+            :mxcURL="getUrl(room)"
+            :fallback="room.roomId"
+            :size="3"
+        />
         <div class="roomListName">{{room.name}}</div>
       </div>
     </div>
@@ -28,13 +43,16 @@
 <script>
 import chat from '@/views/chat.vue';
 import chatInformation from "@/components/chatInformation";
+import userThumbnail from "@/components/userThumbnail";
 import {matrix} from "@/main";
+import sdk from "matrix-js-sdk";
 
 export default {
   name: "rooms",
   components:{
     chat,
-    chatInformation
+    chatInformation,
+    userThumbnail
   },
   methods:{
     openChat(room){
@@ -42,6 +60,11 @@ export default {
       this.$router.push(`/rooms/${room.roomId}`);
       this.$forceUpdate();
       //chat.methods.scrollToBottom();
+    },
+    getUrl(room){
+      let avatarState = room.getLiveTimeline().getState(sdk.EventTimeline.FORWARDS).getStateEvents("m.room.avatar");
+      return avatarState.length>0?avatarState[avatarState.length-1].getContent().url:undefined;
+      //return this.room.getLiveTimeline().getStateEvents("m.room.avatar");
     }
   },
   data(){
@@ -123,17 +146,13 @@ export default {
   left: 20rem;
   text-align: center;
 }
-.roomImgPlaceholder{
+.roomImg{
   position: absolute;
-  left: 1rem;
-  height: 2rem;
+  left: 0.5rem;
+  height: 3rem;
   width: 3rem;
-  padding-top: 1rem;
-  background-color: #42a7b9;
-  border-radius: 1.5rem;
-  text-align: center;
 }
-.roomImgPlaceholder.small{
+.roomImg.small{
   margin-left: calc(50% - 2rem);
 }
 

@@ -1,6 +1,6 @@
 <template>
-  <img v-if="mxcURL" :src="thumbnailUrl()" class="image"/>
-  <Identicon v-else :value="fallback" :theme="'jdenticon'" :size="this.getFontSize()*this.size" class="identicon"/>
+  <img v-if="mxcURL" :src="thumbnailUrl()" class="userThumbnail image"/>
+  <Identicon v-else :value="fallback" :theme="'jdenticon'" :size="this.getFontSize()*this.size" class="userThumbnail identicon"/>
 </template>
 
 <script>
@@ -41,10 +41,7 @@ export default {
 
 <style scoped lang="scss">
 .userThumbnail{
-  border-radius: 1.5rem;
-  .image{
-    border-radius: 10rem;
-    background-color: unset;
-  }
+  border-radius: 50%;
+  background-color: unset;
 }
 </style>

@@ -11,8 +11,11 @@
         </div>
         <h2 v-if="getMembers().length !== 0">members:</h2>
         <div v-for="member in getMembers().slice(0,20)" :key="member" class="contentBox" :title="member">
-          <userThumbnail :mxcURL="getUser(member).avatarUrl" :fallback="getUser(member).displayName"
-                         class="userThumbnail" :size="3"/>
+          <userThumbnail
+              :mxcURL="getUser(member).avatarUrl"
+              :fallback="getUser(member).displayName"
+              class="userThumbnail" :size="3"
+          />
           <div class="information">
             <div class="userName">{{getUser(member).displayName || member}}</div>
             <div class="status">{{getStatus(getUser(member))}}</div>

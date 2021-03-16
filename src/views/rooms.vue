@@ -64,7 +64,6 @@ export default {
     getUrl(room){
       let avatarState = room.getLiveTimeline().getState(sdk.EventTimeline.FORWARDS).getStateEvents("m.room.avatar");
       return avatarState.length>0?avatarState[avatarState.length-1].getContent().url:undefined;
-      //return this.room.getLiveTimeline().getStateEvents("m.room.avatar");
     }
   },
   data(){

@@ -11,11 +11,11 @@
         </div>
         <h2 v-if="getMembers().length !== 0">members:</h2>
         <div v-for="member in getMembers().slice(0,20)" :key="member" class="contentBox" :title="member">
-          <userThumbnail :mxcURL="getUser(member).avatarUrl" :userId="member" :username="getUser(member).displayName"
-                         width="64" height="64" resizeMethod="scale" class="userThumbnail" />
+          <userThumbnail :mxcURL="getUser(member).avatarUrl" :fallback="getUser(member).displayName"
+                         class="userThumbnail" size="3"/>
           <div class="information">
             <div class="userName">{{getUser(member).displayName || member}}</div>
-            <div class="status"></div>
+            <div class="status">{{getStatus(getUser(member))}}</div>
           </div>
         </div>
         <p v-if="getMembers().length>20">and {{getMembers().length-20}} other members</p>
@@ -45,6 +45,8 @@ export default {
     },
     getMembers(){
       return Object.keys(this.room.currentState.members)
+    },
+    getStatus(){
     }
   }
 }
@@ -134,7 +136,8 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  background-color: #42a7b9;
+  width: 3rem;
+  height: 3rem;
 }
 .information{
   position: absolute;

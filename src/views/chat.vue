@@ -12,9 +12,9 @@
               <div :class="isGroup()?'groupEvent':'eventContainer'">
                 <div class="thumbnailContainer">
                   <div class="filler"></div>
-                  <userThumbnail v-if="group[0].sender !== user && isGroup()" :userId="group[0].sender"
-                                 width="64" height="64" resizeMethod="scale" class="userThumbnail"
-                                 :mxcURL="getUser(group[0].sender).avatarUrl" />
+                  <userThumbnail v-if="group[0].sender !== user && isGroup()" :fallback="group[0].sender"
+                                 class="userThumbnail"
+                                 :mxcURL="getUser(group[0].sender).avatarUrl" :size="2"/>
                 </div>
                 <div class="username" v-if="group[0].sender !== user && isGroup()">{{getUser(group[0].sender).displayName || group[0].sender}}</div>
                 <div class="event" v-for="event in group" :key="event.origin_server_ts" :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`">
@@ -88,7 +88,7 @@ export default {
       return payload;
     },
     resize(height){
-      this.$refs.chatContainer.style.height = `calc(100% - ${height}px - 3rem)`;
+      this.$refs.chatContainer.style.height = `calc(100% - ${height}px - 3.5rem)`;
     },
     isGroup(){
       return Object.keys(this.room.currentState.members).length > 2;
@@ -129,7 +129,7 @@ export default {
   position: absolute;
   margin: 0;
   left: 0;
-  top: 3rem;
+  top: 3.5rem;
   width: 100%;
   height: calc(100% - 7rem);
   .messagesContainer{

@@ -3,7 +3,7 @@
       <label for="newMessageInput"></label>
       <textarea @keyup.enter.exact="sendMessage()" @input="resizeMessageBanner()" ref="newMessageInput" id="newMessageInput" class="newMessageInput"
                 autocomplete="off" rows="1" placeholder="type a message ..." v-model="msg.content.body" />
-      <icon type="submit" title="press enter to submit" id="sendMessageBtn"
+      <icon type="submit" title="press enter to submit" class="sendMessageBtn"
             ic="./sym/ic_send_white_24px.svg" />
     </form>
 </template>
@@ -67,16 +67,16 @@ export default {
   left: 0;
   width: 100%;
   height: min-content;
-  min-height: 4rem;
+  min-height: 3.5rem;
   background-color: #1d1d1d;
   border-radius: 1rem 1rem 0 0;
 }
 .newMessageInput{
   position: relative;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
   left: 2rem;
-  min-height: 1.25rem;
+  min-height: 1.5rem;
   max-height: 10rem;
   width: calc(100% - 7rem);
   height: 1.25rem;
@@ -90,9 +90,10 @@ export default {
   vertical-align: middle;
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
-#sendMessageBtn{
+.sendMessageBtn{
   position: absolute;
   right: 1rem;
-  bottom: 0.5rem;
+  bottom: 0.25rem;
+  background-color: unset;
 }
 </style>

@@ -36,14 +36,15 @@ export default {
   },
   methods: {
     async sendMessage(){
-      if (this.msg.content.body !== "") {
-        let msgSend = Object.assign({}, this.msg);
-        this.msg.content.body = "";
-        await matrix.sendEvent(msgSend, this.roomId);
-        let id = this.$refs.newMessageInput;
-        id.style.height = "1.25rem";
-        this.onResize(id.parentElement.clientHeight);
-      }
+      let content = this.msg.content;
+      if (!content.body) return;
+      //content.body = content.body.replace(/\n$/gm, '');
+      let msgSend = Object.assign({}, this.msg);
+      await matrix.sendEvent(msgSend, this.roomId);
+      content.body = "";
+      let id = this.$refs.newMessageInput;
+      id.style.height = "1.25rem";
+      this.onResize(id.parentElement.clientHeight);
     },
     resizeMessageBanner(){
       let id = this.$refs.newMessageInput;

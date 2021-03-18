@@ -1,17 +1,16 @@
 <template>
   <img v-if="mxcURL" :src="thumbnailUrl()" class="userThumbnail image"/>
-  <Identicon v-else :value="fallback" :theme="'jdenticon'" :size="this.getFontSize()*this.size" class="userThumbnail identicon"/>
+  <div v-else v-html="getJdenticon()" class="userThumbnail identicon"/>
 </template>
 
 <script>
 import parseMXC from '@modular-matrix/parse-mxc';
 import {matrix} from "@/main";
-import Identicon from '@vue-polkadot/vue-identicon';
+import {toSvg} from 'jdenticon';
 
 export default {
   name: "userThumbnail.vue",
   components: {
-    Identicon
   },
   props: {
     mxcURL: String,
@@ -28,6 +27,9 @@ export default {
     },
     getFontSize(){
       return window.getComputedStyle(document.body,null).fontSize.split("px", 1)||16;
+    },
+    getJdenticon(){
+      return toSvg(this.fallback, this.getFontSize()*this.size);
     }
   },
   data(){
@@ -43,5 +45,9 @@ export default {
 .userThumbnail{
   border-radius: 50%;
   background-color: unset;
+}
+.identicon {
+  clip-path: circle(49% at 50% 50%);
+  background-color: #111;
 }
 </style>

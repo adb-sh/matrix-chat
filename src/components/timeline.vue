@@ -38,7 +38,8 @@
             {{membershipEvents[event.content.membership]}}
             <span class="time">{{getTime(event.origin_server_ts)}}</span>
           </div>
-          <div v-else class="info">unknown event</div>
+          <div v-else class="info">unknown event
+            <span class="time">{{getTime(event.origin_server_ts)}}</span></div>
         </div>
       </div>
     </div>

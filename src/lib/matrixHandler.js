@@ -59,14 +59,16 @@ export class MatrixHandler {
       this.loading = false;
       callback();
     });
-    this.client.on('event', (event) => {
-      if (event.getType() === 'm.room.create') {
-        console.log(event)
-      }
-    })
   }
   async sendEvent(msg, roomId){
-    await this.client.sendEvent(roomId, msg.type, msg.content, '').then(() => {
+    const msgSend = {
+      type: msg.type,
+      content: {
+        body: msg.content.body,
+        msgtype: msg.content.msgtype,
+      },
+    };
+    await this.client.sendEvent(roomId, msgSend.type, msgSend.content, '').then(() => {
       console.log('message sent successfully');
     }).catch((err) => {
       console.log(`error while sending message => ${err}`);

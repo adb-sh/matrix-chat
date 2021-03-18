@@ -38,8 +38,8 @@ export default {
     async sendMessage(){
       if (this.msg.content.body !== "") {
         let msgSend = Object.assign({}, this.msg);
-        await matrix.sendEvent(msgSend, this.roomId);
         this.msg.content.body = "";
+        await matrix.sendEvent(msgSend, this.roomId);
         let id = this.$refs.newMessageInput;
         id.style.height = "1.25rem";
         this.onResize(id.parentElement.clientHeight);

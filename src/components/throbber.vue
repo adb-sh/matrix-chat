@@ -7,7 +7,7 @@
 
 <script>
 export default {
-name: "throbber",
+  name: "throbber",
   props:{
     text: String
   }

@@ -13,7 +13,8 @@ export class MatrixHandler {
   login(user, password, baseUrl, onError, callback = ()=>{}){
     if (this.client){ console.log('there is already an active session'); return; }
     this.client = new matrix.createClient({
-      baseUrl: baseUrl
+      baseUrl: baseUrl,
+      sessionStore: new matrix.WebStorageSessionStore(window.localStorage)
     });
     this.client.login('m.login.password', {
       user: user,
@@ -40,13 +41,18 @@ export class MatrixHandler {
   }
   tokenLogin(baseUrl, accessToken, userId){
     if (this.client){ console.log('there is already an active session'); return; }
-    this.client = new matrix.createClient({baseUrl, accessToken, userId});
+    this.client = new matrix.createClient({
+      baseUrl,
+      accessToken,
+      userId,
+      sessionStore: new matrix.WebStorageSessionStore(window.localStorage)
+    });
     this.user = userId;
     this.baseUrl = baseUrl;
     this.startSync();
   }
-  logout(){
-    this.client.stopClient();
+  async logout(){
+    await this.client.stopClient();
     this.client = undefined;
   }
   startSync(callback = ()=>{}){

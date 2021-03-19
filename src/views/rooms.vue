@@ -1,12 +1,12 @@
 <template>
   <div v-if="matrix.loading">
-    <throbber class="throbber" text="loading"/>
+    <throbber-overlay text="loading"/>
   </div>
   <div v-else>
     <div id="roomList" class="roomList">
       <h1>[chat]</h1>
       <input v-model="search" class="input" type="text" maxlength="50" placeholder="search"><br>
-      <div v-for="room in matrix.rooms" :key="room" @click="openChat(room)" >
+      <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" >
         <div v-if="!search || room.name.toLowerCase().includes(search.toLowerCase())" class="roomListElement">
           <userThumbnail
             class="roomImg"
@@ -51,12 +51,12 @@ import userThumbnail from "@/components/userThumbnail";
 import {matrix} from "@/main";
 import sdk from "matrix-js-sdk";
 import {getTime} from "@/lib/getTimeStrings";
-import throbber from "@/components/throbber";
+import ThrobberOverlay from "@/components/throbberOverlay";
 
 export default {
   name: "rooms",
   components:{
-    throbber,
+    ThrobberOverlay,
     chat,
     chatInformation,
     userThumbnail
@@ -184,12 +184,6 @@ export default {
 }
 .roomImg.small{
   margin-left: calc(50% - 2rem);
-}
-.throbber{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 input{
   padding: 0 2rem 0 2rem;

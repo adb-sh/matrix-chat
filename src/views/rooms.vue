@@ -1,18 +1,22 @@
 <template>
   <div v-if="matrix.loading">
-    loading...
+    <throbber class="throbber" text="loading"/>
   </div>
   <div v-else>
     <div id="roomList" class="roomList">
       <h1>[chat]</h1>
-      <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" class="roomListElement">
-        <userThumbnail
-          class="roomImg"
-          :mxcURL="getUrl(room)"
-          :fallback="room.roomId"
-          :size="3"
-        />
-        <div class="roomListName">{{room.name}}</div>
+      <input v-model="search" class="input" type="text" maxlength="50" placeholder="search"><br>
+      <div v-for="room in matrix.rooms" :key="room" @click="openChat(room)" >
+        <div v-if="!search || room.name.toLowerCase().includes(search.toLowerCase())" class="roomListElement">
+          <userThumbnail
+            class="roomImg"
+            :mxcURL="getUrl(room)"
+            :fallback="room.roomId"
+            :size="3"
+          />
+          <div class="roomListName">{{room.name}}</div>
+          <div class="preview">{{getPreviewString(room)}}</div>
+        </div>
       </div>
     </div>
     <chat
@@ -46,10 +50,13 @@ import chatInformation from "@/components/chatInformation";
 import userThumbnail from "@/components/userThumbnail";
 import {matrix} from "@/main";
 import sdk from "matrix-js-sdk";
+import {getTime} from "@/lib/getTimeStrings";
+import throbber from "@/components/throbber";
 
 export default {
   name: "rooms",
   components:{
+    throbber,
     chat,
     chatInformation,
     userThumbnail
@@ -64,13 +71,31 @@ export default {
     getUrl(room){
       let avatarState = room.getLiveTimeline().getState(sdk.EventTimeline.FORWARDS).getStateEvents("m.room.avatar");
       return avatarState.length>0?avatarState[avatarState.length-1].getContent().url:undefined;
+    },
+    getLatestEvent(room){
+      if (!room.timeline[room.timeline.length-1]) return undefined;
+      return room.timeline[room.timeline.length-1].event;
+    },
+    getPreviewString(room){
+      let event = this.getLatestEvent(room);
+      if (!event) return '';
+      let text = event.content.body
+        ? event.content.body.length>20?event.content.body.substr(0,19)+'…':event.content.body
+        : 'unknown event';
+      return `${this.calcUserName(event.sender)}: ${text} ${getTime(event.origin_server_ts)}`;
+
+    },
+    calcUserName(userId) {
+      if (matrix.user === userId) return 'you';
+      return matrix.client.getUser(userId).displayName || userId;
     }
   },
   data(){
     return {
       matrix,
       currentRoom: undefined,
-      showChatInfo: false
+      showChatInfo: false,
+      search: ''
     }
   },
   mounted() {
@@ -108,9 +133,15 @@ export default {
 }
 .roomListName{
   position: absolute;
-  left: 4.5rem;
-  top: 1rem;
-  color: #fff;
+  left: 4rem;
+  top: 0.25rem;
+}
+.preview{
+  position: absolute;
+  top: 1.5rem;
+  left: 4rem;
+  font-size: 0.8rem;
+  text-align: left;
 }
 .roomListSmall{
   position: absolute;
@@ -153,6 +184,27 @@ export default {
 }
 .roomImg.small{
   margin-left: calc(50% - 2rem);
+}
+.throbber{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+input{
+  padding: 0 2rem 0 2rem;
+  height: 2.5rem;
+  width: calc(100% - 6rem);
+  left: 1rem;
+  color: #fff;
+  background-color: #1d1d1d;
+  border-radius: 1.25rem;
+  border: 1px solid #fff;
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 0.5rem;
+  appearance: none;
+  outline: none;
 }
 
 @media (max-width: 48rem) {

@@ -9,7 +9,6 @@
           <div class="users">{{getMembers().length}} members</div>
         </div>
         </div>
-        <h2 v-if="getMembers().length !== 0">members:</h2>
         <div v-for="member in getMembers().slice(0,20)" :key="member" class="contentBox" :title="member">
           <userThumbnail
               :mxcURL="getUser(member).avatarUrl"
@@ -68,6 +67,7 @@ export default {
   box-shadow: 6px 6px 20px #111;
   border-radius: 1rem;
   text-align: center;
+  z-index: 30;
 }
 @media (max-width: 30rem) {
   #chatInformation{

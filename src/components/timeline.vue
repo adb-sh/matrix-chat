@@ -93,7 +93,7 @@ export default {
     .date {
       top: 0.25rem;
       position: sticky;
-      z-index: 100;
+      z-index: 10;
       background-color: #2d2d2d;
       padding: 0.5rem;
       border-radius: 0.5rem;

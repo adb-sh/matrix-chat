@@ -38,7 +38,6 @@ export default {
     async sendMessage(){
       let content = this.msg.content;
       if (!content.body) return;
-      //content.body = content.body.replace(/\n$/gm, '');
       let msgSend = Object.assign({}, this.msg);
       await matrix.sendEvent(msgSend, this.roomId);
       content.body = "";

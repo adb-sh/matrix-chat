@@ -79,10 +79,7 @@ export default {
     getPreviewString(room){
       let event = this.getLatestEvent(room);
       if (!event) return '';
-      let text = event.content.body
-        ? event.content.body.length>20?event.content.body.substr(0,19)+'…':event.content.body
-        : 'unknown event';
-      return `${this.calcUserName(event.sender)}: ${text} ${getTime(event.origin_server_ts)}`;
+      return `${this.calcUserName(event.sender)}: ${event.content.body||'unknown event'} ${getTime(event.origin_server_ts)}`;
 
     },
     calcUserName(userId) {
@@ -114,6 +111,7 @@ export default {
   background-color: #222;
   text-align: center;
   overflow-y: auto;
+  z-index: 20;
 }
 .chat{
   position: absolute;
@@ -135,6 +133,10 @@ export default {
   position: absolute;
   left: 4rem;
   top: 0.25rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: calc(100% - 5rem);
+  text-align: left;
 }
 .preview{
   position: absolute;
@@ -142,6 +144,10 @@ export default {
   left: 4rem;
   font-size: 0.8rem;
   text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: calc(100% - 4.5rem);
 }
 .roomListSmall{
   position: absolute;
@@ -157,6 +163,7 @@ export default {
   animation: ease;
   animation-duration: 0.2s;
   scrollbar-width: none;
+  z-index: 20;
 }
 .roomListSmall:hover{
   width: 18rem;

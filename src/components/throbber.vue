@@ -20,7 +20,7 @@ export default {
     height: 8rem;
     width: 8rem;
     background-color: #1d1d1d;
-    box-shadow: 6px 6px 20px #111;
+    box-shadow: 6px 6px 10px #111;
     border-radius: 2rem;
     .icon{
       position: absolute;

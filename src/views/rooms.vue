@@ -66,7 +66,7 @@ export default {
       this.currentRoom = room;
       this.$router.push(`/rooms/${room.roomId}`);
       this.$forceUpdate();
-      //chat.methods.scrollToBottom();
+      this.search = '';
     },
     getUrl(room){
       let avatarState = room.getLiveTimeline().getState(sdk.EventTimeline.FORWARDS).getStateEvents("m.room.avatar");
@@ -111,7 +111,6 @@ export default {
   background-color: #222;
   text-align: center;
   overflow-y: auto;
-  z-index: 20;
 }
 .chat{
   position: absolute;

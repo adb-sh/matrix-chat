@@ -4,7 +4,7 @@
       <div @scroll="scrollHandler()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
         <div v-if="loadingStatus" @click="loadEvents()" class="loadMore">{{loadingStatus}}</div>
         <p v-if="room.timeline.length === 0" class="chatInfo">this room is empty</p>
-        <timeline :timeline="room.timeline" :group-timeline="isGroup()" :user="user"/>
+        <timeline :timeline="room.timeline" :group-timeline="isGroup()" :user="user" :roomId="room.roomId"/>
       </div>
       <icon v-if="showScrollBtn" @click.native="scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
     </div>

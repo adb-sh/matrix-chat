@@ -1,18 +1,25 @@
 <template>
     <div :class="type==='send'?'messageSend':'messageReceive'" class="message">
-      <div v-html="solveTextLinks(msg.replace(/</g, '&lt')
-         .replace(/>/g, '&gt'))"></div>
+      <div v-if="replyEvent" class="reply">
+        {{replyEvent.sender}}<br>
+        {{replyEvent.type==='m.room.message'?replyEvent.content.body:'unkown event'}}
+      </div>
+      <div v-html="parseMessage(msg)"></div>
       <div class="time">{{time}}</div>
     </div>
 </template>
 
 <script>
+import {matrix} from "@/main";
+
 export default {
   name: "message",
   props: {
     msg: String,
     time: String,
-    type: String
+    type: String,
+    content: Object,
+    roomId: String
   },
   methods:{
     solveTextLinks(text){
@@ -26,7 +33,33 @@ export default {
           return `${space}<a href="${hyperlink}" target="_blank">${url}</a>`;
         }
       )
+    },
+    async getReplyEvent(content) {
+      let replyId = this.getReplyId(content);
+      if (replyId === undefined) return undefined;
+      await matrix.client.fetchRoomEvent(this.roomId, replyId).then((res) => {
+        this.replyEvent = res;
+      });
+    },
+    getReplyId(content){
+      if(!content['m.relates_to']) return undefined;
+      return content['m.relates_to']['m.in_reply_to'].event_id || undefined;
+    },
+    parseMessage(msg){
+      return this.solveTextLinks(
+        msg.replace(/>.*\n/gm, '').trim()
+          .replace(/</g, '&lt')
+          .replace(/>/g, '&gt')
+      );
     }
+  },
+  data(){
+    return{
+      replyEvent: undefined
+    }
+  },
+  created() {
+    this.getReplyEvent(this.content);
   }
 }
 </script>
@@ -60,5 +93,10 @@ export default {
     bottom: -0.2rem;
     font-size: 0.7rem;
     text-align: right;
+  }
+  .reply{
+    border-left:  2px solid #fff;
+    padding-left: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 </style>

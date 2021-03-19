@@ -30,9 +30,12 @@
           :key="event.origin_server_ts"
           :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`"
         >
-          <message v-if="event.content.msgtype==='m.text'"
-                   :type="event.sender === user?'send':'receive'"
-                   :msg=event.content.body :time=getTime(event.origin_server_ts)
+          <message
+            v-if="event.content.msgtype==='m.text'"
+            :type="event.sender === user?'send':'receive'"
+            :msg=event.content.body :time=getTime(event.origin_server_ts)
+            :content="event.content"
+            :roomId="roomId"
           />
           <div v-else-if="event.type==='m.room.member'" class="info">
             {{membershipEvents[event.content.membership]}}
@@ -52,6 +55,7 @@ import userThumbnail from "@/components/userThumbnail";
 import {matrix} from "@/main";
 import splitArray from "@/lib/splitArray";
 import {getDate, getTime} from "@/lib/getTimeStrings";
+import sdk from "matrix-js-sdk"
 
 export default {
   name: 'eventGroup',
@@ -62,11 +66,24 @@ export default {
   props: {
     timeline: Array,
     user: String,
-    groupTimeline: Boolean
+    groupTimeline: Boolean,
+    roomId: String
   },
   methods: {
     getUser(userId) {
       return matrix.client.getUser(userId);
+    },
+    getReplyId(event){
+      if(!event.content['m.relates_to']) return undefined;
+      if(!event.content['m.relates_to']['m.in_reply_to']) return undefined;
+      return event.content['m.relates_to']['m.in_reply_to'].event_id || undefined;
+    },
+    async getReplyEvent(event, callback){
+      let replyId = this.getReplyId(event);
+      if (replyId === undefined) return undefined;
+      await matrix.client.fetchRoomEvent(this.roomId, replyId).then((res) => {
+        callback(new sdk.MatrixEvent(res));
+      });
     },
     splitArray,
     getDate,
@@ -126,6 +143,7 @@ export default {
       }
       .username{
         margin-left: 1rem;
+        font-weight: bold;
       }
       .event{
         .info{

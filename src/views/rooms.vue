@@ -7,7 +7,7 @@
       <h1>[chat]</h1>
       <input v-model="search" class="input" type="text" maxlength="50" placeholder="search"><br>
       <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" >
-        <div v-if="!search || room.name.toLowerCase().includes(search.toLowerCase())" class="roomListElement">
+        <div v-if="!search || room.name.toLowerCase().includes(search.toLowerCase().trim())" class="roomListElement">
           <userThumbnail
             class="roomImg"
             :mxcURL="getUrl(room)"
@@ -63,9 +63,9 @@ export default {
   },
   methods:{
     openChat(room){
-      this.currentRoom = room;
+      this.currentRoom = undefined
+      this.$nextTick(() => this.currentRoom = room);
       this.$router.push(`/rooms/${room.roomId}`);
-      this.$forceUpdate();
       this.search = '';
     },
     getUrl(room){

@@ -88,6 +88,7 @@ export default {
   position: relative;
   margin-top: 1.25rem;
   margin-bottom: 0.75rem;
+  padding: 0;
   left: 2rem;
   min-height: 1.5rem;
   max-height: 10rem;

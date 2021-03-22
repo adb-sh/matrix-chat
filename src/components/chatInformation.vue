@@ -1,26 +1,21 @@
 <template>
-  <div id="chatInformation">
-    <div id="box">
+  <div class="chatInfo">
+    <div class="box">
       <div class="scrollContainer">
-        <div class="informationBox">
-        <div class="picBoxBig"><div class="placeholderBig">{{room.name.substr(0,2)}}</div></div>
-        <div class="roomInformation">
-          <div class="roomName">{{room.name}}</div>
-          <div class="users">{{getMembers().length}} members</div>
-        </div>
-        </div>
-        <div v-for="member in getMembers().slice(0,20)" :key="member" class="contentBox" :title="member">
-          <userThumbnail
-              :mxcURL="getUser(member).avatarUrl"
-              :fallback="getUser(member).displayName"
-              class="userThumbnail" :size="3"
+        <div class="topContainer">
+          <avatar
+            class="roomImage"
+            :mxcURL="getMxcFromRoom(room)"
+            :fallback="room.roomId"
+            :size="5"
           />
-          <div class="information">
-            <div class="userName">{{getUser(member).displayName || member}}</div>
-            <div class="status">{{getStatus(getUser(member))}}</div>
+          <div class="info">
+            <div class="roomName">{{room.name}}</div>
+            <div class="users">{{members.length}} members</div>
           </div>
         </div>
-        <p v-if="getMembers().length>20">and {{getMembers().length-20}} other members</p>
+        <user-list-element v-for="member in members.slice(0,20)" :key="member" :user="getUser(member)"/>
+        <p v-if="members.length>20">and {{members.length-20}} other members</p>
       </div>
     </div>
     <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white_24px.svg" />
@@ -28,14 +23,17 @@
 </template>
 <script>
 import icon from './icon.vue';
-import userThumbnail from './userThumbnail';
 import {matrix} from "@/main";
+import UserListElement from "@/components/userListElement";
+import avatar from "@/components/avatar";
+import {getMxcFromRoom} from "@/lib/getMxc";
 
 export default {
   name: "chatInformation",
   components:{
+    avatar,
+    UserListElement,
     icon,
-    userThumbnail
   },
   props:{
     room: {},
@@ -48,14 +46,18 @@ export default {
     getMembers(){
       return Object.keys(this.room.currentState.members)
     },
-    getStatus(){
+    getMxcFromRoom
+  },
+  data(){
+    return{
+      members: this.getMembers()
     }
   }
 }
 
 </script>
 <style scoped>
-#chatInformation{
+.chatInfo{
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
@@ -70,7 +72,7 @@ export default {
   z-index: 30;
 }
 @media (max-width: 30rem) {
-  #chatInformation{
+  .chatInfo{
     transform: unset;
     top: 0;
     left: 0;
@@ -79,7 +81,7 @@ export default {
   }
 }
 @media (max-height: 40rem) {
-  #chatInformation{
+  .chatInfo{
     top: 0;
     height: 100%;
   }
@@ -91,7 +93,7 @@ export default {
   background-color: #0000;
   box-shadow: none;
 }
-#box{
+.box{
   position: absolute;
   top: 0;
   width: calc(100% - 2rem);
@@ -106,20 +108,11 @@ export default {
   width: 100%;
   height: auto;
 }
-.picBoxBig{
-  text-align: center;
-  background-color: #42a7b9;
-  padding-top: 1.5rem;
-  width: 5rem;
-  height: 3.5rem;
-  border-radius: 5rem;
-  font-size: 2rem;
-}
-.roomInformation{
-  position: relative;
+.info{
+  position: absolute;
+  top: 1rem;
+  left: 6rem;
   text-align: left;
-  margin-top: -4rem;
-  margin-left: 5.7rem;
 }
 .roomName{
   color: white;
@@ -129,34 +122,15 @@ export default {
   font-size: 1.2rem;
   color: #9c9c9c;
 }
-.contentBox{
+.topContainer{
   position: relative;
-  margin-top: 0.5rem;
-  height: 3rem;
+  height: 6rem;
   width: 100%;
 }
-.userThumbnail{
+.roomImage{
   position: absolute;
+  width: 5rem;
+  height: 5rem;
   left: 0;
-  top: 0;
-  width: 3rem;
-  height: 3rem;
-}
-.information{
-  position: absolute;
-  left: 4rem;
-  top: 0;
-  width: calc(100% - 4rem);
-}
-.userName{
-  position: absolute;
-  top: 0.75rem;
-  color: white;
-}
-.status{
-  position: absolute;
-  font-size: 0.8rem;
-  top: 1.75rem;
-  color: #9c9c9c;
 }
 </style>

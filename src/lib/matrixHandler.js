@@ -14,7 +14,7 @@ export class MatrixHandler {
     if (this.client){ console.log('there is already an active session'); return; }
     this.client = new matrix.createClient({
       baseUrl: baseUrl,
-      sessionStore: new matrix.WebStorageSessionStore(localStorage)
+      store: new matrix.MemoryStore(window.localStorage)
     });
     this.client.login('m.login.password', {
       user: user,
@@ -45,7 +45,7 @@ export class MatrixHandler {
       baseUrl,
       accessToken,
       userId,
-      sessionStore: new matrix.WebStorageSessionStore(localStorage)
+      store: new matrix.MemoryStore(window.localStorage)
     });
     this.user = userId;
     this.baseUrl = baseUrl;

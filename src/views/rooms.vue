@@ -7,16 +7,11 @@
       <h1>[chat]</h1>
       <input v-model="search" class="input" type="text" maxlength="50" placeholder="search"><br>
       <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" >
-        <div v-if="!search || room.name.toLowerCase().includes(search.toLowerCase())" class="roomListElement">
-          <userThumbnail
-            class="roomImg"
-            :mxcURL="getUrl(room)"
-            :fallback="room.roomId"
-            :size="3"
-          />
-          <div class="roomListName">{{room.name}}</div>
-          <div class="preview">{{getPreviewString(room)}}</div>
-        </div>
+        <room-list-element
+            v-if="!search || room.name.toLowerCase().includes(search.toLowerCase())"
+            :room="room"
+            class="roomListElement"
+        />
       </div>
     </div>
     <chat
@@ -28,18 +23,6 @@
       :open-chat-info="()=>showChatInfo=true"
     />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
-    <div class="roomListSmall">
-      <h1>[c]</h1>
-      <div v-for="(room, index) in matrix.rooms" :key="index" @click="openChat(room)" class="roomListElement" :title="room.name">
-        <userThumbnail
-            class="roomImg"
-            :mxcURL="getUrl(room)"
-            :fallback="room.roomId"
-            :size="3"
-        />
-        <div class="roomListName">{{room.name}}</div>
-      </div>
-    </div>
     <chatInformation v-if="currentRoom && showChatInfo" :room="currentRoom" :close-chat-info="()=>showChatInfo=false"/>
   </div>
 </template>
@@ -47,11 +30,10 @@
 <script>
 import chat from '@/views/chat.vue';
 import chatInformation from "@/components/chatInformation";
-import userThumbnail from "@/components/userThumbnail";
 import {matrix} from "@/main";
-import sdk from "matrix-js-sdk";
-import {getTime} from "@/lib/getTimeStrings";
 import ThrobberOverlay from "@/components/throbberOverlay";
+import {getMxcFromRoom} from "@/lib/getMxc";
+import roomListElement from "@/components/roomListElement";
 
 export default {
   name: "rooms",
@@ -59,33 +41,17 @@ export default {
     ThrobberOverlay,
     chat,
     chatInformation,
-    userThumbnail
+    roomListElement
   },
   methods:{
     openChat(room){
+      this.showChatInfo = false;
       this.currentRoom = room;
       this.$router.push(`/rooms/${room.roomId}`);
       this.$forceUpdate();
       this.search = '';
     },
-    getUrl(room){
-      let avatarState = room.getLiveTimeline().getState(sdk.EventTimeline.FORWARDS).getStateEvents("m.room.avatar");
-      return avatarState.length>0?avatarState[avatarState.length-1].getContent().url:undefined;
-    },
-    getLatestEvent(room){
-      if (!room.timeline[room.timeline.length-1]) return undefined;
-      return room.timeline[room.timeline.length-1].event;
-    },
-    getPreviewString(room){
-      let event = this.getLatestEvent(room);
-      if (!event) return '';
-      return `${this.calcUserName(event.sender)}: ${event.content.body||'unknown event'} ${getTime(event.origin_server_ts)}`;
-
-    },
-    calcUserName(userId) {
-      if (matrix.user === userId) return 'you';
-      return matrix.client.getUser(userId).displayName || userId;
-    }
+    getMxcFromRoom
   },
   data(){
     return {

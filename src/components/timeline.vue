@@ -9,7 +9,7 @@
       <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].origin_server_ts">
         <div class="thumbnailContainer">
           <div class="filler"></div>
-          <userThumbnail
+          <avatar
             v-if="group[0].sender !== user && groupTimeline"
             :fallback="group[0].sender"
             class="userThumbnail"
@@ -51,17 +51,15 @@
 
 <script>
 import message from "@/components/message";
-import userThumbnail from "@/components/userThumbnail";
+import avatar from "@/components/avatar";
 import {matrix} from "@/main";
 import splitArray from "@/lib/splitArray";
 import {getDate, getTime} from "@/lib/getTimeStrings";
-import sdk from "matrix-js-sdk"
-
 export default {
   name: 'eventGroup',
   components: {
     message,
-    userThumbnail
+    avatar
   },
   props: {
     timeline: Array,
@@ -72,18 +70,6 @@ export default {
   methods: {
     getUser(userId) {
       return matrix.client.getUser(userId);
-    },
-    getReplyId(event){
-      if(!event.content['m.relates_to']) return undefined;
-      if(!event.content['m.relates_to']['m.in_reply_to']) return undefined;
-      return event.content['m.relates_to']['m.in_reply_to'].event_id || undefined;
-    },
-    async getReplyEvent(event, callback){
-      let replyId = this.getReplyId(event);
-      if (replyId === undefined) return undefined;
-      await matrix.client.fetchRoomEvent(this.roomId, replyId).then((res) => {
-        callback(new sdk.MatrixEvent(res));
-      });
     },
     splitArray,
     getDate,

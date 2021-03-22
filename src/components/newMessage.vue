@@ -35,11 +35,11 @@ export default {
     roomId: String
   },
   methods: {
-    async sendMessage(){
+    sendMessage(){
       let content = this.msg.content;
-      if (!content.body) return;
+      if (!content.body.trim()) return;
       let msgSend = Object.assign({}, this.msg);
-      await matrix.sendEvent(msgSend, this.roomId);
+      matrix.sendEvent(msgSend, this.roomId);
       content.body = "";
       let id = this.$refs.newMessageInput;
       id.style.height = "1.25rem";
@@ -88,6 +88,7 @@ export default {
   position: relative;
   margin-top: 1.25rem;
   margin-bottom: 0.75rem;
+  padding: 0;
   left: 2rem;
   min-height: 1.5rem;
   max-height: 10rem;

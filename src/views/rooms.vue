@@ -8,7 +8,7 @@
       <input v-model="search" class="input" type="text" maxlength="50" placeholder="search"><br>
       <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" >
         <room-list-element
-            v-if="!search || room.name.toLowerCase().includes(search.toLowerCase())"
+            v-if="!search || room.name.toLowerCase().includes(search.toLowerCase().trim())"
             :room="room"
             class="roomListElement"
         />
@@ -45,10 +45,11 @@ export default {
   },
   methods:{
     openChat(room){
+      this.currentRoom = undefined
+      this.$nextTick(() => this.currentRoom = room);
       this.showChatInfo = false;
       this.currentRoom = room;
       this.$router.push(`/rooms/${room.roomId}`);
-      this.$forceUpdate();
       this.search = '';
     },
     getMxcFromRoom

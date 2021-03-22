@@ -45,10 +45,9 @@ export default {
   },
   methods:{
     openChat(room){
+      this.showChatInfo = false;
       this.currentRoom = undefined
       this.$nextTick(() => this.currentRoom = room);
-      this.showChatInfo = false;
-      this.currentRoom = room;
       this.$router.push(`/rooms/${room.roomId}`);
       this.search = '';
     },

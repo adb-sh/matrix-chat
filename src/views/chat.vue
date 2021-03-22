@@ -68,7 +68,7 @@ export default {
     }
   },
   updated(){
-    if(this.scroll.getScrollBottom() < 400) this.scroll.scrollToBottom();
+    if(this.scroll.getScrollBottom() < 350) this.scroll.scrollToBottom();
   },
   mounted(){
     this.scroll = new scrollHandler(this.$refs.msgContainer);

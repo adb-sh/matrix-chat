@@ -4,8 +4,8 @@
   </div>
   <div v-else>
     <div id="roomList" class="roomList">
-      <h1>[chat]</h1>
-      <input v-model="search" class="input" type="text" maxlength="50" placeholder="search"><br>
+      <h1 class="wideElement">[chat]</h1><h1 class="smallElement">[c]</h1>
+      <input v-model="search" class="input wideElement" type="text" maxlength="50" placeholder="search">
       <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" >
         <room-list-element
             v-if="!search || room.name.toLowerCase().includes(search.toLowerCase().trim())"
@@ -67,7 +67,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .roomList{
   position: absolute;
   left: 0;
@@ -94,68 +94,12 @@ export default {
   cursor: pointer;
   background-color: #222;
 }
-.roomListName{
-  position: absolute;
-  left: 4rem;
-  top: 0.25rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: calc(100% - 5rem);
-  text-align: left;
-}
-.preview{
-  position: absolute;
-  top: 1.5rem;
-  left: 4rem;
-  font-size: 0.8rem;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  width: calc(100% - 4.5rem);
-}
-.roomListSmall{
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4rem;
-  height: 100%;
-  background-color: #222;
-  text-align: center;
-  display: none;
-  overflow-y: auto;
-  overflow-x: hidden;
-  animation: ease;
-  animation-duration: 0.2s;
-  scrollbar-width: none;
-  z-index: 20;
-}
-.roomListSmall:hover{
-  width: 18rem;
-  scrollbar-width: thin;
-  box-shadow: 0 0 20px #111;
-}
-.roomListSmall::-webkit-scrollbar {
-  width: 0;
-}
-.roomListSmall:hover::-webkit-scrollbar {
-  width: 0.5rem;
-}
 .noRoomSelected{
   position: absolute;
   width: calc(100% - 20rem);
   top: 5rem;
   left: 20rem;
   text-align: center;
-}
-.roomImg{
-  position: absolute;
-  left: 0.5rem;
-  height: 3rem;
-  width: 3rem;
-}
-.roomImg.small{
-  margin-left: calc(50% - 2rem);
 }
 input{
   padding: 0 2rem 0 2rem;
@@ -172,19 +116,40 @@ input{
   appearance: none;
   outline: none;
 }
+.wideElement{
+  display: block;
+}
+.smallElement{
+  display: none;
+}
 
-@media (max-width: 48rem) {
-  .roomList{
+@media (max-width: 48rem) and (min-width: 30rem) {
+  .wideElement{
     display: none;
+  }
+  .smallElement{
+    display: block;
+  }
+  .roomList{
+    z-index: 30;
+    width: 4rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .roomList:hover{
+    width: 18rem;
+    scrollbar-width: thin;
+    box-shadow: 0 0 20px #111;
+    .wideElement{
+      display: block;
+    }
+    .smallElement{
+      display: none;
+    }
   }
   .chat{
     width: calc(100% - 4rem);
-  }
-  .roomListSmall{
-    display: block;
-  }
-  .roomImgPlaceholder{
-    left: 0.5rem;
   }
   .noRoomSelected{
     left: 4rem;
@@ -193,6 +158,12 @@ input{
 }
 
 @media (max-width: 30rem) {
+  .wideElement{
+    display: block;
+  }
+  .smallElement{
+    display: none;
+  }
   .roomList{
     width: 100%;
   }
@@ -201,12 +172,6 @@ input{
   }
   .noRoomSelected{
     display: none;
-  }
-  .roomListSmall{
-    display: none;
-  }
-  .roomList{
-    display: block;
   }
 }
 </style>

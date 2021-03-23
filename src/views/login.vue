@@ -5,7 +5,7 @@
       <form v-if="showLogin()" @submit.prevent="login()">
         <input v-model="user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
         <input v-model="password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
-        <input v-model="homeServer" class="input" name="homeserver" maxlength="50" placeholder="https://matrix.org"><br>
+        <input v-model="homeServer" class="input" name="homeserver" placeholder="https://matrix.org"><br>
         <div v-if="loginError" class="info">{{loginError}}</div>
         <textbtn type="submit" text="login" />
       </form>

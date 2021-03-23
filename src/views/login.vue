@@ -49,6 +49,7 @@ export default {
       this.loading = 'logging in';
       matrix.login(this.user, this.password, this.homeServer, (error) => {
         this.loginError = `login failed: ${error}`;
+        this.loading = false;
       }, token => {
         this.loading = 'store token';
         this.cookie.setCookie({

@@ -8,33 +8,34 @@ export class AdminAPI{
   
   async sendRequest({path, obj={}, method=rest=>rest.get}){
     return await method(rest)(`${this.baseUrl}${path}?access_token=${this.accessToken}`)
-      .send(JSON.stringify(obj)).set('accept', 'json').then(res => {
+      .send(obj).set('accept', 'json').then(res => {
         return JSON.parse(res.text);
       });
   }
 
   async getUsers(){
-    return await this.sendRequest({path: 'users'});
+    return await this.sendRequest({path: 'v2/users'});
   }
-  async resetPassword(userId, newPassword){
+  async resetPassword({userId, password}){
     return await this.sendRequest({
-      path: `reset_password/${userId}`,
+      path: `v1/reset_password/${userId}`,
+      method: rest=>rest.post,
       obj: {
-        new_password: newPassword,
+        new_password: password,
         logout_devices: true
       }
     });
   }
-  async createUser(userId, password, displayName, avatarUrl=undefined){
+  async updateUser({userId, password, displayname, avatar_url=undefined}){
     return await this.sendRequest({
-      path: `reset_password/${userId}`,
+      path: `v2/users/${userId}`,
       method: rest=>rest.put,
       obj: {
-        'password': password,
-        'displayname': displayName,
-        'avatar_url': avatarUrl,
-        'admin': false,
-        'deactivated': false
+        password,
+        displayname,
+        avatar_url,
+        admin: false,
+        deactivated: false
       }
     });
   }

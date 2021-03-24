@@ -1,6 +1,6 @@
 <template>
   <button class="iconContainer" >
-    <img class="icon" v-bind:src=ic alt="" />
+    <img class="icon" :src=ic alt="" />
   </button>
 </template>
 
@@ -15,6 +15,7 @@ name: "icon",
 
 <style scoped>
   .iconContainer{
+    position: relative;
     width: 3rem;
     height: 3rem;
     border-radius: 1.5rem;

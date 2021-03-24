@@ -22,6 +22,23 @@ export default {
 body{
   margin: 0;
 }
+input{
+  padding: 0 2rem 0 2rem;
+  height: 2.5rem;
+  color: #fff;
+  background-color: #1d1d1d;
+  border-radius: 1.25rem;
+  border: 1px solid #fff;
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 0.5rem;
+  appearance: none;
+  outline: none;
+}
+input:focus{
+  color: #000;
+  background-color: #fff;
+}
 *{
   scrollbar-width: thin;
   scrollbar-color: #42b983 #2220;
@@ -50,7 +67,7 @@ body{
   top: 0;
   left: calc(50% - 35rem);
   padding: 0;
-  min-height: calc(100%);
+  min-height: 100%;
   width: 70rem;
   min-width: 18rem;
   background-color: #313131;

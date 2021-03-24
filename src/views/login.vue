@@ -108,23 +108,6 @@ export default {
   height: min-content;
   width: 100%;
 }
-input{
-  padding: 0 2rem 0 2rem;
-  height: 2.5rem;
-  color: #fff;
-  background-color: #1d1d1d;
-  border-radius: 1.25rem;
-  border: 1px solid #fff;
-  text-align: center;
-  font-size: 1.1rem;
-  margin: 0.5rem;
-  appearance: none;
-  outline: none;
-}
-input:focus{
-  color: #000;
-  background-color: #fff;
-}
 .throbber{
   position: absolute;
   top: 50%;

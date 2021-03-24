@@ -31,6 +31,7 @@ export class MatrixHandler {
         callback(response.access_token);
         this.user = user;
         this.baseUrl = baseUrl;
+        this.accessToken = response.access_token;
         this.startSync()
       }
     }).catch(error => {
@@ -49,6 +50,7 @@ export class MatrixHandler {
     });
     this.user = userId;
     this.baseUrl = baseUrl;
+    this.accessToken = accessToken;
     this.startSync();
   }
   async logout(){

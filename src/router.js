@@ -2,6 +2,7 @@ import VueRouter from 'vue-router';
 import login from '@/views/login';
 import chat from '@/views/chat';
 import rooms from '@/views/rooms';
+import admin from '@/views/admin';
 
 export const router = new VueRouter({
   routes: [
@@ -29,6 +30,11 @@ export const router = new VueRouter({
       path: '/rooms',
       name: 'rooms',
       component: rooms
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: admin
     }
   ]
 })

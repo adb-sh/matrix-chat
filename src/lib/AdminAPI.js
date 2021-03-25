@@ -10,6 +10,9 @@ export class AdminAPI{
     return await method(rest)(`${this.baseUrl}${path}?access_token=${this.accessToken}`)
       .send(obj).set('accept', 'json').then(res => {
         return JSON.parse(res.text);
+      }).catch(err => {
+        console.log(err);
+        return false;
       });
   }
 

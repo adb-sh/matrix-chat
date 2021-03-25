@@ -1,35 +1,39 @@
 <template>
-  <div class="admin">
-    <h1>admin</h1>
-    <h2>users</h2>
-    <div class="tableScroll">
-      <table v-if="users">
-        <tr>
-          <th class="left">user</th>
-          <th class="mid">displayname</th>
-          <th class="mid">deactivated</th>
-          <th class="mid">admin</th>
-          <th class="right edit">edit</th>
-        </tr>
-        <tr v-for="user in users.users" :key="user.name">
-          <td class="left">{{user.name}}</td>
-          <td class="mid">{{user.displayname}}</td>
-          <td class="mid">{{user.deactivated}}</td>
-          <td class="mid">{{user.admin}}</td>
-          <td class="right edit">
-            <icon @click.native="newUser.userId = user.name" class="editIcon" type="submit" ic="./sym/ic_create_white.svg"/>
-            <icon class="editIcon" type="submit" ic="./sym/ic_delete_white.svg"/>
-          </td>
-        </tr>
-      </table>
+  <div>
+    <div v-if="accessDenied">access denied!</div>
+    <div class="admin" v-else-if="users !== undefined">
+      <h1>admin</h1>
+      <h2>users</h2>
+      <div class="tableScroll">
+        <table>
+          <tr>
+            <th class="left">user</th>
+            <th class="mid">displayname</th>
+            <th class="mid">deactivated</th>
+            <th class="mid">admin</th>
+            <th class="right edit">edit</th>
+          </tr>
+          <tr v-for="user in users.users" :key="user.name">
+            <td class="left">{{user.name}}</td>
+            <td class="mid">{{user.displayname}}</td>
+            <td class="mid">{{user.deactivated}}</td>
+            <td class="mid">{{user.admin}}</td>
+            <td class="right edit">
+              <icon @click.native="newUser.userId = user.name" class="editIcon" type="submit" ic="./sym/ic_create_white.svg"/>
+              <icon class="editIcon" type="submit" ic="./sym/ic_delete_white.svg"/>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h2>update user</h2>
+      <div class="update">
+        <input v-model="newUser.userId" type="text" placeholder="userId"><br>
+        <input v-model="newUser.password" type="password" placeholder="password"><br>
+        <input v-model="newUser.displayname" type="text" placeholder="displayname">
+      </div>
+      <textbtn @click.native="updateUser()" text="update user"/>
     </div>
-    <h2>update user</h2>
-    <div class="update">
-      <input v-model="newUser.userId" type="text" placeholder="userId"><br>
-      <input v-model="newUser.password" type="password" placeholder="password"><br>
-      <input v-model="newUser.displayname" type="text" placeholder="displayname">
-    </div>
-    <textbtn @click.native="updateUser()" text="update user"/>
+    <throbber-overlay v-if="loading" :text="loading"/>
   </div>
 </template>
 
@@ -38,10 +42,12 @@ import {matrix} from "@/main";
 import {AdminAPI} from "@/lib/AdminAPI";
 import icon from "@/components/icon";
 import textbtn from "@/components/textbtn";
+import ThrobberOverlay from "@/components/throbberOverlay";
 
 export default {
   name: "admin",
   components:{
+    ThrobberOverlay,
     icon,
     textbtn
   },
@@ -52,7 +58,9 @@ export default {
         userId: '',
         password: '',
         displayname: '',
-      }
+      },
+      loading: false,
+      accessDenied: false
     }
   },
   methods:{
@@ -61,8 +69,11 @@ export default {
     }
   },
   async created() {
+    this.loading = 'loading';
     this.api = new AdminAPI(matrix.baseUrl+'/_synapse/admin/', matrix.accessToken);
     this.users = await this.api.getUsers('users');
+    this.accessDenied = !this.users;
+    this.loading = false;
   }
 }
 </script>

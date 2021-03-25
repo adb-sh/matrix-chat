@@ -2,21 +2,21 @@
     <form class="newMessageBanner" ref="newMessageBanner" v-on:submit.prevent="sendMessage()">
       <label for="newMessageInput"></label>
       <textarea
-          @keyup.enter.exact="sendMessage()"
-          @input="resizeMessageBanner()"
-          v-model="msg.content.body"
-          ref="newMessageInput"
-          id="newMessageInput"
-          class="newMessageInput"
-          autocomplete="off"
-          rows="1"
-          placeholder="type a message ..."
+        @keyup.enter.exact="sendMessage()"
+        @input="resizeMessageBanner()"
+        v-model="msg.content.body"
+        ref="newMessageInput"
+        id="newMessageInput"
+        class="newMessageInput"
+        autocomplete="off"
+        rows="1"
+        placeholder="type a message ..."
       />
       <icon
-          type="submit"
-          title="press enter to submit"
-          class="sendMessageBtn"
-          ic="./sym/ic_send_white_24px.svg"
+        type="submit"
+        title="press enter to submit"
+        class="sendMessageBtn"
+        ic="./sym/ic_send_white.svg"
       />
     </form>
 </template>

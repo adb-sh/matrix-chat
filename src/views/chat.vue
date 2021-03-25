@@ -6,7 +6,7 @@
         <p v-if="room.timeline.length === 0" class="chatInfo">this room is empty</p>
         <timeline :timeline="room.timeline" :group-timeline="isGroup()" :user="user" :roomId="room.roomId" />
       </div>
-      <icon v-if="showScrollBtn" @click.native="scroll.scrollToBottom()" id="scrollDown" ic="./sym/expand_more-black-24dp.svg" />
+      <icon v-if="showScrollBtn" @click.native="scroll.scrollToBottom()" id="scrollDown" ic="./sym/ic_expand_more_black.svg" />
     </div>
     <newMessage :onResize="height=>resize(height)" :roomId="room.roomId"/>
     <topBanner :room="room" :close-chat="()=>closeChat()" :open-chat-info="()=>openChatInfo()"/>

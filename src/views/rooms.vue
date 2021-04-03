@@ -6,7 +6,11 @@
     <div id="roomList" class="roomList">
       <h1 class="wideElement">[chat]</h1><h1 class="smallElement">[c]</h1>
       <input v-model="search" class="input wideElement" type="text" maxlength="50" placeholder="search">
-      <div v-for="room in matrix.rooms" :key="room.roomId" @click="openChat(room)" >
+      <div
+        v-for="room in Object.assign([], matrix.rooms)
+          .sort(obj => obj.timeline[obj.timeline.length-1].event.origin_server_ts)"
+        :key="room.roomId" @click="openChat(room)"
+      >
         <room-list-element
             v-if="!search || room.name.toLowerCase().includes(search.toLowerCase().trim())"
             :room="room"

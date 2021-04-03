@@ -52,7 +52,7 @@ export default {
       this.loadingStatus = 'loading ...';
       await matrix.client.paginateEventTimeline(this.room.getLiveTimeline(), {backwards: true})
         .then(state => this.loadingStatus = state?'load more':false);
-      this.scroll.setScrollBottom(scrollBottom);
+      if (this.loadingStatus) this.scroll.setScrollBottom(scrollBottom);
     },
     getUser(userId){
       return matrix.client.getUser(userId);

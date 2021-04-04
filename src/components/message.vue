@@ -1,8 +1,8 @@
 <template>
     <div :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <div v-if="replyEvent" class="reply">
-        {{replyEvent.sender}}<br>
-        {{replyEvent.type==='m.room.message'?replyEvent.content.body:'unkown event'}}
+        <span class="username">{{calcUserName(replyEvent.sender)}}</span><br>
+        <span v-html="replyEvent.type==='m.room.message'?parseMessage(replyEvent.content.body):'unkown event'"></span>
       </div>
       <div v-html="parseMessage(msg)"></div>
       <div class="time">{{time}}</div>
@@ -11,6 +11,7 @@
 
 <script>
 import {matrix} from "@/main";
+import {calcUserName} from "@/lib/matrixUtils";
 
 export default {
   name: "message",
@@ -51,7 +52,8 @@ export default {
           .replace(/</g, '&lt')
           .replace(/>/g, '&gt')
       );
-    }
+    },
+    calcUserName
   },
   data(){
     return{
@@ -98,5 +100,8 @@ export default {
     border-left:  2px solid #fff;
     padding-left: 0.5rem;
     margin-bottom: 0.5rem;
+  }
+  .username{
+    font-weight: bold;
   }
 </style>

@@ -28,7 +28,7 @@ input{
   color: #fff;
   background-color: #1d1d1d;
   border-radius: 1.25rem;
-  border: 1px solid #fff;
+  border: 0.1rem solid #fff;
   text-align: center;
   font-size: 1.1rem;
   margin: 0.5rem;

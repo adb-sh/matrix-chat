@@ -17,7 +17,7 @@
 import avatar from "@/components/avatar";
 import {getMxcFromRoom} from "@/lib/getMxc";
 import {getTime} from "@/lib/getTimeStrings";
-import {matrix} from "@/main";
+import {calcUserName} from "@/lib/matrixUtils";
 
 export default {
   name: "userListElement",
@@ -37,10 +37,7 @@ export default {
       if (!room.timeline[room.timeline.length-1]) return undefined;
       return room.timeline[room.timeline.length-1].event;
     },
-    calcUserName(userId) {
-      if (matrix.user === userId) return 'you';
-      return matrix.client.getUser(userId).displayName || userId;
-    },
+    calcUserName,
     getMxcFromRoom
   }
 }

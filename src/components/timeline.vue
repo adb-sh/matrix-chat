@@ -22,7 +22,7 @@
           :class="groupTimeline?'indent username':'username'"
           v-if="group[0].sender !== user && groupTimeline"
         >
-          {{getUser(group[0].sender).displayName || group[0].sender}}
+          {{calcUserName(group[0].sender)}}
         </div>
         <div
           :class="groupTimeline?'indent event':'event'"
@@ -37,6 +37,10 @@
             :content="event.content"
             :roomId="roomId"
           />
+          <div v-else-if="event.content.msgtype==='m.notice'" class="notice">
+            {{event.content.body}}
+            <span class="time">{{getTime(event.origin_server_ts)}}</span>
+          </div>
           <div v-else-if="event.type==='m.room.member'" class="info">
             {{membershipEvents[event.content.membership]}}
             <span class="time">{{getTime(event.origin_server_ts)}}</span>
@@ -52,9 +56,10 @@
 <script>
 import message from "@/components/message";
 import avatar from "@/components/avatar";
-import {matrix} from "@/main";
 import splitArray from "@/lib/splitArray";
 import {getDate, getTime} from "@/lib/getTimeStrings";
+import {getUser, calcUserName} from "@/lib/matrixUtils";
+
 export default {
   name: 'eventGroup',
   components: {
@@ -68,9 +73,8 @@ export default {
     roomId: String
   },
   methods: {
-    getUser(userId) {
-      return matrix.client.getUser(userId);
-    },
+    getUser,
+    calcUserName,
     splitArray,
     getDate,
     getTime
@@ -132,11 +136,18 @@ export default {
         font-weight: bold;
       }
       .event{
-        .info{
+        .info {
           font-style: italic;
           margin-top: 0.5rem;
           margin-bottom: 0.5rem;
           margin-left: 0.5rem;
+          .time {
+            font-size: 0.7rem;
+          }
+        }
+        .notice{
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
           .time{
             font-size: 0.7rem;
           }

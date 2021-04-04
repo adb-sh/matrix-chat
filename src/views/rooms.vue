@@ -106,7 +106,7 @@ export default {
   text-align: center;
 }
 input{
-  width: calc(100% - 5rem);
+  width: calc(100% - 5.2rem);
 }
 .wideElement{
   display: block;

@@ -23,10 +23,10 @@
 </template>
 <script>
 import icon from './icon.vue';
-import {matrix} from "@/main";
 import UserListElement from "@/components/userListElement";
 import avatar from "@/components/avatar";
 import {getMxcFromRoom} from "@/lib/getMxc";
+import {getUser} from "@/lib/matrixUtils";
 
 export default {
   name: "chatInformation",
@@ -40,12 +40,10 @@ export default {
     closeChatInfo: Function
   },
   methods: {
-    getUser(userId){
-      return matrix.client.getUser(userId);
-    },
     getMembers(){
       return Object.keys(this.room.currentState.members)
     },
+    getUser,
     getMxcFromRoom
   },
   data(){

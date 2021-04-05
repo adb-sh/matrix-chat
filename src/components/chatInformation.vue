@@ -18,7 +18,7 @@
         <p v-if="members.length>20">and {{members.length-20}} other members</p>
       </div>
     </div>
-    <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white_24px.svg" />
+    <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white.svg" />
   </div>
 </template>
 <script>

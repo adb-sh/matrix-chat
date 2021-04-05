@@ -20,14 +20,14 @@
     </div>
     <chat
       class="chat"
-      v-if="currentRoom"
-      :room="currentRoom"
+      v-if="showRoom && getCurrentRoom()"
+      :room="getCurrentRoom()"
       :user="matrix.user"
-      :close-chat="()=>currentRoom=undefined"
+      :close-chat="closeChat"
       :open-chat-info="()=>showChatInfo=true"
     />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
-    <chatInformation v-if="currentRoom && showChatInfo" :room="currentRoom" :close-chat-info="()=>showChatInfo=false"/>
+    <chatInformation v-if="showRoom && showChatInfo" :room="getCurrentRoom()" :close-chat-info="()=>showChatInfo=false"/>
   </div>
 </template>
 
@@ -38,6 +38,7 @@ import {matrix} from "@/main";
 import ThrobberOverlay from "@/components/throbberOverlay";
 import {getMxcFromRoom} from "@/lib/getMxc";
 import roomListElement from "@/components/roomListElement";
+import {getRoom} from "@/lib/matrixUtils";
 
 export default {
   name: "rooms",
@@ -50,18 +51,25 @@ export default {
   methods:{
     openChat(room){
       this.showChatInfo = false;
-      this.currentRoom = undefined
-      this.$nextTick(() => this.currentRoom = room);
+      this.showRoom = false;
       this.$router.push(`/rooms/${room.roomId}`);
+      this.$nextTick(() => this.showRoom = true);
       this.search = '';
     },
-    getMxcFromRoom
+    getMxcFromRoom,
+    getRoom,
+    getCurrentRoom(){
+      return getRoom(this.$route.path.split('/')[2]);
+    },
+    closeChat(){
+      this.$router.push('/rooms');
+    }
   },
   data(){
     return {
       matrix,
-      currentRoom: undefined,
       showChatInfo: false,
+      showRoom: true,
       search: ''
     }
   },

@@ -29,6 +29,7 @@
            v-for="event in group"
           :key="event.origin_server_ts"
           :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`"
+          @contextmenu.prevent="setReplyTo(event)"
         >
           <message
             v-if="event.content.msgtype==='m.text'"
@@ -54,11 +55,11 @@
 </template>
 
 <script>
-import message from "@/components/message";
-import avatar from "@/components/avatar";
-import splitArray from "@/lib/splitArray";
-import {getDate, getTime} from "@/lib/getTimeStrings";
-import {getUser, calcUserName} from "@/lib/matrixUtils";
+import message from '@/components/message';
+import avatar from '@/components/avatar';
+import splitArray from '@/lib/splitArray';
+import {getDate, getTime} from '@/lib/getTimeStrings';
+import {getUser, calcUserName} from '@/lib/matrixUtils';
 
 export default {
   name: 'eventGroup',
@@ -70,7 +71,8 @@ export default {
     timeline: Array,
     user: String,
     groupTimeline: Boolean,
-    roomId: String
+    roomId: String,
+    setReplyTo: Function
   },
   methods: {
     getUser,

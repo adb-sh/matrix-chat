@@ -1,8 +1,8 @@
 <template>
     <div :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <div v-if="replyEvent" class="reply">
-        {{replyEvent.sender}}<br>
-        {{replyEvent.type==='m.room.message'?replyEvent.content.body:'unkown event'}}
+        <span class="username">{{calcUserName(replyEvent.sender)}}</span><br>
+        <span v-html="replyEvent.type==='m.room.message'?parseMessage(replyEvent.content.body):'unkown event'"></span>
       </div>
       <div v-html="parseMessage(msg)"></div>
       <div class="time">{{time}}</div>
@@ -10,10 +10,12 @@
 </template>
 
 <script>
-import {matrix} from "@/main";
+import {matrix} from '@/main';
+import {calcUserName} from '@/lib/matrixUtils';
+import {parseMessage} from '@/lib/eventUtils';
 
 export default {
-  name: "message",
+  name: 'message',
   props: {
     msg: String,
     time: String,
@@ -22,18 +24,6 @@ export default {
     roomId: String
   },
   methods:{
-    solveTextLinks(text){
-      return (text || "").replace(
-        /([^\S]|^)(((https?:\/\/)|(www\.))(\S+))/gi,
-        (match, space, url)=>{
-          let hyperlink = url;
-          if (!hyperlink.match('^https?://')) {
-            hyperlink = 'http://' + hyperlink;
-          }
-          return `${space}<a href="${hyperlink}" target="_blank">${url}</a>`;
-        }
-      )
-    },
     async getReplyEvent(content) {
       let replyId = this.getReplyId(content);
       if (replyId === undefined) return undefined;
@@ -43,15 +33,11 @@ export default {
     },
     getReplyId(content){
       if(!content['m.relates_to']) return undefined;
-      return content['m.relates_to']['m.in_reply_to'].event_id || undefined;
+      if(!content['m.relates_to']['m.in_reply_to']) return undefined;
+      return content['m.relates_to']['m.in_reply_to'].event_id;
     },
-    parseMessage(msg){
-      return this.solveTextLinks(
-        msg.replace(/>.*\n/gm, '').trim()
-          .replace(/</g, '&lt')
-          .replace(/>/g, '&gt')
-      );
-    }
+    calcUserName,
+    parseMessage
   },
   data(){
     return{
@@ -79,13 +65,13 @@ export default {
     margin-top: 0.25rem;
   }
   .messageReceive{
-    background-color: #42b983;
+    background-color: #424141;
     border-radius: 1rem 1rem 1rem 0;
   }
   .messageSend{
     margin-left:auto;
     margin-right:0;
-    background-color: #42a7b9;
+    background-color: #357882;
     border-radius: 1rem 1rem 0 1rem;
   }
   .time{
@@ -98,5 +84,8 @@ export default {
     border-left:  2px solid #fff;
     padding-left: 0.5rem;
     margin-bottom: 0.5rem;
+  }
+  .username{
+    font-weight: bold;
   }
 </style>

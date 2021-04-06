@@ -1,7 +1,7 @@
 <template>
   <div class="topBanner">
     <div>
-      <icon @click.native="closeChat()" class="topIcon" ic="./sym/arrow_back-24px.svg" />
+      <icon @click.native="closeChat()" class="topIcon" ic="./sym/ic_arrow_back_white.svg" />
       <div @click="openChatInfo()" class="container">
         <avatar class="topIcon avatar" :mxcURL="getMxcFromRoom(room)" :fallback="room.roomId" :size="3"/>
         <div class="chatName">{{room.name}}</div>

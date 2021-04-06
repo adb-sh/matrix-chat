@@ -1,16 +1,16 @@
 <template>
-    <form class="newMessageBanner" ref="newMessageBanner" v-on:submit.prevent="sendMessage()">
-      <label for="newMessageInput"></label>
+  <div class="newMessageBanner" ref="newMessageBanner">
+    <div class="reply" v-if="replyTo" @click="resetReplyTo">
+      <span class="username">{{calcUserName(replyTo.sender)}}</span><br>
+      {{parseMessage(replyTo.content.body)}}
+    </div>
+    <form v-on:submit.prevent="sendMessage()">
       <textarea
         @keyup.enter.exact="sendMessage()"
         @input="resizeMessageBanner()"
-        v-model="msg.content.body"
-        ref="newMessageInput"
-        id="newMessageInput"
-        class="newMessageInput"
-        autocomplete="off"
-        rows="1"
-        placeholder="type a message ..."
+        v-model="event.content.body"
+        ref="newMessageInput" class="newMessageInput"
+        rows="1" placeholder="type a message ..."
       />
       <icon
         type="submit"
@@ -19,52 +19,67 @@
         ic="./sym/ic_send_white.svg"
       />
     </form>
+  </div>
 </template>
 
 <script>
 import icon from '@/components/icon.vue';
 import {matrix} from '@/main.js';
+import {parseMessage} from '@/lib/eventUtils';
+import {calcUserName} from '@/lib/matrixUtils';
 
 export default {
-  name: "newMessage",
+  name: 'newMessage',
   components: {
     icon
   },
   props: {
     onResize: Function,
-    roomId: String
+    roomId: String,
+    replyTo: Object,
+    resetReplyTo: Function
   },
   methods: {
     sendMessage(){
-      let content = this.msg.content;
+      let content = this.event.content;
       if (!content.body.trim()) return;
-      let msgSend = Object.assign({}, this.msg);
-      matrix.sendEvent(msgSend, this.roomId);
-      content.body = "";
+      matrix.sendEvent(this.event, this.roomId, this.replyTo);
+      content.body = '';
+      this.resetReplyTo();
       let id = this.$refs.newMessageInput;
-      id.style.height = "1.25rem";
+      id.style.height = '1.25rem';
       this.onResize(id.parentElement.clientHeight);
     },
     resizeMessageBanner(){
       let id = this.$refs.newMessageInput;
       id.style.height = '1.25rem';
       id.style.height = `${id.scrollHeight}px`;
-      this.onResize(id.parentElement.clientHeight);
+      this.onResize(this.$refs.newMessageBanner.clientHeight);
+    },
+    focusInput(){
+      this.$refs.newMessageInput.focus();
     },
     toggleEmojiPicker() {
       this.showEmojiPicker = !this.showEmojiPicker;
     },
     onSelectEmoji(emoji) {
-      this.msg.content.body += emoji.data;
-    }
+      this.event.content.body += emoji.data;
+    },
+    parseMessage,
+    calcUserName
   },
   data(){
     return {
-      msg: {
-        type: "m.room.message",
+      event: {
+        type: 'm.room.message',
         content: {
-          body: "",
-          msgtype: "m.text"
+          body: '',
+          msgtype: 'm.text',
+          'm.relates_to': {
+            'm.in_reply_to': {
+              event_id: undefined
+            }
+          }
         }
       },
       showEmojiPicker: false
@@ -89,7 +104,7 @@ export default {
   margin-top: 1.25rem;
   margin-bottom: 0.75rem;
   padding: 0;
-  left: 2rem;
+  left: 1rem;
   min-height: 1.5rem;
   max-height: 10rem;
   width: calc(100% - 7rem);
@@ -109,5 +124,19 @@ export default {
   right: 1rem;
   bottom: 0.25rem;
   background-color: unset;
+}
+.reply{
+  position: relative;
+  width: calc(100% - 7rem);
+  left: 1rem;
+  border-left:  2px solid #fff;
+  padding-left: 0.5rem;
+  margin-top: 0.75rem;
+  margin-right: 0.5rem;
+  word-break: break-word;
+  white-space: pre-line;
+}
+.username{
+  font-weight: bold;
 }
 </style>

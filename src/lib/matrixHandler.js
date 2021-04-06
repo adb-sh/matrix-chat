@@ -68,18 +68,17 @@ export class MatrixHandler {
       callback();
     });
   }
-  async sendEvent(msg, roomId){
-    const msgSend = {
-      type: msg.type,
-      content: {
-        body: msg.content.body.trim(),
-        msgtype: msg.content.msgtype,
-      },
-    };
-    await this.client.sendEvent(roomId, msgSend.type, msgSend.content, '').then(() => {
-      console.log('message sent successfully');
-    }).catch((err) => {
-      console.log(`error while sending message => ${err}`);
-    });
+  async sendEvent({content, type}, roomId, replyTo = undefined){
+    await this.client.sendEvent(roomId, type, {
+      body: content.body.trim(),
+      msgtype: content.msgtype,
+      'm.relates_to': {
+        'm.in_reply_to': {
+          event_id: replyTo?replyTo.event_id:undefined
+        }
+      }
+    }).then(() => console.log('message sent successfully'))
+      .catch((err) => console.log(`error while sending message => ${err}`)
+      );
   }
 }

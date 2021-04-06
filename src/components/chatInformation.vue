@@ -18,15 +18,15 @@
         <p v-if="members.length>20">and {{members.length-20}} other members</p>
       </div>
     </div>
-    <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white_24px.svg" />
+    <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white.svg" />
   </div>
 </template>
 <script>
 import icon from './icon.vue';
-import {matrix} from "@/main";
 import UserListElement from "@/components/userListElement";
 import avatar from "@/components/avatar";
 import {getMxcFromRoom} from "@/lib/getMxc";
+import {getUser} from "@/lib/matrixUtils";
 
 export default {
   name: "chatInformation",
@@ -40,12 +40,10 @@ export default {
     closeChatInfo: Function
   },
   methods: {
-    getUser(userId){
-      return matrix.client.getUser(userId);
-    },
     getMembers(){
       return Object.keys(this.room.currentState.members)
     },
+    getUser,
     getMxcFromRoom
   },
   data(){

@@ -1,14 +1,21 @@
 <template>
   <div>
     <div ref="chatContainer" class="chatContainer">
-      <div @scroll="onScroll()" ref="msgContainer" id="messagesContainer" class="messagesContainer">
+      <div @scroll="onScroll()" ref="timelineContainer" class="timelineContainer">
         <div v-if="loadingStatus" @click="loadEvents()" class="loadMore">{{loadingStatus}}</div>
         <p v-if="room.timeline.length === 0" class="chatInfo">this room is empty</p>
-        <timeline :timeline="room.timeline" :group-timeline="isGroup()" :user="user" :roomId="room.roomId" />
+        <timeline
+          :timeline="room.timeline" :group-timeline="isGroup()"
+          :user="user" :roomId="room.roomId"
+          :setReplyTo="event=>{replyTo=event; resize();}"
+        />
       </div>
       <icon v-if="showScrollBtn" @click.native="scroll.scrollToBottom()" id="scrollDown" ic="./sym/ic_expand_more_black.svg" />
     </div>
-    <newMessage :onResize="height=>resize(height)" :roomId="room.roomId"/>
+    <newMessage
+      :onResize="height=>resize(height)" :roomId="room.roomId" ref="newMessage"
+      :replyTo="replyTo" :resetReplyTo="()=>replyTo=undefined"
+    />
     <topBanner :room="room" :close-chat="()=>closeChat()" :open-chat-info="()=>openChatInfo()"/>
   </div>
 </template>
@@ -20,7 +27,7 @@ import Icon from '@/components/icon';
 import {matrix} from '@/main';
 import splitArray from '@/lib/splitArray.js'
 import timeline from '@/components/timeline';
-import scrollHandler from "@/lib/scrollHandler";
+import scrollHandler from '@/lib/scrollHandler';
 
 export default {
   name: 'chat',
@@ -38,10 +45,10 @@ export default {
   },
   methods:{
     onScroll(){
-      if (this.$refs.msgContainer.scrollTop === 0) this.loadEvents();
+      if (this.$refs.timelineContainer.scrollTop === 0) this.loadEvents();
       this.showScrollBtn = this.scroll.getScrollBottom() > 400;
     },
-    resize(height){
+    resize(height = this.$refs.newMessage.clientHeight){
       this.$refs.chatContainer.style.height = `calc(100% - ${height}px - 3.5rem)`;
     },
     isGroup(){
@@ -52,7 +59,7 @@ export default {
       this.loadingStatus = 'loading ...';
       await matrix.client.paginateEventTimeline(this.room.getLiveTimeline(), {backwards: true})
         .then(state => this.loadingStatus = state?'load more':false);
-      this.scroll.setScrollBottom(scrollBottom);
+      if (this.loadingStatus) this.scroll.setScrollBottom(scrollBottom);
     },
     getUser(userId){
       return matrix.client.getUser(userId);
@@ -64,15 +71,21 @@ export default {
       showScrollBtn: false,
       scrollOnUpdate: true,
       loadingStatus: 'load more',
-      scroll: ()=>{}
+      scroll: ()=>{},
+      replyTo: undefined
     }
   },
   updated(){
     if(this.scroll.getScrollBottom() < 350) this.scroll.scrollToBottom();
   },
   mounted(){
-    this.scroll = new scrollHandler(this.$refs.msgContainer);
+    this.scroll = new scrollHandler(this.$refs.timelineContainer);
     this.scroll.scrollToBottom();
+  },
+  watch: {
+    '$route'(){
+      this.scroll.scrollToBottom();
+    }
   }
 }
 </script>
@@ -85,7 +98,7 @@ export default {
   top: 3.5rem;
   width: 100%;
   height: calc(100% - 7rem);
-  .messagesContainer{
+  .timelineContainer{
     height: 100%;
     overflow-y: auto;
   }

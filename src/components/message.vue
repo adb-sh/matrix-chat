@@ -33,7 +33,8 @@ export default {
     },
     getReplyId(content){
       if(!content['m.relates_to']) return undefined;
-      return content['m.relates_to']['m.in_reply_to'].event_id || undefined;
+      if(!content['m.relates_to']['m.in_reply_to']) return undefined;
+      return content['m.relates_to']['m.in_reply_to'].event_id;
     },
     calcUserName,
     parseMessage

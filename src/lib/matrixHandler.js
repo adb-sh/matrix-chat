@@ -1,4 +1,5 @@
 import matrix from 'matrix-js-sdk';
+import {NotificationHandler} from "@/lib/NotificationHandler";
 
 export class MatrixHandler {
   constructor(clientDisplayName = 'matrix-chat') {
@@ -9,6 +10,7 @@ export class MatrixHandler {
     this.loading = undefined;
     this.user = undefined;
     this.baseUrl = undefined;
+    this.notify = new NotificationHandler();
   }
   login(user, password, baseUrl, onError, callback = ()=>{}){
     if (this.client){ console.log('there is already an active session'); return; }
@@ -57,15 +59,22 @@ export class MatrixHandler {
     await this.client.stopClient();
     this.client = undefined;
   }
-  startSync(callback = ()=>{}){
+  async startSync(callback = ()=>{}){
     this.loading = true;
-    this.client.startClient();
+    await this.client.startClient();
     this.client.once('sync', (state) => {
       console.log(state);
       this.rooms = this.client.getRooms();
-      console.log(this.rooms)
       this.loading = false;
       callback();
+      this.listenToPushEvents()
+    });
+  }
+  listenToPushEvents(){
+    this.client.on('event', event => {
+      if (this.client.getPushActionsForEvent(event).notify){
+        this.notify.showNotification(event.event);
+      }
     });
   }
   async sendEvent({content, type}, roomId, replyTo = undefined){

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App.vue'
-import {router} from './router.js'
+import {router} from '@/router'
 import {MatrixHandler} from './lib/matrixHandler.js'
 import {cookieHandler} from './lib/cookieHandler.js';
 

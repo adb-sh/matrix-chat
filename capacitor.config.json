@@ -4,7 +4,7 @@
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "./dist",
-  "linuxAndroidStudioPath": "~/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/201.7199119/bin/studio.sh",
+  "linuxAndroidStudioPath": "/home/alban/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/201.7199119/bin/studio.sh",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0

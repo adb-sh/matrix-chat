@@ -45,8 +45,8 @@ export default {
   },
   methods:{
     onScroll(){
-      if (this.$refs.timelineContainer.scrollTop === 0) this.loadEvents();
-      this.showScrollBtn = this.scroll.getScrollBottom() > 400;
+      if (this.$refs.timelineContainer.scrollTop < 400 && this.loadingStatus !== 'loading') this.loadEvents();
+      this.showScrollBtn = this.scroll.getScrollBottom() > 500;
     },
     resize(height = this.$refs.newMessage.clientHeight){
       this.$refs.chatContainer.style.height = `calc(100% - ${height}px - 3.5rem)`;
@@ -56,10 +56,10 @@ export default {
     },
     async loadEvents(){
       let scrollBottom = this.scroll.getScrollBottom();
-      this.loadingStatus = 'loading ...';
-      await matrix.client.paginateEventTimeline(this.room.getLiveTimeline(), {backwards: true})
-        .then(state => this.loadingStatus = state?'load more':false);
-      if (this.loadingStatus) this.scroll.setScrollBottom(scrollBottom);
+      this.loadingStatus = 'loading';
+      await matrix.client.scrollback(this.room, 30);
+      this.loadingStatus = 'load more';
+      this.scroll.setScrollBottom(scrollBottom)
     },
     getUser(userId){
       return matrix.client.getUser(userId);
@@ -76,11 +76,12 @@ export default {
     }
   },
   updated(){
-    if(this.scroll.getScrollBottom() < 350) this.scroll.scrollToBottom();
+    if(this.scroll.getScrollBottom() < 400 && this.loadingStatus !== 'loading') this.scroll.scrollToBottom();
   },
   mounted(){
     this.scroll = new scrollHandler(this.$refs.timelineContainer);
     this.scroll.scrollToBottom();
+    this.onScroll();
   },
   watch: {
     '$route'(){

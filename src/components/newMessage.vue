@@ -7,7 +7,7 @@
     <form v-on:submit.prevent="sendMessage()">
       <textarea
         @keyup.enter.exact="sendMessage()"
-        @input="resizeMessageBanner()"
+        @input="resizeMessageBanner(); sendTyping(2000);"
         v-model="event.content.body"
         ref="newMessageInput" class="newMessageInput"
         rows="1" placeholder="type a message ..."
@@ -50,6 +50,11 @@ export default {
       id.style.height = '1.25rem';
       this.onResize(id.parentElement.clientHeight);
     },
+    sendTyping(timeout){
+      if (this.waitForSendTyping) return;
+      matrix.client.sendTyping(this.roomId, true, timeout+100);
+      setTimeout(()=>this.waitForSendTyping=false, timeout);
+    },
     resizeMessageBanner(){
       let id = this.$refs.newMessageInput;
       id.style.height = '1.25rem';
@@ -82,7 +87,8 @@ export default {
           }
         }
       },
-      showEmojiPicker: false
+      showEmojiPicker: false,
+      waitForSendTyping: false
     }
   }
 }

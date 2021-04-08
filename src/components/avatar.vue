@@ -1,36 +1,30 @@
 <template>
-  <img v-if="mxcURL" :src="thumbnailUrl()" class="userThumbnail image"/>
+  <img v-if="mxcURL" :src="getAvatarUrl(mxcURL)" class="userThumbnail image"/>
   <div v-else v-html="getJdenticon()" class="userThumbnail identicon"/>
 </template>
 
 <script>
-import parseMXC from '@modular-matrix/parse-mxc';
-import {matrix} from "@/main";
 import {toSvg} from 'jdenticon';
+import {getAvatarUrl} from '@/lib/getMxc';
 
 export default {
-  name: "userThumbnail.vue",
+  name: 'userThumbnail.vue',
   components: {
   },
   props: {
     mxcURL: String,
     username: String,
     fallback: String,
-    homeserver: String,
     size: Number
   },
   methods: {
-    thumbnailUrl(){
-      let mxc = parseMXC.parse(this.mxcURL);
-      return `${this.homeserver||matrix.baseUrl}/_matrix/media/v1/thumbnail/${
-        mxc.homeserver}/${mxc.id}?width=${this.imageSize}&height=${this.imageSize}&method=${this.resizeMethod}`;
-    },
     getFontSize(){
-      return window.getComputedStyle(document.body,null).fontSize.split("px", 1)||16;
+      return window.getComputedStyle(document.body,null).fontSize.split('px', 1)||16;
     },
     getJdenticon(){
       return toSvg(this.fallback, this.getFontSize()*this.size);
-    }
+    },
+    getAvatarUrl
   },
   data(){
     return {

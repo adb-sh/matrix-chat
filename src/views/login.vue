@@ -42,7 +42,7 @@ export default {
       } if (this.password === '') {
         this.loginError = 'password is empty';
         return;
-      } if (!(this.user.match(/^@[a-zA-Z0-9]+:[a-z0-9]+\.[a-z]/))) {
+      } if (!(this.user.match(/^@[a-zA-Z0-9_.+-]+:[a-z0-9.-]+\.[a-z]+$/))) {
         this.loginError = 'username is in wrong style';
         return;
       }

@@ -29,10 +29,10 @@
           :key="event.origin_server_ts"
           :class="groupTimeline?'indent event':'event'"
           :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`"
-          @contextmenu.prevent="setReplyTo(event)"
+          @contextmenu.prevent.native="setReplyTo(event)"
           :type="event.sender === user?'send':'receive'"
           :event="event"
-          :on-update="()=>onUpdate()"
+          :on-update="onUpdate"
         />
       </div>
     </div>

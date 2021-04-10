@@ -26,6 +26,7 @@ export function getPreviewUrl(mxcUrl, size = 64, resizeMethod = 'crop'){
 }
 
 export function getMediaUrl(mxcUrl){
+  if (!mxcUrl) return undefined;
   let mxc = parseMXC.parse(mxcUrl);
   return `${matrix.baseUrl}/_matrix/media/r0/download/${
     mxc.homeserver}/${mxc.id}`;

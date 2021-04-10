@@ -1,7 +1,7 @@
 <template>
   <div class="event">
     <div v-if="event.type==='m.room.message'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
-      <reply-event :event="replyEvent"/>
+      <reply-event :event="replyEvent" v-if="replyEvent"/>
 
       <div v-if="event.content.msgtype==='m.text'" v-html="parseMessage(event.content.body)"/>
       <div v-else-if="event.content.msgtype==='m.notice'" class="notice" v-html="parseMessage(event.content.body)"/>

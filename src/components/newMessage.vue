@@ -1,9 +1,6 @@
 <template>
   <div class="newMessageBanner" ref="newMessageBanner">
-    <div class="reply" v-if="replyTo" @click="resetReplyTo">
-      <span class="username">{{calcUserName(replyTo.sender)}}</span><br>
-      {{parseMessage(replyTo.content.body)}}
-    </div>
+    <reply-event v-if="replyTo" :event="replyTo" @click.native="resetReplyTo()"/>
     <form v-on:submit.prevent="sendMessage()">
       <textarea
         @keyup.enter.exact="sendMessage()"
@@ -27,10 +24,12 @@ import icon from '@/components/icon.vue';
 import {matrix} from '@/main.js';
 import {parseMessage} from '@/lib/eventUtils';
 import {calcUserName} from '@/lib/matrixUtils';
+import ReplyEvent from '@/components/replyEvent';
 
 export default {
   name: 'newMessage',
   components: {
+    ReplyEvent,
     icon
   },
   props: {

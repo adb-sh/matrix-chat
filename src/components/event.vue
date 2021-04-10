@@ -1,23 +1,41 @@
 <template>
   <div class="event">
-    <div v-if="event.content.msgtype==='m.text'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
-      <div v-if="replyEvent" class="reply">
-        <span class="username">{{calcUserName(replyEvent.sender)}}</span><br>
-        <span v-html="replyEvent.type==='m.room.message'?parseMessage(replyEvent.content.body):'unkown event'"></span>
+    <div v-if="event.type==='m.room.message'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
+      <reply-event :event="replyEvent"/>
+
+      <div v-if="event.content.msgtype==='m.text'" v-html="parseMessage(event.content.body)"/>
+      <div v-else-if="event.content.msgtype==='m.notice'" class="notice" v-html="parseMessage(event.content.body)"/>
+      <div v-else-if="event.content.msgtype==='m.image'" class="image">
+        <img :src="getMediaUrl(event.content.url)" :alt="event.content.body"/><br>
+        {{event.content.body}}
       </div>
-      <div v-html="parseMessage(event.content.body)"></div>
+      <div v-else-if="event.content.msgtype==='m.file'" class="file">
+        file: <a :href="getMediaUrl(event.content.url)">
+          {{event.content.filename || getMediaUrl(event.content.url)}}
+        </a><br>{{event.content.body}}
+      </div>
+      <div v-else-if="event.content.msgtype==='m.audio'" class="audio">
+        <audio controls>
+          <source :src="getMediaUrl(event.content.url)" :type="event.content.mimetype">
+          your browser doesn't support audio
+        </audio><br>
+        {{event.content.body}}
+      </div>
+      <div v-else-if="event.content.msgtype==='m.video'" class="video">
+        <video controls>
+          <source :src="getMediaUrl(event.content.url)" :type="event.content.mimetype">
+          your browser doesn't support video
+        </video><br>
+        {{event.content.body}}
+      </div>
+      <div v-else class="italic">unsupported message type {{event.content.msgtype}}</div>
+
       <div class="time">{{getTime(event.origin_server_ts)}}</div>
     </div>
-    <div v-else-if="event.content.msgtype==='m.notice'" class="notice">
-      {{event.content.body}}
-      <span class="time">{{getTime(event.origin_server_ts)}}</span>
-    </div>
-    <div v-else-if="event.type==='m.room.member'" class="info">
-      {{membershipEvents[event.content.membership](event)}}
-      <span class="time">{{getTime(event.origin_server_ts)}}</span>
-    </div>
-    <div v-else class="info">unknown event
-      <span class="time">{{getTime(event.origin_server_ts)}}</span>
+    <div v-else class="info">
+      <span v-if="event.type==='m.room.member'">{{membershipEvents[event.content.membership](event)}}</span>
+      <span v-else>unsupported event</span>
+      <span class="time"> {{getTime(event.origin_server_ts)}}</span>
     </div>
   </div>
 </template>
@@ -27,9 +45,12 @@ import {matrix} from '@/main';
 import {calcUserName} from '@/lib/matrixUtils';
 import {parseMessage} from '@/lib/eventUtils';
 import {getTime} from '@/lib/getTimeStrings';
+import {getMediaUrl} from '@/lib/getMxc';
+import ReplyEvent from '@/components/replyEvent';
 
 export default {
   name: 'message',
+  components: {ReplyEvent},
   props: {
     type: String,
     event: Object,
@@ -45,12 +66,10 @@ export default {
         && content['m.relates_to']['m.in_reply_to']
         && content['m.relates_to']['m.in_reply_to'].event_id
     },
-    calcMembershipEvents(){
-
-    },
     calcUserName,
     parseMessage,
-    getTime
+    getTime,
+    getMediaUrl
   },
   data(){
     return{
@@ -91,7 +110,7 @@ export default {
     width: max-content;
     min-width: 2rem;
     max-width: calc(100% - 5rem);
-    padding: 0.7rem 1rem 0.45rem 1rem;
+    padding: 0.8rem 1rem 0.45rem 1rem;
     background-color: #42a7b9;
     border-radius: 1rem 1rem 0 1rem;
     text-align: left;
@@ -111,6 +130,30 @@ export default {
       bottom: -0.2rem;
       font-size: 0.7rem;
       text-align: right;
+    }
+    .notice{
+      font-style: italic;
+    }
+    .image{
+      width: 100%;
+      img{
+        width: 100%;
+        height: auto;
+        max-height: 35rem;
+        border-radius: 0.5rem;
+      }
+    }
+    .video{
+      width: 100%;
+      video{
+        width: 100%;
+        height: auto;
+        max-height: 35rem;
+        border-radius: 0.5rem;
+      }
+    }
+    .italic{
+      font-style: italic;
     }
   }
   .messageReceive{

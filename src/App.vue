@@ -39,6 +39,9 @@ input:focus{
   color: #000;
   background-color: #fff;
 }
+a{
+  color: #00BCD4;
+}
 *{
   scrollbar-width: thin;
   scrollbar-color: #42b983 #2220;

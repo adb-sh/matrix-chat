@@ -19,8 +19,14 @@ export function getMxcFromRoomId(roomId){
   return getMxcFromRoom(matrix.client.getRoom(roomId));
 }
 
-export function getAvatarUrl(mxcUrl, size = 64, resizeMethod = 'crop'){
+export function getPreviewUrl(mxcUrl, size = 64, resizeMethod = 'crop'){
   let mxc = parseMXC.parse(mxcUrl);
   return `${matrix.baseUrl}/_matrix/media/v1/thumbnail/${
     mxc.homeserver}/${mxc.id}?width=${size}&height=${size}&method=${resizeMethod}`;
+}
+
+export function getMediaUrl(mxcUrl){
+  let mxc = parseMXC.parse(mxcUrl);
+  return `${matrix.baseUrl}/_matrix/media/r0/download/${
+    mxc.homeserver}/${mxc.id}`;
 }

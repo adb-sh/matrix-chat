@@ -137,7 +137,7 @@ export default {
     .image{
       width: 100%;
       img{
-        width: 100%;
+        max-width: 100%;
         height: auto;
         max-height: 35rem;
         border-radius: 0.5rem;
@@ -146,10 +146,15 @@ export default {
     .video{
       width: 100%;
       video{
-        width: 100%;
+        max-width: 100%;
         height: auto;
         max-height: 35rem;
         border-radius: 0.5rem;
+      }
+    }
+    .audio{
+      audio{
+        max-width: 100%;
       }
     }
     .italic{

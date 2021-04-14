@@ -19,7 +19,7 @@ export function solveMarkdownLinks(text){
   );
 }
 export function fixHtml(text){
-  return text.replace(/>.*\n/gm, '').trim()
+  return text.replace(/> .*\n/gm, '').trim()
     .replace(/</g, '&lt')
     .replace(/>/g, '&gt');
 }

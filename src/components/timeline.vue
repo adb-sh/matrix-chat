@@ -109,8 +109,13 @@ export default {
         }
       }
       .username{
+        position: relative;
         margin-left: 1rem;
         font-weight: bold;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .indent{
         margin-left: 2.5rem;

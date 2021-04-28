@@ -14,13 +14,13 @@
 </template>
 
 <script>
-import avatar from "@/components/avatar";
-import {getMxcFromRoom} from "@/lib/getMxc";
-import {getTime} from "@/lib/getTimeStrings";
-import {calcUserName} from "@/lib/matrixUtils";
+import avatar from '@/components/avatar';
+import {getMxcFromRoom} from '@/lib/getMxc';
+import {getTime} from '@/lib/getTimeStrings';
+import {calcUserName} from '@/lib/matrixUtils';
 
 export default {
-  name: "userListElement",
+  name: 'roomListElement',
   components:{
     avatar
   },
@@ -34,8 +34,8 @@ export default {
       return `${this.calcUserName(event.sender)}: ${event.content.body||'unknown event'} ${getTime(event.origin_server_ts)}`;
     },
     getLatestEvent(room){
-      if (!room.timeline[room.timeline.length-1]) return undefined;
-      return room.timeline[room.timeline.length-1].event;
+      return room.timeline[room.timeline.length-1]
+        && room.timeline[room.timeline.length-1].event;
     },
     calcUserName,
     getMxcFromRoom

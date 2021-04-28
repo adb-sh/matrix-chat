@@ -22,11 +22,12 @@
 <script>
 import textbtn from '@/components/textbtn';
 import {matrix} from '@/main.js';
-import {cookieHandler} from "@/lib/cookieHandler";
-import ThrobberOverlay from "@/components/throbberOverlay";
+import {cookieHandler} from '@/lib/cookieHandler';
+import ThrobberOverlay from '@/components/throbberOverlay';
+import {isValidUserId} from '@/lib/matrixUtils';
 
 export default {
-  name: "login.vue",
+  name: 'login.vue',
   components: {
     ThrobberOverlay,
     textbtn
@@ -42,7 +43,7 @@ export default {
       } if (this.password === '') {
         this.loginError = 'password is empty';
         return;
-      } if (!(this.user.match(/^@[a-zA-Z0-9_.+-]+:[a-z0-9.-]+\.[a-z]+$/))) {
+      } if (!isValidUserId(this.user)) {
         this.loginError = 'username is in wrong style';
         return;
       }
@@ -83,10 +84,10 @@ export default {
   },
   data(){
     return {
-      user: "",
-      password: "",
-      homeServer: "https://adb.sh",
-      loginError: "",
+      user: '',
+      password: '',
+      homeServer: 'https://adb.sh',
+      loginError: '',
       cookie: new cookieHandler(),
       loading: false
     }

@@ -67,7 +67,7 @@ export class MatrixHandler {
       this.rooms = this.client.getRooms();
       this.loading = false;
       callback();
-      this.listenToPushEvents()
+      this.listenToPushEvents();
     });
   }
   listenToPushEvents(){

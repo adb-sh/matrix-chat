@@ -1,57 +1,69 @@
 <template>
-    <div class="newMessageBanner" ref="newMessageBanner">
-      <reply-event v-if="replyTo" :event="replyTo" @click.native="resetReplyTo()"/>
-      <form v-on:submit.prevent="sendMessage()">
-        <textarea
-          @keyup.enter.exact="sendMessage()"
-          @input="resizeMessageBanner(); sendTyping(2000);"
-          v-model="event.content.body"
-          ref="newMessageInput" class="newMessageInput"
-          rows="1" placeholder="type a message ..."
-        />
+  <div class="newMessageBanner" ref="newMessageBanner">
+    <reply-event v-if="replyTo" :event="replyTo" @click.native="resetReplyTo()"/>
+    <event-content v-if="attachment" :content="attachment" class="attachment"/>
+    <form v-on:submit.prevent="sendMessage()">
+      <textarea
+        @keyup.enter.exact="sendMessage()"
+        @input="resizeMessageBanner(); sendTyping(2000);"
+        v-model="event.content.body"
+        ref="newMessageInput" class="newMessageInput"
+        rows="1" placeholder="type a message ..."
+      />
+      <icon
+        v-if="event.content.body && !isRecording"
+        type="submit"
+        title="press enter to submit"
+        class="sendMessageBtn"
+        ic="./sym/ic_send_white.svg"
+      />
+      <div v-else class="recorder">
         <icon
-          v-if="event.content.body && !isRecording"
-          type="submit"
-          title="press enter to submit"
-          class="sendMessageBtn"
-          ic="./sym/ic_send_white.svg"
+          v-if="!isRecording"
+          title="record voice"
+          class="recordBtn start"
+          ic="./sym/ic_mic_white.svg"
+          @click.native="startRecording()"
+          ref="startRecord"
         />
-        <div v-else class="recorder">
+        <div v-else class="voiceMeterContainer">
+          <div class="voiceMeter" ref="voiceMeter"></div>
           <icon
-            v-if="!isRecording"
             title="record voice"
-            class="recordBtn start"
+            class="recordBtn stop"
             ic="./sym/ic_mic_white.svg"
-            @click.native="startRecording()"
-            ref="startRecord"
+            @click.native="stopRecording()"
+            ref="stopRecord"
           />
-          <div v-else class="voiceMeterContainer">
-            <div class="voiceMeter" ref="voiceMeter"></div>
-            <icon
-              title="record voice"
-              class="recordBtn stop"
-              ic="./sym/ic_mic_white.svg"
-              @click.native="stopRecording()"
-              ref="stopRecord"
-            />
-          </div>
         </div>
-      </form>
+      </div>
+    </form>
+    <div class="mediaButtons">
       <icon
         title="toggle emoji"
-        class="emojiToggle"
+        class="leftBtn emojiToggle"
         ic="./sym/ic_insert_emoticon_white.svg"
         @click.native="toggleEmojiPicker()"
-
       />
-      <v-emoji-picker
-        v-if="showEmojiPicker"
-        class="emojiPicker"
-        @select="onSelectEmoji"
-        :dark="true"
-        :continuousList="true"
+      <icon
+        title="upload media"
+        class="leftBtn attachFile"
+        ic="./sym/ic_attach_file_white.svg"
+        @click.native="$refs.fileInput.click()"
       />
+      <input
+        type="file" id="fileInput" ref="fileInput"
+        @change="setAttachment($refs.fileInput.files[0])"
+      >
     </div>
+    <v-emoji-picker
+      v-if="showEmojiPicker"
+      class="emojiPicker"
+      @select="onSelectEmoji"
+      :dark="true"
+      :continuousList="true"
+    />
+  </div>
 </template>
 
 <script>
@@ -62,11 +74,13 @@ import {calcUserName} from '@/lib/matrixUtils';
 import ReplyEvent from '@/components/replyEvent';
 import {VEmojiPicker} from 'v-emoji-picker';
 import Recorder from 'recorder-js';
+import EventContent from '@/components/eventContent';
 const audioContext =  new (window.AudioContext || window.webkitAudioContext)();
 
 export default {
   name: 'newMessage',
   components: {
+    EventContent,
     ReplyEvent,
     icon,
     VEmojiPicker
@@ -128,6 +142,26 @@ export default {
       this.$refs.voiceMeter.style.height = `calc(3rem + ${value/4}px`;
       this.$refs.voiceMeter.style.width = `calc(3rem + ${value/4}px`;
     },
+    setAttachment(file){
+      let reader = new FileReader();
+      reader.onerror = console.error;
+      reader.onload = event => {
+        this.attachment = {
+          msgtype: this.getMsgType(file.type),
+          mimetype: file.type,
+          url: event.target.result
+        };
+        this.event.content.body = file.name;
+      }
+      reader.readAsDataURL(file);
+    },
+    getMsgType(fileType){
+      return {
+        'image': 'm.image',
+        'audio': 'm.audio',
+        'video': 'm.video'
+      }[fileType.split('/', 1)[0]] || 'm.file';
+    },
     parseMessage,
     calcUserName
   },
@@ -147,12 +181,16 @@ export default {
       },
       showEmojiPicker: false,
       waitForSendTyping: false,
-      recorder:  new Recorder(audioContext, {
+      recorder: new Recorder(audioContext, {
         onAnalysed: data => this.setVoiceMeter(data.lineTo)
       }),
       isRecording: false,
-      recBlob: undefined
+      recBlob: undefined,
+      attachment: undefined
     }
+  },
+  updated() {
+    this.resizeMessageBanner();
   }
 }
 </script>
@@ -173,10 +211,10 @@ export default {
   margin-top: 1.25rem;
   margin-bottom: 0.75rem;
   padding: 0;
-  left: 3rem;
+  left: 5.5rem;
   min-height: 1.5rem;
   max-height: 10rem;
-  width: calc(100% - 7rem);
+  width: calc(100% - 10rem);
   height: 1.25rem;
   background-color: #fff0;
   border: 0 solid #fff0;
@@ -215,8 +253,15 @@ export default {
   z-index: 10;
   max-width: calc(100% - 0.5rem - 2px);
 }
-.emojiToggle{
+.mediaButtons{
   position: absolute;
+  left: 0;
+  bottom: 0;
+  height: fit-content;
+  width: fit-content;
+}
+.leftBtn{
+  position: relative;
   left: 0.25rem;
   bottom: 0.5rem;
   background-color: unset;
@@ -261,5 +306,17 @@ export default {
   right: 0;
   border-radius: 0 1rem 0 0;
   overflow: hidden;
+}
+#fileInput{
+  display: none;
+}
+.attachment{
+  max-width: 5rem;
+}
+img{
+  max-width: 10rem;
+  height: auto;
+  max-height: 4rem;
+  border-radius: 0.5rem;
 }
 </style>

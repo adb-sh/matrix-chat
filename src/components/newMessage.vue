@@ -1,43 +1,50 @@
 <template>
   <div class="newMessageBanner" ref="newMessageBanner">
     <reply-event v-if="replyTo" :event="replyTo" @click.native="resetReplyTo()"/>
-    <event-content v-if="attachment" :content="attachment" class="attachment"/>
-    <form v-on:submit.prevent="sendMessage()">
-      <textarea
-        @keyup.enter.exact="sendMessage()"
-        @input="resizeMessageBanner(); sendTyping(2000);"
-        v-model="event.content.body"
-        ref="newMessageInput" class="newMessageInput"
-        rows="1" placeholder="type a message ..."
-      />
+    <div v-if="attachment" class="attachment">
+      <event-content :content="attachment" class="attachmentContent" :compact="true"/>
       <icon
-        v-if="event.content.body && !isRecording"
-        type="submit"
-        title="press enter to submit"
-        class="sendMessageBtn"
-        ic="./sym/ic_send_white.svg"
+        title="remove"
+        class="remove"
+        ic="./sym/ic_close_white.svg"
+        @click.native="resetAttachment()"
       />
-      <div v-else class="recorder">
+    </div>
+    <textarea
+      @keyup.enter.exact="onSubmit(event)"
+      @input="resizeMessageBanner(); sendTyping(2000);"
+      v-model="event.content.body"
+      ref="newMessageInput" class="newMessageInput"
+      rows="1" placeholder="type a message ..."
+    />
+    <icon
+      v-if="event.content.body && !isRecording || attachment"
+      type="submit"
+      title="press enter to submit"
+      class="sendMessageBtn"
+      ic="./sym/ic_send_white.svg"
+      @click.native="onSubmit(event)"
+    />
+    <div v-else class="recorder">
+      <icon
+        v-if="!isRecording"
+        title="record voice"
+        class="recordBtn start"
+        ic="./sym/ic_mic_white.svg"
+        @click.native="startRecording()"
+        ref="startRecord"
+      />
+      <div v-else class="voiceMeterContainer">
+        <div class="voiceMeter" ref="voiceMeter"></div>
         <icon
-          v-if="!isRecording"
           title="record voice"
-          class="recordBtn start"
+          class="recordBtn stop"
           ic="./sym/ic_mic_white.svg"
-          @click.native="startRecording()"
-          ref="startRecord"
+          @click.native="stopRecording()"
+          ref="stopRecord"
         />
-        <div v-else class="voiceMeterContainer">
-          <div class="voiceMeter" ref="voiceMeter"></div>
-          <icon
-            title="record voice"
-            class="recordBtn stop"
-            ic="./sym/ic_mic_white.svg"
-            @click.native="stopRecording()"
-            ref="stopRecord"
-          />
-        </div>
       </div>
-    </form>
+    </div>
     <div class="mediaButtons">
       <icon
         title="toggle emoji"
@@ -53,7 +60,7 @@
       />
       <input
         type="file" id="fileInput" ref="fileInput"
-        @change="setAttachment($refs.fileInput.files[0])"
+        @change="setAttachment({file: $refs.fileInput.files[0]})"
       >
     </div>
     <v-emoji-picker
@@ -92,15 +99,26 @@ export default {
     resetReplyTo: Function
   },
   methods: {
-    sendMessage(){
-      let content = this.event.content;
-      if (!content.body.trim()) return;
-      matrix.sendEvent(this.event, this.roomId, this.replyTo);
-      content.body = '';
+    onSubmit(event){
+      console.log(event)
+      event.content.msgtype==='m.text'?this.sendEvent(event):this.sendMediaEvent(event);
+    },
+    async sendEvent(event){
+      if (!event.content.body.trim()) return;
+      await matrix.sendEvent(this.event, this.roomId, this.replyTo);
+      //await matrix.sendEvent(new Proxy(this.event, this.eventProxy), this.roomId, this.replyTo);
+      event.content.body = '';
+      this.resetAttachment();
       this.resetReplyTo();
       let id = this.$refs.newMessageInput;
       id.style.height = '1.25rem';
       this.onResize(id.parentElement.clientHeight);
+    },
+    sendMediaEvent(event){
+      matrix.client.uploadContent(this.attachment.blob).then(mxc => {
+        event.content.url = mxc;
+        this.sendEvent(event);
+      });
     },
     sendTyping(timeout){
       if (this.waitForSendTyping) return;
@@ -133,8 +151,9 @@ export default {
     stopRecording(){
       this.recorder.stop()
         .then(({blob}) => {
-          this.recBlob = blob;
           this.isRecording=false;
+          blob.name = `Recording-${new Date().toISOString()}.${blob.type.split('/')[1]}`;
+          this.setAttachment({blob});
         });
     },
     setVoiceMeter(value){
@@ -142,18 +161,38 @@ export default {
       this.$refs.voiceMeter.style.height = `calc(3rem + ${value/4}px`;
       this.$refs.voiceMeter.style.width = `calc(3rem + ${value/4}px`;
     },
-    setAttachment(file){
-      let reader = new FileReader();
-      reader.onerror = console.error;
-      reader.onload = event => {
-        this.attachment = {
-          msgtype: this.getMsgType(file.type),
-          mimetype: file.type,
-          url: event.target.result
-        };
-        this.event.content.body = file.name;
-      }
-      reader.readAsDataURL(file);
+    async readFile(file){
+      return await new Promise(resolve => {
+        let reader = new FileReader();
+        reader.onerror = console.error;
+        reader.onload = async event => {
+          resolve(await (await fetch(event.target.result)).blob());
+        }
+        reader.readAsDataURL(file);
+      });
+    },
+    async setAttachment({blob, file = blob}){
+      this.attachment = {
+        msgtype: this.getMsgType(file.type),
+        mimetype: file.type,
+        url: window.URL.createObjectURL(file),
+        blob: blob || await this.readFile(file),
+        file
+      };
+      this.event.content = {
+        body: file.name,
+        msgtype: this.attachment.msgtype,
+        mimetype: this.attachment.mimetype
+      };
+    },
+    resetAttachment(){
+      if (!this.attachment) return;
+      window.URL.revokeObjectURL(this.attachment.file);
+      this.event.content = {
+        body: this.attachment?this.event.content.body.replace(this.attachment.file.name, ''):'',
+        msgtype: 'm.text'
+      };
+      this.attachment = undefined;
     },
     getMsgType(fileType){
       return {
@@ -173,9 +212,7 @@ export default {
           body: '',
           msgtype: 'm.text',
           'm.relates_to': {
-            'm.in_reply_to': {
-              event_id: undefined
-            }
+            'm.in_reply_to': this.replyTo
           }
         }
       },
@@ -186,7 +223,14 @@ export default {
       }),
       isRecording: false,
       recBlob: undefined,
-      attachment: undefined
+      attachment: undefined,
+      eventProxy: {
+        set: ()=>{},
+        get: (target, key) => {
+          if (typeof target[key] === 'object') return new Proxy(target[key], this.eventProxy);
+          return target[key];
+        }
+      }
     }
   },
   updated() {
@@ -195,7 +239,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .newMessageBanner{
   position: absolute;
   bottom: 0;
@@ -269,6 +313,8 @@ export default {
   width: 2.5rem;
   box-shadow: none;
 }
+.emojiToggle{
+}
 .recordBtn{
   position: absolute;
   right: 1rem;
@@ -311,7 +357,23 @@ export default {
   display: none;
 }
 .attachment{
-  max-width: 5rem;
+  top: 0.5rem;
+  left: 0.5rem;
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  .attachmentContent{
+    position: relative;
+    width: fit-content;
+  }
+  .remove{
+    position: absolute;
+    top: 0;
+    right: -3rem;
+    background-color: unset;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
 }
 img{
   max-width: 10rem;

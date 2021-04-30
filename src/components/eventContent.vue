@@ -2,10 +2,10 @@
   <div v-if="content.msgtype==='m.text'" v-html="parseMessage(content.body)"/>
   <div v-else-if="content.msgtype==='m.notice'" class="notice" v-html="parseMessage(content.body)"/>
   <div v-else-if="content.msgtype==='m.image'" class="image">
-    <img :src="getSource(content.url)" :alt="content.body"/><br>
+    <img :src="getSource(content.url)" :alt="content.body" :class="`${compact?'compact':''}`"/><br>
     {{content.body}}
   </div>
-  <div v-else-if="content.msgtype==='m.file'" class="file">
+  <div v-else-if="content.msgtype==='m.file'" :class="`file ${compact?'compact':''}`">
     <icon
       title="file"
       ic="./sym/ic_attach_file_white.svg"
@@ -16,15 +16,15 @@
       </a><br>{{content.body}}
     </div>
   </div>
-  <div v-else-if="content.msgtype==='m.audio'" class="audio">
-    <audio controls>
+  <div v-else-if="content.msgtype==='m.audio'" :class="`audio ${compact?'compact':''}`">
+    <audio controls :class="`${compact?'compact':''}`">
       <source :src="getSource(content.url)" :type="content.mimetype">
       your browser doesn't support audio
     </audio><br>
     {{content.body}}
   </div>
-  <div v-else-if="content.msgtype==='m.video'" class="video">
-    <video controls>
+  <div v-else-if="content.msgtype==='m.video'" :class="`video ${compact?'compact':''}`">
+    <video controls :class="`${compact?'compact':''}`">
       <source :src="getSource(content.url)" :type="content.mimetype">
       your browser doesn't support video
     </video><br>
@@ -42,7 +42,11 @@ export default {
   name: 'eventContent',
   components: {Icon},
   props: {
-    content: Object
+    content: Object,
+    compact: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     getSource(url){
@@ -70,6 +74,10 @@ export default {
     max-height: 35rem;
     border-radius: 0.5rem;
   }
+  .compact{
+    max-width: 8rem;
+    max-height: 8rem;
+  }
 }
 .video{
   width: 100%;
@@ -79,10 +87,18 @@ export default {
     max-height: 35rem;
     border-radius: 0.5rem;
   }
+  .compact{
+    max-width: 8rem;
+    max-height: 8rem;
+  }
 }
 .audio{
   audio{
     max-width: 100%;
+  }
+  .compact{
+    max-width: 16rem;
+    max-height: 8rem;
   }
 }
 .italic{

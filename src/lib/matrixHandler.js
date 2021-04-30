@@ -1,5 +1,5 @@
 import matrix from 'matrix-js-sdk';
-import {NotificationHandler} from "@/lib/NotificationHandler";
+import {NotificationHandler} from '@/lib/NotificationHandler';
 
 export class MatrixHandler {
   constructor(clientDisplayName = 'matrix-chat') {
@@ -78,16 +78,21 @@ export class MatrixHandler {
     });
   }
   async sendEvent({content, type}, roomId, replyTo = undefined){
+    console.log(replyTo, content)
     await this.client.sendEvent(roomId, type, {
       body: content.body.trim(),
       msgtype: content.msgtype,
+      mimetype: content.mimetype,
+      url: content.url,
       'm.relates_to': {
         'm.in_reply_to': {
           event_id: replyTo?replyTo.event_id:undefined
-        }
-      }
+        },
+      },
     }).then(() => console.log('message sent successfully'))
-      .catch((err) => console.log(`error while sending message => ${err}`)
-      );
+      .catch((err) => console.log(`error while sending message => ${err}`));
+    /*return await this.client.sendEvent(roomId, type, content)
+      .then(() => console.log('message sent successfully'))
+      .catch((err) => console.log(`error while sending message => ${err}`));*/
   }
 }

@@ -6,14 +6,20 @@
     {{content.body}}
   </div>
   <div v-else-if="content.msgtype==='m.file'" :class="`file ${compact?'compact':''}`">
-    <icon
-      title="file"
-      ic="./sym/ic_attach_file_white.svg"
-    />
+    <a :href="getSource(content.url)" target="_blank">
+    <div class="fileContent">
+      <icon
+        title="file"
+        ic="./sym/ic_attach_file_white.svg"
+        class="download"
+      />
+      <div class="filename">
+          {{content.filename || getSource(content.url)}}
+      </div>
+    </div>
+    </a>
     <div class="text">
-      <a :href="getSource(content.url)">
-        {{content.filename || getSource(content.url)}}
-      </a><br>{{content.body}}
+      {{content.body}}
     </div>
   </div>
   <div v-else-if="content.msgtype==='m.audio'" :class="`audio ${compact?'compact':''}`">
@@ -59,11 +65,26 @@ export default {
 
 <style scoped lang="scss">
 .file{
-  .text{
+  max-width: 30rem;
+  .fileContent{
     position: relative;
-    left: 4rem;
-    top: 0;
-    width: 100%;
+    background-color: #1d1d1d;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    min-height: 3rem;
+    .filename{
+      display: inline-block;
+      position: relative;
+      margin-left: 4rem;
+      top: 0;
+      height: 100%;
+    }
+    .download{
+      position: absolute;
+    }
+  }
+  .compact{
+    max-width: 20rem;
   }
 }
 .image{

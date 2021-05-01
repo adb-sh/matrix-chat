@@ -105,8 +105,8 @@ export default {
     },
     async sendEvent(event){
       if (!event.content.body.trim()) return;
-      await matrix.sendEvent(this.event, this.roomId, this.replyTo);
-      //await matrix.sendEvent(new Proxy(this.event, this.eventProxy), this.roomId, this.replyTo);
+      if (this.replyTo) this.setReplyTo(this.replyTo);
+      matrix.sendEvent(new Proxy(this.event, this.eventProxyHandler), this.roomId);
       event.content.body = '';
       this.resetAttachment();
       this.resetReplyTo();
@@ -124,6 +124,11 @@ export default {
       if (this.waitForSendTyping) return;
       matrix.client.sendTyping(this.roomId, true, timeout+100);
       setTimeout(()=>this.waitForSendTyping=false, timeout);
+    },
+    setReplyTo(event){
+      this.event.content['m.relates_to'] = {
+        'm.in_reply_to': event
+      }
     },
     resizeMessageBanner(){
       let id = this.$refs.newMessageInput;
@@ -177,12 +182,14 @@ export default {
         mimetype: file.type,
         url: window.URL.createObjectURL(file),
         blob: blob || await this.readFile(file),
+        filename: file.name,
         file
       };
       this.event.content = {
         body: file.name,
         msgtype: this.attachment.msgtype,
-        mimetype: this.attachment.mimetype
+        mimetype: this.attachment.mimetype,
+        filename: file.name
       };
     },
     resetAttachment(){
@@ -212,7 +219,7 @@ export default {
           body: '',
           msgtype: 'm.text',
           'm.relates_to': {
-            'm.in_reply_to': this.replyTo
+            'm.in_reply_to': undefined
           }
         }
       },
@@ -224,10 +231,10 @@ export default {
       isRecording: false,
       recBlob: undefined,
       attachment: undefined,
-      eventProxy: {
-        set: ()=>{},
+      eventProxyHandler: {
+        set: () => true,
         get: (target, key) => {
-          if (typeof target[key] === 'object') return new Proxy(target[key], this.eventProxy);
+          if (typeof target[key] === 'object') return new Proxy(Object.assign({}, target[key]), this.eventProxyHandler);
           return target[key];
         }
       }

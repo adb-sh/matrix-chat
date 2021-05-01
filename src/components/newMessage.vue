@@ -18,33 +18,14 @@
       rows="1" placeholder="type a message ..."
     />
     <icon
-      v-if="event.content.body && !isRecording || attachment"
+      v-if="event.content.body && !getRecordingState() || attachment"
       type="submit"
       title="press enter to submit"
       class="sendMessageBtn"
       ic="./sym/ic_send_white.svg"
       @click.native="onSubmit(event)"
     />
-    <div v-else class="recorder">
-      <icon
-        v-if="!isRecording"
-        title="record voice"
-        class="recordBtn start"
-        ic="./sym/ic_mic_white.svg"
-        @click.native="startRecording()"
-        ref="startRecord"
-      />
-      <div v-else class="voiceMeterContainer">
-        <div class="voiceMeter" ref="voiceMeter"></div>
-        <icon
-          title="record voice"
-          class="recordBtn stop"
-          ic="./sym/ic_mic_white.svg"
-          @click.native="stopRecording()"
-          ref="stopRecord"
-        />
-      </div>
-    </div>
+    <sound-recorder v-else class="recorder" :on-stop="setAttachment" ref="recorder"/>
     <div class="mediaButtons">
       <icon
         title="toggle emoji"
@@ -52,16 +33,7 @@
         ic="./sym/ic_insert_emoticon_white.svg"
         @click.native="toggleEmojiPicker()"
       />
-      <icon
-        title="upload media"
-        class="leftBtn attachFile"
-        ic="./sym/ic_attach_file_white.svg"
-        @click.native="$refs.fileInput.click()"
-      />
-      <input
-        type="file" id="fileInput" ref="fileInput"
-        @change="setAttachment({file: $refs.fileInput.files[0]})"
-      >
+     <fileUpload class="leftBtn" :on-change="setAttachment"/>
     </div>
     <v-emoji-picker
       v-if="showEmojiPicker"
@@ -80,13 +52,15 @@ import {parseMessage} from '@/lib/eventUtils';
 import {calcUserName} from '@/lib/matrixUtils';
 import ReplyEvent from '@/components/replyEvent';
 import {VEmojiPicker} from 'v-emoji-picker';
-import Recorder from 'recorder-js';
 import EventContent from '@/components/eventContent';
-const audioContext =  new (window.AudioContext || window.webkitAudioContext)();
+import SoundRecorder from '@/components/soundRecorder';
+import FileUpload from '@/components/fileUpload';
 
 export default {
   name: 'newMessage',
   components: {
+    FileUpload,
+    SoundRecorder,
     EventContent,
     ReplyEvent,
     icon,
@@ -145,44 +119,16 @@ export default {
     onSelectEmoji(emoji) {
       this.event.content.body += emoji.data;
     },
-    startRecording(){
-      navigator.mediaDevices.getUserMedia({audio: true})
-        .then(stream => {
-          this.recorder.init(stream);
-          this.recorder.start().then(()=>this.isRecording=true);
-        })
-        .catch(err => console.log('unable to get stream', err));
-    },
-    stopRecording(){
-      this.recorder.stop()
-        .then(({blob}) => {
-          this.isRecording=false;
-          blob.name = `Recording-${new Date().toISOString()}.${blob.type.split('/')[1]}`;
-          this.setAttachment({blob});
-        });
-    },
-    setVoiceMeter(value){
-      if (!this.$refs.stopRecord) return;
-      this.$refs.voiceMeter.style.height = `calc(3rem + ${value/4}px`;
-      this.$refs.voiceMeter.style.width = `calc(3rem + ${value/4}px`;
-    },
-    async readFile(file){
-      return await new Promise(resolve => {
-        let reader = new FileReader();
-        reader.onerror = console.error;
-        reader.onload = async event => {
-          resolve(await (await fetch(event.target.result)).blob());
-        }
-        reader.readAsDataURL(file);
-      });
+    getRecordingState(){
+      return this.$refs.recorder && this.$refs.recorder.isRecording
     },
     async setAttachment({blob, file = blob}){
       this.attachment = {
         msgtype: this.getMsgType(file.type),
         mimetype: file.type,
         url: window.URL.createObjectURL(file),
-        blob: blob || await this.readFile(file),
         filename: file.name,
+        blob,
         file
       };
       this.event.content = {
@@ -196,7 +142,7 @@ export default {
       if (!this.attachment) return;
       window.URL.revokeObjectURL(this.attachment.file);
       this.event.content = {
-        body: this.attachment?this.event.content.body.replace(this.attachment.file.name, ''):'',
+        body: this.attachment?this.event.content.body.replace(this.attachment.filename, ''):'',
         msgtype: 'm.text'
       };
       this.attachment = undefined;
@@ -225,11 +171,6 @@ export default {
       },
       showEmojiPicker: false,
       waitForSendTyping: false,
-      recorder: new Recorder(audioContext, {
-        onAnalysed: data => this.setVoiceMeter(data.lineTo)
-      }),
-      isRecording: false,
-      recBlob: undefined,
       attachment: undefined,
       eventProxyHandler: {
         set: () => true,
@@ -320,48 +261,12 @@ export default {
   width: 2.5rem;
   box-shadow: none;
 }
-.emojiToggle{
-}
-.recordBtn{
-  position: absolute;
-  right: 1rem;
-  bottom: 0.25rem;
-  background-color: #1d1d1d;
-  border-radius: 50%;
-}
-.recordBtn.stop{
-  right: 0;
-  bottom: 0;
-  background-color: #c63e3e;
-  box-shadow: none;
-}
-.voiceMeter{
-  position: absolute;
-  background-color: #fff;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  border-radius: 50%;
-  box-shadow: 3px 3px 10px #111;
-}
-.voiceMeterContainer{
-  position: absolute;
-  height: 3rem;
-  width: 3rem;
-  bottom: 0.25rem;
-  right: 1rem;
-}
 .recorder{
   position: absolute;
   height: 100%;
-  width: 8rem;
   bottom: 0;
   right: 0;
   border-radius: 0 1rem 0 0;
-  overflow: hidden;
-}
-#fileInput{
-  display: none;
 }
 .attachment{
   top: 0.5rem;

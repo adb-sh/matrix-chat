@@ -10,7 +10,7 @@
       <room-list-element
         v-for="room in Object.assign([], matrix.client.getRooms())
           .sort(obj => obj.timeline[obj.timeline.length-1].event.origin_server_ts)
-          .filter(prop=>matchResults(prop.name, search))"
+          .filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
         :key="room.roomId" @click.native="openChat(room)"
         :room="room"
         class="roomListElement"
@@ -22,7 +22,7 @@
             .filter(prop=>matchResults(prop.displayName, search)||matchResults(prop.userId, search))
             .slice(0,10)"
           :user="user" :key="user.userId"
-          @click.native="setQuestion(`create private chat with '${search}'?`,()=>search='cool')"
+          @click.native="setQuestion(`create private chat with '${user.displayName}'?`,()=>createRoom({user}))"
         />
         <p class="wideElement">suggestions ↴</p><p class="smallElement">…</p>
         <div class="wideElement">
@@ -31,9 +31,8 @@
              @click="setQuestion(`join room '${search}'?`, ()=>joinRoom(search))"
           >join room: {{search}} ➤</p>
           <p v-if="search.match(/^[a-zA-Z0-9_.+-]+$/)"
-            @click="setQuestion(`create room '${search}'?`,()=>search='cool')"
+            @click="setQuestion(`create room '${search}'?`,()=>createRoom({name: search}))"
           >create room: {{search}} ➤</p>
-          <room-list-element v-if="isValidRoomId(search) && getRoom(search)" :room="getRoom(search)"/>
         </div>
       </div>
     </div>
@@ -101,7 +100,14 @@ export default {
     },
     joinRoom(room){
       this.matrix.client.join(room).then(()=>{
-        this.openChat(room);
+        this.openChat(getRoom(room.room_id));
+      });
+    },
+    async createRoom({name = '', user = undefined}){
+      return this.matrix.client.createRoom({name}).then(room => {
+        if (user) this.matrix.client.invite(room.room_id, user.userId);
+        this.openChat(getRoom(room.room_id));
+        return room;
       });
     },
     getMxcFromRoom,

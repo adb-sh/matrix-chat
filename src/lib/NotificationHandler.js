@@ -1,4 +1,4 @@
-import {getMxcFromUserId, getAvatarUrl} from '@/lib/getMxc';
+import {getMxcFromUserId, getPreviewUrl} from '@/lib/getMxc';
 import {calcUserName} from '@/lib/matrixUtils';
 import {getRoom} from '@/lib/matrixUtils';
 import {router} from '@/router';
@@ -22,7 +22,7 @@ export class NotificationHandler{
     let mxc = getMxcFromUserId(event.sender);
     new Notification(`${calcUserName(event.sender)} in ${getRoom(event.room_id).name}`, {
       body: event.content.body,
-      icon: mxc?getAvatarUrl(mxc):undefined
+      icon: mxc?getPreviewUrl(mxc):undefined
     }).onclick = ()=>router.push(`/rooms/${event.room_id}`);
   }
 }

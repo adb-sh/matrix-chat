@@ -2,34 +2,7 @@
   <div class="event">
     <div v-if="event.type==='m.room.message'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <reply-event :event="replyEvent" v-if="replyEvent"/>
-
-      <div v-if="event.content.msgtype==='m.text'" v-html="parseMessage(event.content.body)"/>
-      <div v-else-if="event.content.msgtype==='m.notice'" class="notice" v-html="parseMessage(event.content.body)"/>
-      <div v-else-if="event.content.msgtype==='m.image'" class="image">
-        <img :src="getMediaUrl(event.content.url)" :alt="event.content.body"/><br>
-        {{event.content.body}}
-      </div>
-      <div v-else-if="event.content.msgtype==='m.file'" class="file">
-        file: <a :href="getMediaUrl(event.content.url)">
-          {{event.content.filename || getMediaUrl(event.content.url)}}
-        </a><br>{{event.content.body}}
-      </div>
-      <div v-else-if="event.content.msgtype==='m.audio'" class="audio">
-        <audio controls>
-          <source :src="getMediaUrl(event.content.url)" :type="event.content.mimetype">
-          your browser doesn't support audio
-        </audio><br>
-        {{event.content.body}}
-      </div>
-      <div v-else-if="event.content.msgtype==='m.video'" class="video">
-        <video controls>
-          <source :src="getMediaUrl(event.content.url)" :type="event.content.mimetype">
-          your browser doesn't support video
-        </video><br>
-        {{event.content.body}}
-      </div>
-      <div v-else class="italic">unsupported message type {{event.content.msgtype}}</div>
-
+      <event-content :content="event.content"/>
       <div class="time">{{getTime(event.origin_server_ts)}}</div>
     </div>
     <div v-else class="info">
@@ -47,10 +20,11 @@ import {parseMessage} from '@/lib/eventUtils';
 import {getTime} from '@/lib/getTimeStrings';
 import {getMediaUrl} from '@/lib/getMxc';
 import ReplyEvent from '@/components/replyEvent';
+import EventContent from '@/components/eventContent';
 
 export default {
   name: 'message',
-  components: {ReplyEvent},
+  components: {EventContent, ReplyEvent},
   props: {
     type: String,
     event: Object,
@@ -132,32 +106,6 @@ export default {
       text-align: right;
     }
     .notice{
-      font-style: italic;
-    }
-    .image{
-      width: 100%;
-      img{
-        max-width: 100%;
-        height: auto;
-        max-height: 35rem;
-        border-radius: 0.5rem;
-      }
-    }
-    .video{
-      width: 100%;
-      video{
-        max-width: 100%;
-        height: auto;
-        max-height: 35rem;
-        border-radius: 0.5rem;
-      }
-    }
-    .audio{
-      audio{
-        max-width: 100%;
-      }
-    }
-    .italic{
       font-style: italic;
     }
   }

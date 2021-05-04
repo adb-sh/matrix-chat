@@ -1,6 +1,5 @@
 import sdk from 'matrix-js-sdk'
 import {matrix} from '@/main';
-import parseMXC from '@modular-matrix/parse-mxc';
 
 export function getMxcFromUser(user){
   return user.avatarUrl;
@@ -20,14 +19,9 @@ export function getMxcFromRoomId(roomId){
 }
 
 export function getPreviewUrl(mxcUrl, size = 64, resizeMethod = 'crop'){
-  let mxc = parseMXC.parse(mxcUrl);
-  return `${matrix.baseUrl}/_matrix/media/v1/thumbnail/${
-    mxc.homeserver}/${mxc.id}?width=${size}&height=${size}&method=${resizeMethod}`;
+  return matrix.client.mxcUrlToHttp(mxcUrl, size, size, resizeMethod);
 }
 
 export function getMediaUrl(mxcUrl){
-  if (!mxcUrl) return undefined;
-  let mxc = parseMXC.parse(mxcUrl);
-  return `${matrix.baseUrl}/_matrix/media/r0/download/${
-    mxc.homeserver}/${mxc.id}`;
+  return matrix.client.mxcUrlToHttp(mxcUrl);
 }

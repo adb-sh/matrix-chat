@@ -6,16 +6,34 @@
     <div id="roomList" class="roomList">
       <h1 class="wideElement">[chat]</h1><h1 class="smallElement">[c]</h1>
       <input v-model="search" class="input wideElement" type="text" maxlength="50" placeholder="search">
-      <div
-        v-for="room in Object.assign([], matrix.rooms)
-          .sort(obj => obj.timeline[obj.timeline.length-1].event.origin_server_ts)"
-        :key="room.roomId" @click="openChat(room)"
-      >
-        <room-list-element
-            v-if="!search || room.name.toLowerCase().includes(search.toLowerCase().trim())"
-            :room="room"
-            class="roomListElement"
+      <p class="wideElement">rooms ↴</p>
+      <room-list-element
+        v-for="room in Object.assign([], matrix.client.getRooms())
+          .sort(obj => obj.timeline[obj.timeline.length-1].event.origin_server_ts)
+          .filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
+        :key="room.roomId" @click.native="openChat(room)"
+        :room="room"
+        class="roomListElement"
+      />
+      <div v-if="search">
+        <p class="wideElement">users ↴</p><p class="smallElement">—</p>
+        <user-list-element
+          v-for="user in matrix.client.getUsers()
+            .filter(prop=>matchResults(prop.displayName, search)||matchResults(prop.userId, search))
+            .slice(0,10)"
+          :user="user" :key="user.userId"
+          @click.native="setQuestion(`create private chat with '${user.displayName}'?`,()=>createRoom({user}))"
         />
+        <p class="wideElement">suggestions ↴</p><p class="smallElement">…</p>
+        <div class="wideElement">
+          <p v-if="isValidUserId(search)">create chat: {{search}} ➤</p>
+          <p v-if="isValidRoomId(search)"
+             @click="setQuestion(`join room '${search}'?`, ()=>joinRoom(search))"
+          >join room: {{search}} ➤</p>
+          <p v-if="search.match(/^[a-zA-Z0-9_.+-]+$/)"
+            @click="setQuestion(`create room '${search}'?`,()=>createRoom({name: search}))"
+          >create room: {{search}} ➤</p>
+        </div>
       </div>
     </div>
     <chat
@@ -28,21 +46,27 @@
     />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <chatInformation v-if="showRoom && showChatInfo" :room="getCurrentRoom()" :close-chat-info="()=>showChatInfo=false"/>
+    <popup-question v-if="popup.question" :callback="popup.callback" :question="popup.question" class="center"/>
   </div>
 </template>
 
 <script>
 import chat from '@/views/chat.vue';
-import chatInformation from "@/components/chatInformation";
-import {matrix} from "@/main";
-import ThrobberOverlay from "@/components/throbberOverlay";
-import {getMxcFromRoom} from "@/lib/getMxc";
-import roomListElement from "@/components/roomListElement";
-import {getRoom} from "@/lib/matrixUtils";
+import chatInformation from '@/components/chatInformation';
+import {matrix} from '@/main';
+import ThrobberOverlay from '@/components/throbberOverlay';
+import {getMxcFromRoom} from '@/lib/getMxc';
+import roomListElement from '@/components/roomListElement';
+import {getRoom, getUser} from '@/lib/matrixUtils';
+import {isValidUserId, isValidRoomId} from '@/lib/matrixUtils';
+import userListElement from '@/components/userListElement';
+import PopupQuestion from '@/components/popupQuestion';
 
 export default {
-  name: "rooms",
+  name: 'rooms',
   components:{
+    PopupQuestion,
+    userListElement,
     ThrobberOverlay,
     chat,
     chatInformation,
@@ -56,21 +80,52 @@ export default {
       this.$nextTick(() => this.showRoom = true);
       this.search = '';
     },
-    getMxcFromRoom,
-    getRoom,
     getCurrentRoom(){
       return getRoom(this.$route.path.split('/')[2]);
     },
     closeChat(){
       this.$router.push('/rooms');
-    }
+    },
+    matchResults(prop, search){
+      return prop.toLowerCase().includes(search.toLowerCase().trim());
+    },
+    setQuestion(question, callback){
+      this.popup = {
+        question,
+        callback:(res)=>{
+          this.popup = false;
+          if (res) callback();
+        }
+      }
+    },
+    joinRoom(room){
+      this.matrix.client.join(room).then(()=>{
+        this.openChat(getRoom(room.room_id));
+      });
+    },
+    async createRoom({name = '', user = undefined}){
+      return this.matrix.client.createRoom({name}).then(room => {
+        if (user) this.matrix.client.invite(room.room_id, user.userId);
+        this.openChat(getRoom(room.room_id));
+        return room;
+      });
+    },
+    getMxcFromRoom,
+    getRoom,
+    getUser,
+    isValidUserId,
+    isValidRoomId
   },
   data(){
     return {
       matrix,
       showChatInfo: false,
       showRoom: true,
-      search: ''
+      search: '',
+      popup:{
+        question: '',
+        callback: ()=>{}
+      }
     }
   },
   mounted() {
@@ -89,6 +144,8 @@ export default {
   background-color: #222;
   text-align: center;
   overflow-y: auto;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 .chat{
   position: absolute;
@@ -122,6 +179,13 @@ input{
 .smallElement{
   display: none;
 }
+.center{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 50;
+}
 
 @media (max-width: 48rem) and (min-width: 30rem) {
   .wideElement{
@@ -134,7 +198,6 @@ input{
     z-index: 30;
     width: 4rem;
     overflow-y: auto;
-    overflow-x: hidden;
     scrollbar-width: none;
   }
   .roomList:hover{

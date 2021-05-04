@@ -1,11 +1,11 @@
 <template>
-  <img v-if="mxcURL" :src="getAvatarUrl(mxcURL)" class="userThumbnail image"/>
+  <img v-if="mxcURL" :src="getPreviewUrl(mxcURL)" class="userThumbnail image"/>
   <div v-else v-html="getJdenticon()" class="userThumbnail identicon"/>
 </template>
 
 <script>
 import {toSvg} from 'jdenticon';
-import {getAvatarUrl} from '@/lib/getMxc';
+import {getPreviewUrl} from '@/lib/getMxc';
 
 export default {
   name: 'userThumbnail.vue',
@@ -24,7 +24,7 @@ export default {
     getJdenticon(){
       return toSvg(this.fallback, this.getFontSize()*this.size);
     },
-    getAvatarUrl
+    getPreviewUrl
   },
   data(){
     return {

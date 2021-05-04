@@ -24,38 +24,23 @@
         >
           {{calcUserName(group[0].sender)}}
         </div>
-        <div
-          :class="groupTimeline?'indent event':'event'"
-           v-for="event in group"
+        <event
+          v-for="event in group"
           :key="event.origin_server_ts"
+          :class="groupTimeline?'indent event':'event'"
           :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`"
-          @contextmenu.prevent="setReplyTo(event)"
-        >
-          <message
-            v-if="event.content.msgtype==='m.text'"
-            :type="event.sender === user?'send':'receive'"
-            :msg=event.content.body :time=getTime(event.origin_server_ts)
-            :content="event.content"
-            :roomId="roomId"
-          />
-          <div v-else-if="event.content.msgtype==='m.notice'" class="notice">
-            {{event.content.body}}
-            <span class="time">{{getTime(event.origin_server_ts)}}</span>
-          </div>
-          <div v-else-if="event.type==='m.room.member'" class="info">
-            {{membershipEvents[event.content.membership]}}
-            <span class="time">{{getTime(event.origin_server_ts)}}</span>
-          </div>
-          <div v-else class="info">unknown event
-            <span class="time">{{getTime(event.origin_server_ts)}}</span></div>
-        </div>
+          @contextmenu.prevent.native="setReplyTo(event)"
+          :type="event.sender === user?'send':'receive'"
+          :event="event"
+          :on-update="onUpdate"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import message from '@/components/message';
+import event from '@/components/event';
 import avatar from '@/components/avatar';
 import splitArray from '@/lib/splitArray';
 import {getDate, getTime} from '@/lib/getTimeStrings';
@@ -64,15 +49,15 @@ import {getUser, calcUserName} from '@/lib/matrixUtils';
 export default {
   name: 'eventGroup',
   components: {
-    message,
+    event,
     avatar
   },
   props: {
     timeline: Array,
     user: String,
     groupTimeline: Boolean,
-    roomId: String,
-    setReplyTo: Function
+    setReplyTo: Function,
+    onUpdate: Function
   },
   methods: {
     getUser,
@@ -80,16 +65,6 @@ export default {
     splitArray,
     getDate,
     getTime
-  },
-  data(){
-    return {
-      membershipEvents:{
-        invite: 'was invented',
-        join: 'joined the room',
-        leave: 'left the room',
-        ban: 'was banned'
-      }
-    }
   }
 }
 </script>
@@ -134,26 +109,13 @@ export default {
         }
       }
       .username{
+        position: relative;
         margin-left: 1rem;
         font-weight: bold;
-      }
-      .event{
-        .info {
-          font-style: italic;
-          margin-top: 0.5rem;
-          margin-bottom: 0.5rem;
-          margin-left: 0.5rem;
-          .time {
-            font-size: 0.7rem;
-          }
-        }
-        .notice{
-          margin-top: 0.5rem;
-          margin-bottom: 0.5rem;
-          .time{
-            font-size: 0.7rem;
-          }
-        }
+        max-width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .indent{
         margin-left: 2.5rem;

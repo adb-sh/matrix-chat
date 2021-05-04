@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import avatar from "@/components/avatar";
+import avatar from '@/components/avatar';
 
 export default {
-  name: "userListElement",
+  name: 'userListElement',
   components:{
     avatar
   },

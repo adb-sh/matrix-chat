@@ -8,10 +8,16 @@ export class cookieHandler {
   getCookies(){
     return this.cookies;
   }
-  setCookie(cookies){
+  setCookies(cookies){
     Object.keys(cookies).forEach(key => {
       this.cookies[key] = cookies[key];
     })
+  }
+  set(key, value){
+    this.cookies[key] = value;
+  }
+  get(key){
+    return this.cookies[key];
   }
   parseCookie(string){
     let cookies = {};
@@ -24,14 +30,12 @@ export class cookieHandler {
   reload(){
     if (document.cookie) this.cookies = this.parseCookie(document.cookie);
     console.log('cookie loaded')
-    console.log(this.cookies);
   }
   store(){
     Object.keys(this.cookies).forEach(key => {
       document.cookie = `${key}=${this.cookies[key]}; expires=${this.expires}; SameSite=${this.SameSite}; Secure;`;
     });
     console.log('cookie stored');
-    console.log(this.cookies);
   }
   toString(cookies = this.cookies){
     let string = '';

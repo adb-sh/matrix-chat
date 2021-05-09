@@ -36,7 +36,7 @@
      <fileUpload class="leftBtn" :on-change="setAttachment"/>
     </div>
     <v-emoji-picker
-      v-if="showEmojiPicker"
+      v-show="showEmojiPicker"
       class="emojiPicker"
       @select="onSelectEmoji"
       :dark="true"
@@ -79,7 +79,7 @@ export default {
     },
     async sendEvent(event){
       if (!event.content.body.trim()) return;
-      if (this.replyTo) this.setReplyTo(this.replyTo);
+      this.setReplyTo(this.replyTo);
       matrix.sendEvent(new Proxy(this.event, this.eventProxyHandler), this.roomId);
       event.content.body = '';
       this.resetAttachment();
@@ -139,7 +139,7 @@ export default {
       };
     },
     resetAttachment(){
-      if (!this.attachment) return;
+      if (!this.attachment) return this.attachment = undefined;
       window.URL.revokeObjectURL(this.attachment.file);
       this.event.content = {
         body: this.attachment?this.event.content.body.replace(this.attachment.filename, ''):'',

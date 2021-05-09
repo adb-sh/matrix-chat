@@ -48,7 +48,8 @@ export class MatrixHandler {
       baseUrl,
       accessToken,
       userId,
-      store: new matrix.MemoryStore(window.localStorage)
+      store: new matrix.MemoryStore(window.localStorage),
+      sessionStore: new matrix.WebStorageSessionStore(window.localStorage)
     });
     this.user = userId;
     this.baseUrl = baseUrl;

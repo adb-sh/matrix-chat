@@ -22,9 +22,9 @@
 <script>
 import textbtn from '@/components/textbtn';
 import {matrix} from '@/main.js';
-import {cookieHandler} from '@/lib/cookieHandler';
 import ThrobberOverlay from '@/components/throbberOverlay';
 import {isValidUserId} from '@/lib/matrixUtils';
+import {DataStore} from '@/lib/DataStore';
 
 export default {
   name: 'login.vue',
@@ -52,14 +52,11 @@ export default {
         this.loginError = `login failed: ${error}`;
         this.loading = false;
       }, token => {
-        this.loading = 'store token';
-        this.cookie.setCookie({
+        this.store.setObj({
           baseUrl: this.homeServer,
           userId: this.user,
           accessToken: token
         });
-        this.cookie.setExpire(15);
-        this.cookie.store();
         this.loading = false;
         this.$router.push('/rooms/');
       });
@@ -67,14 +64,11 @@ export default {
     async logout(){
       this.loading = 'logging out';
       await matrix.logout();
-      this.loading = 'remove token';
-      this.cookie.setCookie({
+      this.store.setObj({
         baseUrl: undefined,
         userId: undefined,
         accessToken: undefined
       });
-      this.cookie.setExpire(0);
-      this.cookie.store();
       this.loading = false;
       this.$forceUpdate();
     },
@@ -88,7 +82,7 @@ export default {
       password: '',
       homeServer: 'https://adb.sh',
       loginError: '',
-      cookie: new cookieHandler(),
+      store: new DataStore(),
       loading: false
     }
   }

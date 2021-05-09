@@ -9,7 +9,7 @@ export const router = new VueRouter({
     {
       path: '/',
       name: 'home',
-      component: login
+      component: rooms
     },
     {
       path: '/login',

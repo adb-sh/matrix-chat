@@ -25,6 +25,7 @@ import {matrix} from '@/main.js';
 import ThrobberOverlay from '@/components/throbberOverlay';
 import {isValidUserId} from '@/lib/matrixUtils';
 import {DataStore} from '@/lib/DataStore';
+const store = new DataStore();
 
 export default {
   name: 'login.vue',
@@ -34,25 +35,14 @@ export default {
   },
   methods: {
     login(){
-      if (matrix.client !== undefined) {
-        this.loginError = 'you are already logged in';
-        return;
-      } if (this.user === '') {
-        this.loginError = 'username is empty';
-        return;
-      } if (this.password === '') {
-        this.loginError = 'password is empty';
-        return;
-      } if (!isValidUserId(this.user)) {
-        this.loginError = 'username is in wrong style';
-        return;
-      }
+      // eslint-disable-next-line no-cond-assign
+      if (this.loginError = this.getInputErrors()) return false;
       this.loading = 'logging in';
       matrix.login(this.user, this.password, this.homeServer, (error) => {
         this.loginError = `login failed: ${error}`;
         this.loading = false;
       }, token => {
-        this.store.setObj({
+        this.store.set('login', {
           baseUrl: this.homeServer,
           userId: this.user,
           accessToken: token
@@ -64,13 +54,16 @@ export default {
     async logout(){
       this.loading = 'logging out';
       await matrix.logout();
-      this.store.setObj({
-        baseUrl: undefined,
-        userId: undefined,
-        accessToken: undefined
-      });
+      this.store.set('login', {});
       this.loading = false;
       this.$forceUpdate();
+    },
+    getInputErrors(){
+      if (matrix.client !== undefined) return 'you are already logged in';
+      if (this.user === '') return 'username is empty';
+      if (this.password === '') return 'password is empty';
+      if (!isValidUserId(this.user)) return 'username is in wrong style';
+      return false;
     },
     showLogin(){
       return matrix.client === undefined;
@@ -82,7 +75,7 @@ export default {
       password: '',
       homeServer: 'https://adb.sh',
       loginError: '',
-      store: new DataStore(),
+      store,
       loading: false
     }
   }

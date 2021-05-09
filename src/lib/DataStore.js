@@ -1,4 +1,6 @@
 import {cookieHandler} from '@/lib/cookieHandler';
+import {Capacitor, Plugins} from '@capacitor/core';
+const {Storage} = Plugins;
 
 export class DataStore{
   constructor(){
@@ -6,17 +8,14 @@ export class DataStore{
     this.cookie.setExpire(15);
     this.store = localStorage;
   }
-  set(key, value){
-    this.cookie.set(key, value);
+  async set(key, value){
+    if (Capacitor.isNative) return await Storage.set({key, value: JSON.stringify(value)});
+    this.store.setItem(key, JSON.stringify(value));
+    this.cookie.set(key, JSON.stringify(value));
     this.cookie.store();
-    this.store.setItem(key, value);
   }
-  get(key){
-    return this.store.getItem(key) || this.cookie.get(key);
-  }
-  setObj(obj){
-    this.cookie.setCookies(obj);
-    this.cookie.store();
-    Object.keys(obj).forEach(key => this.store.setItem(key, obj[key]));
+  async get(key){
+    if (Capacitor.isNative) return JSON.parse((await Storage.get({key})).value||'null');
+    return JSON.parse(this.store.getItem(key) || this.cookie.get(key) || 'null');
   }
 }

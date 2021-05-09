@@ -22,7 +22,7 @@
       type="submit"
       title="press enter to submit"
       class="sendMessageBtn"
-      ic="./sym/ic_send_white.svg"
+      :ic="isSending?'./sym/throbber.svg':'./sym/ic_send_white.svg'"
       @click.native="onSubmit(event)"
     />
     <sound-recorder v-else class="recorder" :on-stop="setAttachment" ref="recorder"/>
@@ -74,13 +74,15 @@ export default {
   },
   methods: {
     onSubmit(event){
-      console.log(event)
+      if (this.isSending) return;
       event.content.msgtype==='m.text'?this.sendEvent(event):this.sendMediaEvent(event);
     },
     async sendEvent(event){
       if (!event.content.body.trim()) return;
       this.setReplyTo(this.replyTo);
-      matrix.sendEvent(new Proxy(this.event, this.eventProxyHandler), this.roomId);
+      this.isSending = true;
+      await matrix.sendEvent(new Proxy(this.event, this.eventProxyHandler), this.roomId);
+      this.isSending = false;
       event.content.body = '';
       this.resetAttachment();
       this.resetReplyTo();
@@ -89,6 +91,7 @@ export default {
       this.onResize(id.parentElement.clientHeight);
     },
     sendMediaEvent(event){
+      this.isSending = true;
       matrix.client.uploadContent(this.attachment.blob).then(mxc => {
         event.content.url = mxc;
         this.sendEvent(event);
@@ -169,20 +172,21 @@ export default {
           }
         }
       },
-      showEmojiPicker: false,
-      waitForSendTyping: false,
-      attachment: undefined,
       eventProxyHandler: {
         set: () => true,
         get: (target, key) => {
           if (typeof target[key] === 'object') return new Proxy(Object.assign({}, target[key]), this.eventProxyHandler);
           return target[key];
         }
-      }
+      },
+      showEmojiPicker: false,
+      waitForSendTyping: false,
+      attachment: undefined,
+      isSending: false
     }
   },
   updated() {
-    this.resizeMessageBanner();
+    this.$nextTick(this.resizeMessageBanner);
   }
 }
 </script>

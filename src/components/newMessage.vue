@@ -2,7 +2,7 @@
   <div class="newMessageBanner" ref="newMessageBanner">
     <reply-event v-if="replyTo" :event="replyTo" @click.native="resetReplyTo()"/>
     <div v-if="attachment" class="attachment">
-      <event-content :content="attachment" class="attachmentContent" :compact="true"/>
+      <event-content :content="attachment" class="attachmentContent" :compact="true" :onUpdate="resizeMessageBanner()"/>
       <icon
         title="remove"
         class="remove"
@@ -13,6 +13,7 @@
     <textarea
       @keyup.enter.exact="onSubmit(event)"
       @input="resizeMessageBanner(); sendTyping(2000);"
+      @paste="onPaste"
       v-model="event.content.body"
       ref="newMessageInput" class="newMessageInput"
       rows="1" placeholder="type a message ..."
@@ -55,6 +56,7 @@ import {VEmojiPicker} from 'v-emoji-picker';
 import EventContent from '@/components/eventContent';
 import SoundRecorder from '@/components/soundRecorder';
 import FileUpload from '@/components/fileUpload';
+import {readFileBlob} from '@/lib/readFileBlob';
 
 export default {
   name: 'newMessage',
@@ -153,6 +155,12 @@ export default {
         'audio': 'm.audio',
         'video': 'm.video'
       }[fileType.split('/', 1)[0]] || 'm.file';
+    },
+    onPaste(event){
+      let item = (event.clipboardData || event.originalEvent.clipboardData).items[0];
+      if (item.kind !== 'file') return false;
+      let file = item.getAsFile();
+      return readFileBlob(file).then(blob => this.setAttachment({blob, file}));
     },
     parseMessage,
     calcUserName

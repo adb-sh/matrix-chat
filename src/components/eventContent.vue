@@ -52,6 +52,10 @@ export default {
     compact: {
       type: Boolean,
       default: false
+    },
+    onUpdate: {
+      type: Function,
+      default: ()=>{}
     }
   },
   methods: {
@@ -59,6 +63,9 @@ export default {
       return url.includes('mxc')?getMediaUrl(url):url;
     },
     parseMessage
+  },
+  updated() {
+    this.onUpdate();
   }
 }
 </script>

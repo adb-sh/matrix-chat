@@ -15,6 +15,7 @@
 
 <script>
 import icon from '@/components/icon';
+import {readFileBlob} from '@/lib/readFileBlob';
 
 export default {
   name: 'soundRecorder',
@@ -26,21 +27,11 @@ export default {
   },
   methods: {
     setFile({file}){
-      this.readFile(file).then(blob => {
+      readFileBlob(file).then(blob => {
         blob.name = file.name;
         this.onChange({blob})
       });
-    },
-    readFile(file){
-      return new Promise(resolve => {
-        let reader = new FileReader();
-        reader.onerror = console.error;
-        reader.onload = async event => {
-          resolve(await (await fetch(event.target.result)).blob());
-        }
-        reader.readAsDataURL(file);
-      });
-    },
+    }
   }
 }
 </script>

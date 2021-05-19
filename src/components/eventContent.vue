@@ -1,5 +1,5 @@
 <template>
-  <div v-if="content.msgtype==='m.text'" v-html="parseMessage(content.body)"/>
+  <div v-if="content.msgtype==='m.text'" v-html="parseMessage(content.body)" :class="getEmojiClass(content)"/>
   <div v-else-if="content.msgtype==='m.notice'" class="notice" v-html="parseMessage(content.body)"/>
   <div v-else-if="content.msgtype==='m.image'" class="image">
     <img :src="getSource(content.url)" :alt="content.body" :class="`${compact?'compact':''}`"/><br>
@@ -62,6 +62,17 @@ export default {
     getSource(url){
       return url.includes('mxc')?getMediaUrl(url):url;
     },
+    getEmojiContentLength(content){
+      return content.body.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])+$/)
+          && content.body.match(/\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]/g).length
+          || 0;
+    },
+    getEmojiClass(content){
+      let emojiLength = this.getEmojiContentLength(content);
+      if (emojiLength > 1) return 'emoji';
+      if (emojiLength === 1) return 'bigEmoji';
+      return '';
+    },
     parseMessage
   },
   updated() {
@@ -71,6 +82,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.emoji{
+  font-size: 2rem;
+}
+.bigEmoji{
+  font-size: 3rem;
+}
 .file{
   max-width: 30rem;
   .fileContent{

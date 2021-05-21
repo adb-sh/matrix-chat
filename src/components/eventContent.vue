@@ -36,7 +36,8 @@
     </video><br>
     {{content.body}}
   </div>
-  <div v-else class="italic">unsupported message type {{content.msgtype}}</div>
+  <div v-else-if="content.msgtype" class="italic">unsupported message type: {{content.msgtype}}</div>
+  <div v-else class="italic">deleted message</div>
 </template>
 
 <script>

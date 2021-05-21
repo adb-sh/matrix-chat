@@ -5,9 +5,9 @@
       <event-content :content="event.content"/>
       <div class="time">{{getTime(event.origin_server_ts)}}</div>
     </div>
-    <div v-else class="info">
+    <div v-else :class="type==='send'?'info send':'info receive'">
       <span v-if="event.type==='m.room.member'">{{membershipEvents[event.content.membership](event)}}</span>
-      <span v-else>unsupported event</span>
+      <span v-else>unsupported event: {{event.type}}</span>
       <span class="time"> {{getTime(event.origin_server_ts)}}</span>
     </div>
   </div>
@@ -49,10 +49,12 @@ export default {
     return{
       replyEvent: undefined,
       membershipEvents:{
-        invite(event){ return `invited ${calcUserName(event.target.userId)}` },
+        invite(event){ return `invited ${event.target?calcUserName(event.target.userId):event.content.displayname||event.state_key}` },
         join(event){
-          if (event.content.displayname !== null) return `changed username to ${event.content.displayname}`
-          return 'joined the room'
+          if (!event.unsigned.prev_content) return 'joined the room';
+          if (event.unsigned.prev_content.displayName !== event.content.displayname)
+            return `changed displayname from ${event.unsigned.prev_content.displayname} to ${event.content.displayname}`;
+          return 'updated their account';
         },
         leave(){ return 'left the room' },
         ban(event){return `banned ${calcUserName(event.target.userId)}` }
@@ -78,6 +80,9 @@ export default {
     .time {
       font-size: 0.7rem;
     }
+  }
+  .info.send{
+    text-align: right;
   }
   .message{
     position: relative;

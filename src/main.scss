@@ -1,0 +1,50 @@
+:root {
+  --primary: #2196f3;
+  --secondary: #2196f3;
+
+  --red: #e53935;
+  --green: #4caf50;
+  --blue: #03a9f4;
+  --teal: #009688;
+
+  --white: #fff;
+  --black: #000;
+
+  --grey100: #fff;
+  --grey200: #414141;
+  --grey300: #313131;
+  --grey400: #2d2d2d;
+  --grey500: #222222;
+  --grey600: #1d1d1d;
+  --grey700: #111111;
+  --grey800: #050505;
+  --grey900: #000;
+
+  --shadow100: 2px 2px 5px #111;
+  --shadow200: 3px 3px 10px #111;
+  --shadow300: 6px 6px 20px #111;
+}
+
+input, textarea, select {
+  background-color: var(--grey400);
+  border-radius: 0.7rem;
+  border: none;
+  padding: 0.5rem;
+  color: var(--grey100);
+  outline: none;
+  margin: 0.2rem;
+}
+input:focus, textarea:focus {
+  background-color: var(--grey300);
+}
+
+textarea {
+  width: 20rem;
+  min-width: 10rem;
+  min-height: 3rem;
+  max-width: calc(100% - 1.2rem);
+}
+
+.viewer-backdrop{
+  background-color: #000e !important;
+}

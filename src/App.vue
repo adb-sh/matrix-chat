@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="content">
+    <div id="appContent">
       <router-view />
       <error />
     </div>
@@ -18,26 +18,11 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@import "main.scss";
+
 body{
   margin: 0;
-}
-input{
-  padding: 0 2rem 0 2rem;
-  height: 2.5rem;
-  color: #fff;
-  background-color: #1d1d1d;
-  border-radius: 1.25rem;
-  border: 0.1rem solid #fff;
-  text-align: center;
-  font-size: 1.1rem;
-  margin: 0.5rem;
-  appearance: none;
-  outline: none;
-}
-input:focus{
-  color: #000;
-  background-color: #fff;
 }
 a{
   color: #00BCD4;
@@ -65,7 +50,7 @@ a{
   min-height: 100%;
   width: 100%;
 }
-.content{
+#appContent{
   position: absolute;
   top: 0;
   left: calc(50% - 35rem);
@@ -77,7 +62,7 @@ a{
   box-shadow: 3px 3px 10px #111;
 }
 @media (max-width: 75rem){
-  .content{
+  #appContent{
     width: 100%;
     left: 0;
   }

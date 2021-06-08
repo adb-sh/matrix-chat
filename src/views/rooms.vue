@@ -120,10 +120,10 @@ export default {
       });
     },
     setShowCreateRoom(props, callback=()=>{}){
-      this.createRoom = {
+      this.showCreateRoom = {
         props,
         callback:(res)=>{
-          this.createRoom = {};
+          this.showCreateRoom = {};
           if (res) callback(res);
         }
       }

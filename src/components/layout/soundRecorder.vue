@@ -46,6 +46,7 @@ export default {
       this.onStart();
       navigator.mediaDevices.getUserMedia({audio: true})
         .then(stream => {
+          this.stream = stream;
           this.recorder.init(stream);
           this.recorder.start().then(()=>this.isRecording=true);
         })
@@ -56,6 +57,7 @@ export default {
         .then(({blob}) => {
           blob.name = `Recording-${new Date().toISOString()}.${blob.type.split('/')[1]}`;
           this.onStop({blob});
+          this.stream.getTracks().map(track => track.stop());
           this.isRecording=false;
         });
     },
@@ -68,8 +70,11 @@ export default {
   data(){
     return{
       recorder: new Recorder(audioContext, {
-        onAnalysed: data => this.setVoiceMeter(data.lineTo)
+        onAnalysed: data => {
+          this.setVoiceMeter(data.lineTo);
+        }
       }),
+      stream: undefined,
       isRecording: false
     }
   }

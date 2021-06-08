@@ -52,11 +52,15 @@ export default {
         invite(event){ return `invited ${event.target?calcUserName(event.target.userId):event.content.displayname||event.state_key}` },
         join(event){
           if (!event.unsigned.prev_content) return 'joined the room';
-          if (event.unsigned.prev_content.displayName !== event.content.displayname)
+          if (event.unsigned.prev_content.membership === 'invite') return 'accepted invite';
+          if (event.unsigned.prev_content.displayname !== event.content.displayname)
             return `changed displayname from ${event.unsigned.prev_content.displayname} to ${event.content.displayname}`;
           return 'updated their account';
         },
-        leave(){ return 'left the room' },
+        leave(event){
+          if (event.unsigned.prev_content && event.unsigned.prev_content.membership === 'invite') return 'rejected invite';
+          return 'left the room'
+        },
         ban(event){return `banned ${calcUserName(event.target.userId)}` }
       }
     }

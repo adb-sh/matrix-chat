@@ -19,8 +19,8 @@ import {calcUserName} from '@/lib/matrixUtils';
 import {parseMessage} from '@/lib/eventUtils';
 import {getTime} from '@/lib/getTimeStrings';
 import {getMediaUrl} from '@/lib/getMxc';
-import ReplyEvent from '@/components/replyEvent';
-import EventContent from '@/components/eventContent';
+import ReplyEvent from '@/components/chat/replyEvent';
+import EventContent from '@/components/chat/eventContent';
 
 export default {
   name: 'message',

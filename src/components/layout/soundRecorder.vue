@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import icon from '@/components/icon';
+import icon from '@/components/layout/icon';
 import Recorder from 'recorder-js';
 const audioContext =  new (window.AudioContext || window.webkitAudioContext)();
 

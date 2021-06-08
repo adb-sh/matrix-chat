@@ -1,39 +1,34 @@
 <template>
-  <div class="chatInfo">
-    <div class="box">
-      <div class="scrollContainer">
-        <div class="topContainer">
-          <avatar
-            class="roomImage"
-            :mxcURL="getMxcFromRoom(room)"
-            :fallback="room.roomId"
-            :size="5"
-          />
-          <div class="info">
-            <div class="roomName">{{room.name}}</div>
-            <div class="users">{{members.length}} members</div>
-          </div>
-        </div>
-        <user-list-element v-for="member in members.slice(0,20)" :key="member" :user="getUser(member)"/>
-        <p v-if="members.length>20">and {{members.length-20}} other members</p>
+  <popup :on-close="closeChatInfo" class="popup">
+    <div class="topContainer">
+      <avatar
+        class="roomImage"
+        :mxcURL="getMxcFromChat(room)"
+        :fallback="room.roomId"
+        :size="5"
+      />
+      <div class="info">
+        <div class="roomName">{{room.name}}</div>
+        <div class="users">{{members.length}} members</div>
       </div>
     </div>
-    <icon class="closeBtn" @click.native="closeChatInfo()" ic="./sym/ic_close_white.svg" />
-  </div>
+    <user-list-element v-for="member in members.slice(0,20)" :key="member" :user="getUser(member)"/>
+    <p v-if="members.length>20">and {{members.length-20}} other members</p>
+  </popup>
 </template>
 <script>
-import icon from './icon.vue';
-import UserListElement from "@/components/userListElement";
-import avatar from "@/components/avatar";
-import {getMxcFromRoom} from "@/lib/getMxc";
-import {getUser} from "@/lib/matrixUtils";
+import UserListElement from '@/components/matrix/userListElement';
+import avatar from '@/components/matrix/avatar';
+import {getMxcFromChat} from '@/lib/getMxc';
+import {getUser} from '@/lib/matrixUtils';
+import popup from '@/components/layout/popup';
 
 export default {
-  name: "chatInformation",
+  name: 'chatInformation',
   components:{
     avatar,
     UserListElement,
-    icon,
+    popup
   },
   props:{
     room: {},
@@ -44,7 +39,7 @@ export default {
       return Object.keys(this.room.currentState.members)
     },
     getUser,
-    getMxcFromRoom
+    getMxcFromChat
   },
   data(){
     return{
@@ -83,6 +78,9 @@ export default {
     top: 0;
     height: 100%;
   }
+}
+.popup{
+  min-height: calc(100% - 10rem);
 }
 .closeBtn{
   position: absolute;

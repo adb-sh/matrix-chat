@@ -1,37 +1,44 @@
 <template>
-  <div v-if="matrix.loading">
-    <throbber-overlay text="loading"/>
-  </div>
+  <overlay v-if="matrix.loading"><throbber text="loading" class="center"/></overlay>
   <div v-else>
     <div id="roomList" class="roomList">
       <h1 class="wideElement">[chat]</h1><h1 class="smallElement">[c]</h1>
       <input v-model="search" class="input wideElement" type="text" maxlength="50" placeholder="search">
-      <p class="wideElement">rooms ↴</p>
+      <p class="wideElement">- rooms -</p>
       <room-list-element
-        v-for="room in Object.assign([], matrix.client.getRooms())
-          .sort(obj => obj.timeline[obj.timeline.length-1].event.origin_server_ts)
+        v-for="room in matrix.client.getRooms()
           .filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
         :key="room.roomId" @click.native="openChat(room)"
         :room="room"
         class="roomListElement"
       />
       <div v-if="search">
-        <p class="wideElement">users ↴</p><p class="smallElement">—</p>
+        <p class="wideElement">- users -</p><p class="smallElement">—</p>
         <user-list-element
           v-for="user in matrix.client.getUsers()
             .filter(prop=>matchResults(prop.displayName, search)||matchResults(prop.userId, search))
             .slice(0,10)"
           :user="user" :key="user.userId"
-          @click.native="setQuestion(`create private chat with '${user.displayName}'?`,()=>createRoom({user}))"
+          @click.native="setQuestion({
+            title:'New Chat',
+            question:`Create private chat with '${user.displayName}'?`,
+            callback:()=>createRoom({users:[user], access: 'private'}).then(openChat)
+          })"
         />
-        <p class="wideElement">suggestions ↴</p><p class="smallElement">…</p>
+        <p class="wideElement">- suggestions -</p><p class="smallElement">…</p>
         <div class="wideElement">
-          <p v-if="isValidUserId(search)">create chat: {{search}} ➤</p>
+          <p v-if="isValidUserId(search)" class="suggestion">create chat: {{search}} ➤</p>
           <p v-if="isValidRoomId(search)"
-             @click="setQuestion(`join room '${search}'?`, ()=>joinRoom(search))"
+            class="suggestion"
+            @click="setQuestion({
+              title:'Join room',
+              question:`Join '${search}'?`,
+              callback:()=>joinRoom(search)
+            })"
           >join room: {{search}} ➤</p>
           <p v-if="search.match(/^[a-zA-Z0-9_.+-]+$/)"
-            @click="setQuestion(`create room '${search}'?`,()=>createRoom({name: search}))"
+            @click="setShowCreateRoom({name: search}, openChat)"
+            class="suggestion"
           >create room: {{search}} ➤</p>
         </div>
       </div>
@@ -45,32 +52,40 @@
       :open-chat-info="()=>showChatInfo=true"
     />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
-    <chatInformation v-if="showRoom && showChatInfo" :room="getCurrentRoom()" :close-chat-info="()=>showChatInfo=false"/>
-    <popup-question v-if="popup.question" :callback="popup.callback" :question="popup.question" class="center"/>
+    <overlay>
+      <chatInformation v-if="showRoom && showChatInfo" :room="getCurrentRoom()" :close-chat-info="()=>showChatInfo=false" class="center"/>
+      <new-room v-if="showCreateRoom.props" :callback="showCreateRoom.callback" :props="showCreateRoom.props" class="center"/>
+      <popup-question v-if="popup.question" :callback="popup.callback" :question="popup.question" :title="popup.title" class="center"/>
+    </overlay>
   </div>
 </template>
 
 <script>
-import chat from '@/views/chat.vue';
-import chatInformation from '@/components/chatInformation';
+import chat from '@/components/chat/chat.vue';
+import chatInformation from '@/components/chat/chatInformation';
 import {matrix} from '@/main';
-import ThrobberOverlay from '@/components/throbberOverlay';
 import {getMxcFromRoom} from '@/lib/getMxc';
-import roomListElement from '@/components/roomListElement';
+import roomListElement from '@/components/matrix/roomListElement';
 import {getRoom, getUser} from '@/lib/matrixUtils';
 import {isValidUserId, isValidRoomId} from '@/lib/matrixUtils';
-import userListElement from '@/components/userListElement';
-import PopupQuestion from '@/components/popupQuestion';
+import userListElement from '@/components/matrix/userListElement';
+import PopupQuestion from '@/components/layout/popupQuestion';
+import newRoom from '@/components/matrix/newRoom';
+import Overlay from '@/components/layout/overlay';
+import Throbber from '@/components/layout/throbber';
+import {createRoom} from '@/lib/matrixUtils';
 
 export default {
   name: 'rooms',
   components:{
+    Throbber,
+    Overlay,
     PopupQuestion,
     userListElement,
-    ThrobberOverlay,
     chat,
     chatInformation,
-    roomListElement
+    roomListElement,
+    newRoom
   },
   methods:{
     openChat(room){
@@ -89,11 +104,12 @@ export default {
     matchResults(prop, search){
       return prop.toLowerCase().includes(search.toLowerCase().trim());
     },
-    setQuestion(question, callback){
+    setQuestion({title, question, callback}){
       this.popup = {
         question,
+        title,
         callback:(res)=>{
-          this.popup = false;
+          this.popup = {};
           if (res) callback();
         }
       }
@@ -103,18 +119,21 @@ export default {
         this.openChat(getRoom(room.room_id));
       });
     },
-    async createRoom({name = '', user = undefined}){
-      return this.matrix.client.createRoom({name}).then(room => {
-        if (user) this.matrix.client.invite(room.room_id, user.userId);
-        this.openChat(getRoom(room.room_id));
-        return room;
-      });
+    setShowCreateRoom(props, callback=()=>{}){
+      this.createRoom = {
+        props,
+        callback:(res)=>{
+          this.createRoom = {};
+          if (res) callback(res);
+        }
+      }
     },
     getMxcFromRoom,
     getRoom,
     getUser,
     isValidUserId,
-    isValidRoomId
+    isValidRoomId,
+    createRoom
   },
   data(){
     return {
@@ -122,10 +141,8 @@ export default {
       showChatInfo: false,
       showRoom: true,
       search: '',
-      popup:{
-        question: '',
-        callback: ()=>{}
-      }
+      popup:{},
+      showCreateRoom:{}
     }
   },
   mounted() {
@@ -171,7 +188,10 @@ export default {
   text-align: center;
 }
 input{
-  width: calc(100% - 5.2rem);
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: calc(100% - 4rem);
 }
 .wideElement{
   display: block;
@@ -180,11 +200,17 @@ input{
   display: none;
 }
 .center{
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  z-index: 50;
+}
+.suggestion{
+  cursor: pointer;
+  text-decoration: underline;
+}
+.suggestion:hover{
+  background-color: #4444;
 }
 
 @media (max-width: 48rem) and (min-width: 30rem) {

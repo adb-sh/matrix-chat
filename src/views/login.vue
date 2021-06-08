@@ -7,30 +7,32 @@
         <input v-model="password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
         <input v-model="homeServer" class="input" name="homeserver" placeholder="https://matrix.org"><br>
         <div v-if="loginError" class="info">{{loginError}}</div>
-        <textbtn type="submit" text="login" />
+        <textbtn type="submit" text="login" class="rounded"/>
       </form>
       <div v-else>
         <p>you are already logged in</p>
         <textbtn @click.native="$router.push('rooms')" text="chat" />
-        <textbtn @click.native="logout()" text="logout" />
+        <textbtn @click.native="logout()" text="logout" class="outline"/>
       </div>
     </div>
-    <throbber-overlay v-if="loading" :text="loading" class="throbber"/>
+    <overlay v-if="loading"><throbber :text="loading"/></overlay>
   </div>
 </template>
 
 <script>
-import textbtn from '@/components/textbtn';
+import textbtn from '@/components/layout/textbtn';
 import {matrix} from '@/main.js';
-import ThrobberOverlay from '@/components/throbberOverlay';
 import {isValidUserId} from '@/lib/matrixUtils';
 import {DataStore} from '@/lib/DataStore';
+import Overlay from '@/components/layout/overlay';
+import Throbber from '@/components/layout/throbber';
 const store = new DataStore();
 
 export default {
   name: 'login.vue',
   components: {
-    ThrobberOverlay,
+    Throbber,
+    Overlay,
     textbtn
   },
   methods: {
@@ -112,12 +114,6 @@ input:focus{
   text-align: center;
   height: min-content;
   width: 100%;
-}
-.throbber{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 @media (max-width: 35rem) {

@@ -19,6 +19,7 @@
     "sass": "^1.29.0",
     "superagent": "^6.1.0",
     "v-emoji-picker": "^2.3.1",
+    "viewerjs": "*",
     "vue": "^2.6.11",
     "ws": "^7.3.1"
   },

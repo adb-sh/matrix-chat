@@ -22,14 +22,14 @@
 </template>
 
 <script>
-import newMessage from '@/components/newMessage.vue';
-import topBanner from '@/components/topBanner.vue';
-import Icon from '@/components/icon';
-import {matrix} from '@/main';
+import newMessage from '@/components/chat/newMessage.vue';
+import topBanner from '@/components/chat/topBanner.vue';
+import Icon from '@/components/layout/icon';
+import {matrix} from '@/main.js';
 import splitArray from '@/lib/splitArray.js'
-import timeline from '@/components/timeline';
+import timeline from '@/components/chat/timeline';
 import scrollHandler from '@/lib/scrollHandler';
-import {getUser} from "@/lib/matrixUtils";
+import {getUser} from '@/lib/matrixUtils';
 
 export default {
   name: 'chat',

@@ -47,15 +47,15 @@
 </template>
 
 <script>
-import icon from '@/components/icon.vue';
+import icon from '@/components/layout/icon.vue';
 import {matrix} from '@/main.js';
 import {parseMessage} from '@/lib/eventUtils';
 import {calcUserName} from '@/lib/matrixUtils';
-import ReplyEvent from '@/components/replyEvent';
+import ReplyEvent from '@/components/chat/replyEvent';
 import {VEmojiPicker} from 'v-emoji-picker';
-import EventContent from '@/components/eventContent';
-import SoundRecorder from '@/components/soundRecorder';
-import FileUpload from '@/components/fileUpload';
+import EventContent from '@/components/chat/eventContent';
+import SoundRecorder from '@/components/layout/soundRecorder';
+import FileUpload from '@/components/layout/fileUpload';
 import {readFileBlob} from '@/lib/readFileBlob';
 
 export default {

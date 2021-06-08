@@ -2,20 +2,20 @@
   <div class="roomListElement" :title="room.name">
     <div class="imageContainer">
       <avatar
-          class="roomImage"
-          :mxcURL="getMxcFromRoom(room)"
-          :fallback="room.roomId"
-          :size="3"
+        class="roomImage"
+        :mxcURL="getMxcFromChat(room)"
+        :fallback="room.roomId"
+        :size="3"
       />
     </div>
     <div class="roomListName">{{room.name}}</div>
-    <div class="status">{{getPreviewString(room)}}</div>
+    <div class="status">{{previewString}}</div>
   </div>
 </template>
 
 <script>
-import avatar from '@/components/avatar';
-import {getMxcFromRoom} from '@/lib/getMxc';
+import avatar from '@/components/matrix/avatar';
+import {getMxcFromChat} from '@/lib/getMxc';
 import {getTime} from '@/lib/getTimeStrings';
 import {calcUserName} from '@/lib/matrixUtils';
 
@@ -37,8 +37,16 @@ export default {
       return room.timeline[room.timeline.length-1]
         && room.timeline[room.timeline.length-1].event;
     },
+    getMxcFromChat,
     calcUserName,
-    getMxcFromRoom
+  },
+  data(){
+    return {
+      previewString: 'loading'
+    }
+  },
+  created() {
+    this.previewString = this.getPreviewString(this.room);
   }
 }
 </script>

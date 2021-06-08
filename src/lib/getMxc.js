@@ -18,6 +18,12 @@ export function getMxcFromRoomId(roomId){
   return getMxcFromRoom(matrix.client.getRoom(roomId));
 }
 
+export function getMxcFromChat(room){
+  return Object.keys(room.currentState.members).length===2
+    ?getMxcFromUserId(Object.keys(room.currentState.members).filter(tmp=>tmp!==matrix.user)[0])
+    :getMxcFromRoom(room);
+}
+
 export function getPreviewUrl(mxcUrl, size = 64, resizeMethod = 'crop'){
   return matrix.client.mxcUrlToHttp(mxcUrl, size, size, resizeMethod);
 }

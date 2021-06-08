@@ -33,23 +33,25 @@
       </div>
       <textbtn @click.native="updateUser()" text="update user"/>
     </div>
-    <throbber-overlay v-if="loading" :text="loading"/>
+    <overlay v-if="loading"><throbber :text="loading"/></overlay>
   </div>
 </template>
 
 <script>
-import {matrix} from "@/main";
-import {AdminAPI} from "@/lib/AdminAPI";
-import icon from "@/components/icon";
-import textbtn from "@/components/textbtn";
-import ThrobberOverlay from "@/components/throbberOverlay";
+import {matrix} from '@/main';
+import {AdminAPI} from '@/lib/AdminAPI';
+import icon from '@/components/layout/icon';
+import textbtn from '@/components/layout/textbtn';
+import overlay from '@/components/layout/overlay';
+import throbber from '@/components/layout/throbber';
 
 export default {
-  name: "admin",
+  name: 'admin',
   components:{
-    ThrobberOverlay,
     icon,
-    textbtn
+    textbtn,
+    overlay,
+    throbber
   },
   data(){
     return{

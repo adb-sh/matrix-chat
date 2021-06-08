@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import event from '@/components/event';
-import avatar from '@/components/avatar';
+import event from '@/components/chat/event';
+import avatar from '@/components/matrix/avatar';
 import splitArray from '@/lib/splitArray';
 import {getDate, getTime} from '@/lib/getTimeStrings';
 import {getUser, calcUserName} from '@/lib/matrixUtils';

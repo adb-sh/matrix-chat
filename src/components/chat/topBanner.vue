@@ -3,7 +3,7 @@
     <div>
       <icon @click.native="closeChat()" class="topIcon" ic="./sym/ic_arrow_back_white.svg" />
       <div @click="openChatInfo()" class="container">
-        <avatar class="topIcon avatar" :mxcURL="getMxcFromRoom(room)" :fallback="room.roomId" :size="3"/>
+        <avatar class="topIcon avatar" :mxcURL="getMxcFromChat(room)" :fallback="room.roomId" :size="3"/>
         <div class="chatName">{{room.name}}</div>
         <div class="info">{{Object.keys(room.currentState.members).length}} members</div>
       </div>
@@ -11,13 +11,12 @@
   </div>
 </template>
 <script>
-import icon from '@/components/icon.vue';
-import avatar from "@/components/avatar";
-import {getMxcFromRoom} from "@/lib/getMxc";
-
+import icon from '@/components/layout/icon.vue';
+import avatar from '@/components/matrix/avatar';
+import {getMxcFromChat} from '@/lib/getMxc';
 
 export default {
-  name: "topBanner",
+  name: 'topBanner',
   components:{
     icon,
     avatar
@@ -28,7 +27,7 @@ export default {
     openChatInfo: Function
   },
   methods: {
-    getMxcFromRoom
+    getMxcFromChat
   }
 }
 </script>
@@ -40,6 +39,7 @@ export default {
   width: 100%;
   height: 3.5rem;
   background-color: #1d1d1d;
+  cursor: pointer;
 }
 .topIcon{
   position: absolute;

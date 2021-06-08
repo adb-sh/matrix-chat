@@ -17,6 +17,9 @@ export default {
 <style scoped lang="scss">
   .box{
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     height: 8rem;
     width: 8rem;
     background-color: #1d1d1d;

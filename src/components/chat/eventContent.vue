@@ -1,26 +1,18 @@
 <template>
   <div v-if="content.msgtype==='m.text'" v-html="parseMessage(content.body)" :class="getEmojiClass(content)"/>
   <div v-else-if="content.msgtype==='m.notice'" class="notice" v-html="parseMessage(content.body)"/>
-  <div v-else-if="content.msgtype==='m.image'" class="image">
-    <img :src="getSource(content.url)" :alt="content.body" :class="`${compact?'compact':''}`"/><br>
+  <image-viewer v-else-if="content.msgtype==='m.image'" :alt="content.body" class="image" :class="compact?'compact':''">
+    <img :src="getSource(content.url)" :alt="content.body" :class="compact?'compact':''"/><br>
     {{content.body}}
-  </div>
+  </image-viewer>
   <div v-else-if="content.msgtype==='m.file'" :class="`file ${compact?'compact':''}`">
     <a :href="getSource(content.url)" target="_blank">
-    <div class="fileContent">
-      <icon
-        title="file"
-        ic="./sym/ic_attach_file_white.svg"
-        class="download"
-      />
-      <div class="filename">
-          {{content.filename || getSource(content.url)}}
+      <div class="fileContent">
+        <icon title="file" ic="./sym/ic_attach_file_white.svg" class="download"/>
+        <div class="filename">{{content.filename || getSource(content.url)}}</div>
       </div>
-    </div>
     </a>
-    <div class="text">
-      {{content.body}}
-    </div>
+    <div class="text">{{content.body}}</div>
   </div>
   <div v-else-if="content.msgtype==='m.audio'" :class="`audio ${compact?'compact':''}`">
     <audio controls :class="`${compact?'compact':''}`">
@@ -43,11 +35,15 @@
 <script>
 import {getMediaUrl} from '@/lib/getMxc';
 import {parseMessage} from '@/lib/eventUtils';
-import Icon from '@/components/icon';
+import Icon from '@/components/layout/icon';
+import imageViewer from '@/components/layout/imageViewer';
 
 export default {
   name: 'eventContent',
-  components: {Icon},
+  components: {
+    Icon,
+    imageViewer
+  },
   props: {
     content: Object,
     compact: {

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import error from "@/components/error.vue";
+import error from '@/components/layout/error.vue';
 
 export default {
   name: 'App',

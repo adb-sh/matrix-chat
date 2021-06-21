@@ -4,6 +4,12 @@
       <reply-event :event="replyEvent" v-if="replyEvent"/>
       <event-content :content="event.content"/>
       <div class="time">{{getTime(event.origin_server_ts)}}</div>
+      <icon
+        class="replyBtn" :class="type==='send'?'send':'receive'"
+        title="toggle emoji"
+        ic="./sym/ic_reply_white.svg"
+        @click.native="setReplyTo(event)"
+      />
     </div>
     <div v-else :class="type==='send'?'info send':'info receive'">
       <span v-if="event.type==='m.room.member'">{{membershipEvents[event.content.membership](event)}}</span>
@@ -21,14 +27,20 @@ import {getTime} from '@/lib/getTimeStrings';
 import {getMediaUrl} from '@/lib/getMxc';
 import ReplyEvent from '@/components/chat/replyEvent';
 import EventContent from '@/components/chat/eventContent';
+import icon from '@/components/layout/icon';
 
 export default {
   name: 'message',
-  components: {EventContent, ReplyEvent},
+  components: {
+    EventContent,
+    ReplyEvent,
+    icon
+  },
   props: {
     type: String,
     event: Object,
-    onUpdate: Function
+    onUpdate: Function,
+    setReplyTo: Function
   },
   methods:{
     async getReplyEvent(event){
@@ -88,6 +100,21 @@ export default {
   .info.send{
     text-align: right;
   }
+  .replyBtn{
+    position: absolute;
+    right: -2.5rem;
+    bottom: 0;
+    background-color: var(--grey400);
+    box-shadow: unset;
+    height: 2rem;
+    width: 2rem;
+    display: none;
+  }
+  .replyBtn.send{
+    position: absolute;
+    right: unset;
+    left: -2.5rem;
+  }
   .message{
     position: relative;
     width: max-content;
@@ -135,5 +162,8 @@ export default {
       font-size: 0.7rem;
     }
   }
+}
+.event:hover > .message > .replyBtn{
+  display: block;
 }
 </style>

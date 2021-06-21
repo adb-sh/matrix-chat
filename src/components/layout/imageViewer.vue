@@ -26,7 +26,7 @@ export default {
         rotateRight: {show: 1, size: 'large'}
       },
       zoomRatio: 0.25,
-      minZoomRatio: 0.5,
+      minZoomRatio: 0.1,
       maxZoomRatio: 10,
       toggleOnDblclick: true,
     });

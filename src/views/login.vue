@@ -2,7 +2,7 @@
   <div class="login">
     <div class="loginBox">
       <h1 class="title">[chat]</h1>
-      <form v-if="showLogin()" @submit.prevent="login()">
+      <form v-if="!matrix.client" @submit.prevent="login()">
         <input v-model="user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
         <input v-model="password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
         <input v-model="homeServer" class="input" name="homeserver" placeholder="https://matrix.org"><br>
@@ -66,9 +66,6 @@ export default {
       if (this.password === '') return 'password is empty';
       if (!isValidUserId(this.user)) return 'username is in wrong style';
       return false;
-    },
-    showLogin(){
-      return matrix.client === undefined;
     }
   },
   data(){
@@ -78,7 +75,8 @@ export default {
       homeServer: 'https://adb.sh',
       loginError: '',
       store,
-      loading: false
+      loading: false,
+      matrix
     }
   }
 }

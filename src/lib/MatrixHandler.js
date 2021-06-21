@@ -11,29 +11,37 @@ export class MatrixHandler {
     this.user = undefined;
     this.baseUrl = undefined;
     this.notify = new NotificationHandler();
+    this.indexedDBStore = window.indexedDB ? new matrix.IndexedDBStore({
+      indexedDB: window.indexedDB,
+      localStorage: window.localStorage,
+      dbName: 'matrix-chat-sync'
+    }):null;
+    this.indexedDBStore.startup();
   }
   login(user, password, baseUrl, onError, callback = ()=>{}){
     if (this.client){ console.log('there is already an active session'); return; }
     this.client = new matrix.createClient({
       baseUrl: baseUrl,
-      store: new matrix.MemoryStore(window.localStorage)
+      store: this.indexedDBStore,
+      useAuthorizationHeader: true,
+      sessionStore: new matrix.WebStorageSessionStore(window.localStorage)
     });
     this.client.login('m.login.password', {
       user: user,
       password: password,
       initial_device_display_name: this.clientDisplayName,
-    }).then((response) => {
-      if (response.error) {
+    }).then(res => {
+      if (res.error) {
         this.logout();
-        console.log(`login error => ${response.error}`);
-        onError(response.error);
+        console.log(`login error => ${res.error}`);
+        onError(res.error);
       }
-      if (response.access_token){
-        console.log(`access token => ${response.access_token}`);
-        callback(response.access_token);
+      if (res.access_token){
+        console.log(`access token => ${res.access_token}`);
+        callback(res.access_token);
         this.user = user;
         this.baseUrl = baseUrl;
-        this.accessToken = response.access_token;
+        this.accessToken = res.access_token;
         this.startSync()
       }
     }).catch(error => {
@@ -42,19 +50,27 @@ export class MatrixHandler {
       onError(error.toString());
     })
   }
-  tokenLogin(baseUrl, accessToken, userId){
+  tokenLogin(baseUrl, accessToken, userId, onError=()=>{}){
+    this.loading = true;
     if (this.client){ console.log('there is already an active session'); return; }
     this.client = new matrix.createClient({
-      baseUrl,
+      userId: userId,
       accessToken,
-      userId,
-      store: new matrix.MemoryStore(window.localStorage),
+      baseUrl,
+      store: this.indexedDBStore,
+      useAuthorizationHeader: true,
       sessionStore: new matrix.WebStorageSessionStore(window.localStorage)
     });
-    this.user = userId;
-    this.baseUrl = baseUrl;
-    this.accessToken = accessToken;
-    this.startSync();
+    this.client.getAccountDataFromServer('verification').then(() => {
+      this.user = userId;
+      this.baseUrl = baseUrl;
+      this.accessToken = accessToken;
+      this.startSync();
+    }).catch((err)=>{
+      this.loading = false;
+      console.error(err);
+      this.logout().then(()=>onError());
+    });
   }
   async logout(){
     await this.client.stopClient();
@@ -63,7 +79,7 @@ export class MatrixHandler {
   async startSync(callback = ()=>{}){
     this.loading = true;
     await this.client.startClient();
-    this.client.once('sync', (state) => {
+    this.client.once('sync', state => {
       console.log(state);
       this.rooms = this.client.getRooms();
       this.loading = false;

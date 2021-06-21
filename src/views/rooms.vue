@@ -1,5 +1,6 @@
 <template>
   <overlay v-if="matrix.loading"><throbber text="loading" class="center"/></overlay>
+  <overlay v-else-if="!matrix.client"><popup-question :callback="()=>$router.push('/login')" :title="'Connection failed'" :question="'Go to login?'" class="center"/></overlay>
   <div v-else>
     <div id="roomList" class="roomList">
       <h1 class="wideElement">[chat]</h1><h1 class="smallElement">[c]</h1>
@@ -145,7 +146,7 @@ export default {
       showCreateRoom:{}
     }
   },
-  mounted() {
+  created() {
     if (matrix.client === undefined) this.$router.push('/login');
   }
 }
@@ -226,6 +227,9 @@ input{
     overflow-y: auto;
     scrollbar-width: none;
   }
+  .roomList::-webkit-scrollbar {
+    display: none;
+  }
   .roomList:hover{
     width: 18rem;
     scrollbar-width: thin;
@@ -236,6 +240,9 @@ input{
     .smallElement{
       display: none;
     }
+  }
+  .roomList:hover::-webkit-scrollbar {
+    display: block;
   }
   .chat{
     width: calc(100% - 4rem);

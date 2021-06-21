@@ -1,9 +1,12 @@
 export class cookieHandler {
-  constructor() {
+  constructor({expires}) {
     this.cookies = {};
     this.reload();
     this.expires = undefined;
     this.SameSite = 'Strict';
+    this.setItem = this.set;
+    this.getItem = this.get;
+    this.setExpire(expires);
   }
   getCookies(){
     return this.cookies;

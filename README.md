@@ -1,7 +1,7 @@
 # [chat]
-
 a simple matrix webapp for mobile and desktop
 
+<a href="https://liberapay.com/adb.sh/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a> 
 
 <img src="https://chat.adb.sh/media/screenshot-desktop.png" alt="screenshot-desktop">
 

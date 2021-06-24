@@ -5,6 +5,7 @@
         <div v-if="loadingStatus" @click="loadEvents()" class="loadMore">{{loadingStatus}}</div>
         <p v-if="room.timeline.length === 0" class="chatInfo">this room is empty</p>
         <timeline
+          v-if="room.timeline.length"
           :timeline="room.timeline" :group-timeline="isGroup()"
           :user="user" :roomId="room.roomId"
           :setReplyTo="setReplyTo"
@@ -13,6 +14,16 @@
       </div>
       <icon v-if="showScrollBtn" @click.native="scroll.scrollToBottom()" id="scrollDown" ic="./sym/ic_expand_more_black.svg" />
     </div>
+    <overlay class="overlay">
+      <popup-question
+        v-if="room.currentState.members[matrix.user].membership==='invite'"
+        class="acceptInvite"
+        title="Accept invite"
+        :question="`Join ${room.name}?`"
+        :callback="()=>matrix.client.joinRoom(room.roomId)"
+        :onReject="()=>matrix.client.leave(room.roomId)"
+      />
+    </overlay>
     <newMessage
       :onResize="resize" :roomId="room.roomId" ref="newMessage"
       :replyTo="replyTo" :resetReplyTo="resetReplyTo"
@@ -30,6 +41,8 @@ import splitArray from '@/lib/splitArray.js'
 import timeline from '@/components/chat/timeline';
 import scrollHandler from '@/lib/scrollHandler';
 import {getUser} from '@/lib/matrixUtils';
+import overlay from '@/components/layout/overlay';
+import popupQuestion from '@/components/layout/popupQuestion';
 
 export default {
   name: 'chat',
@@ -37,7 +50,9 @@ export default {
     timeline,
     Icon,
     newMessage,
-    topBanner
+    topBanner,
+    overlay,
+    popupQuestion
   },
   props: {
     room: [Object, undefined],
@@ -85,7 +100,8 @@ export default {
       scrollOnUpdate: true,
       loadingStatus: 'load more',
       scroll: ()=>{},
-      replyTo: undefined
+      replyTo: undefined,
+      matrix
     }
   },
   updated(){
@@ -136,5 +152,14 @@ export default {
   transform: translate(-50%,0);
   margin-top: 0.5rem;
   cursor: pointer;
+}
+.overlay{
+  z-index: 20;
+}
+.acceptInvite{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <button class="btn">
-    <div class="btnText">{{text}}</div>
+    <div class="btnText">{{text}}<slot v-if="this.$slots.default"/></div>
   </button>
 </template>
 

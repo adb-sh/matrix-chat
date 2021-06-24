@@ -1,9 +1,9 @@
 <template>
-  <popup :on-close="callback">
+  <popup :on-close="onReject">
     <h2>{{title}}</h2>
     <p>{{question}}</p>
-    <textbtn :text="action" @click.native="callback(true)"/>
-    <textbtn text="Cancel" @click.native="callback(false)" class="outline"/>
+    <textbtn :text="action" @click.native="callback()"/>
+    <textbtn text="Cancel" @click.native="onReject()" class="outline"/>
   </popup>
 </template>
 
@@ -21,6 +21,7 @@ export default {
     title: String,
     question: String,
     callback: Function,
+    onReject: Function,
     action: {
       type: String,
       default: 'Apply'

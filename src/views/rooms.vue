@@ -63,7 +63,7 @@
     <overlay>
       <chatInformation v-if="showRoom && showChatInfo" :room="getCurrentRoom()" :close-chat-info="()=>showChatInfo=false" class="center"/>
       <new-room v-if="showCreateRoom.props" :callback="showCreateRoom.callback" :props="showCreateRoom.props" class="center"/>
-      <popup-question v-if="popup.question" :callback="popup.callback" :question="popup.question" :title="popup.title" class="center"/>
+      <popup-question v-if="popup.question" :callback="popup.callback" :onReject="popup.onReject" :question="popup.question" :title="popup.title" class="center"/>
     </overlay>
   </div>
 </template>
@@ -116,14 +116,17 @@ export default {
       this.popup = {
         question,
         title,
-        callback:(res)=>{
+        callback:()=>{
           this.popup = {};
-          if (res) callback();
+          callback();
+        },
+        onReject:()=>{
+          this.popup = {};
         }
       }
     },
     joinRoom(room){
-      this.matrix.client.join(room).then(()=>{
+      this.matrix.client.joinRoom(room).then(()=>{
         this.openChat(getRoom(room.room_id));
       });
     },
@@ -132,7 +135,7 @@ export default {
         props,
         callback:(res)=>{
           this.showCreateRoom = {};
-          if (res) callback(res);
+          callback(res);
         }
       }
     },

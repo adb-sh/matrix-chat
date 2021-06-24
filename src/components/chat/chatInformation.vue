@@ -12,8 +12,11 @@
         <div class="users">{{members.length}} members</div>
       </div>
     </div>
+    <h3>Members</h3>
     <user-list-element v-for="member in members.slice(0,20)" :key="member" :user="getUser(member)"/>
     <p v-if="members.length>20">and {{members.length-20}} other members</p>
+    <h3>Other</h3>
+    <textbtn class="leave" @click.native="matrix.client.leave(room.roomId)">Leave room</textbtn>
   </popup>
 </template>
 <script>
@@ -22,13 +25,16 @@ import avatar from '@/components/matrix/avatar';
 import {getMxcFromChat} from '@/lib/getMxc';
 import {getUser} from '@/lib/matrixUtils';
 import popup from '@/components/layout/popup';
+import textbtn from '@/components/layout/textbtn';
+import {matrix} from '@/main';
 
 export default {
   name: 'chatInformation',
   components:{
     avatar,
     UserListElement,
-    popup
+    popup,
+    textbtn
   },
   props:{
     room: {},
@@ -43,7 +49,8 @@ export default {
   },
   data(){
     return{
-      members: this.getMembers()
+      members: this.getMembers(),
+      matrix
     }
   }
 }
@@ -128,5 +135,8 @@ export default {
   width: 5rem;
   height: 5rem;
   left: 0;
+}
+.leave{
+  background-color: var(--red);
 }
 </style>

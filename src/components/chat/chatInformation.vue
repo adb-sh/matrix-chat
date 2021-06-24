@@ -15,6 +15,16 @@
     <h3>Members</h3>
     <user-list-element v-for="member in members.slice(0,20)" :key="member" :user="getUser(member)"/>
     <p v-if="members.length>20">and {{members.length-20}} other members</p>
+    <h3>Add User</h3>
+    <user-search :filter="prop=>!(usersToAdd.find(temp=>temp===prop)||members.find(temp=>temp===prop.userId))" :callback="addUser" class="userSearch"/>
+    <div>
+      <user-list-element
+        v-for="user in usersToAdd"
+        :user="user" :key="user.userId"
+        @click.native="removeUser(user)"
+      />
+    </div>
+    <textbtn v-if="usersToAdd.length" @click.native="inviteUsers(usersToAdd).then(()=>usersToAdd=[])">Invite</textbtn>
     <h3>Other</h3>
     <textbtn class="leave" @click.native="matrix.client.leave(room.roomId)">Leave room</textbtn>
   </popup>
@@ -27,6 +37,7 @@ import {getUser} from '@/lib/matrixUtils';
 import popup from '@/components/layout/popup';
 import textbtn from '@/components/layout/textbtn';
 import {matrix} from '@/main';
+import userSearch from '@/components/matrix/userSearch';
 
 export default {
   name: 'chatInformation',
@@ -34,7 +45,8 @@ export default {
     avatar,
     UserListElement,
     popup,
-    textbtn
+    textbtn,
+    userSearch
   },
   props:{
     room: {},
@@ -44,13 +56,26 @@ export default {
     getMembers(){
       return Object.keys(this.room.currentState.members)
     },
+    addUser(user){
+      if (this.usersToAdd.find(tmp => tmp === user)) return;
+      this.usersToAdd.push(user);
+      this.userSearch = '';
+    },
+    removeUser(user){
+      this.usersToAdd = this.usersToAdd.filter(tmp => tmp !== user);
+    },
+    async inviteUsers(users){
+      await Promise.all(users.map(async user => await matrix.client.invite(this.room.roomId, user.userId)));
+      this.$forceUpdate();
+    },
     getUser,
     getMxcFromChat
   },
   data(){
     return{
       members: this.getMembers(),
-      matrix
+      matrix,
+      usersToAdd: []
     }
   }
 }

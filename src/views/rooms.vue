@@ -28,7 +28,14 @@
         />
         <p class="wideElement">- suggestions -</p><p class="smallElement">…</p>
         <div class="wideElement">
-          <p v-if="isValidUserId(search)" class="suggestion">create chat: {{search}} ➤</p>
+          <p v-if="isValidUserId(search)"
+           class="suggestion"
+            @click="setQuestion({
+            title:'New Chat',
+            question:`Create private chat with '${search}'?`,
+            callback:()=>createRoom({users:[{userId:search}], access: 'private'}).then(openChat)
+          })"
+          >create chat: {{search}} ➤</p>
           <p v-if="isValidRoomId(search)"
             class="suggestion"
             @click="setQuestion({

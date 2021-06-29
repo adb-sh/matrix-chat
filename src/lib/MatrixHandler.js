@@ -80,14 +80,15 @@ export class MatrixHandler {
   async startSync(callback = ()=>{}){
     this.loading = true;
     await this.client.startClient();
-    this.client.once('sync', state => {
-      console.log(state);
-      this.rooms = sortRoomsByTimestamp(this.client.getRooms());
-      this.loading = false;
-      callback();
-      this.listenToRoomChanges();
-      this.listenToPushEvents();
-    });
+    await new Promise(resolve => this.client.on('sync', state => {
+      console.log('sync state:', state);
+      if (state === 'PREPARED') resolve();
+    }));
+    this.rooms = sortRoomsByTimestamp(this.client.getRooms());
+    this.loading = false;
+    callback();
+    this.listenToRoomChanges();
+    this.listenToPushEvents();
   }
   listenToPushEvents(){
     this.client.on('event', event => {

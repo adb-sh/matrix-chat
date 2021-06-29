@@ -9,14 +9,15 @@
       />
     </div>
     <div class="roomListName">{{room.name}}</div>
-    <div class="status">{{previewString}}</div>
+    <div class="time">{{getTimeThenDate(getLatestEvent(room).origin_server_ts)}}</div>
+    <div class="status"><span class="user">{{calcUserName(getLatestEvent(room).sender)}}:</span> {{getPreviewString(room)}}</div>
   </div>
 </template>
 
 <script>
 import avatar from '@/components/matrix/avatar';
 import {getMxcFromChat} from '@/lib/getMxc';
-import {getTime} from '@/lib/getTimeStrings';
+import {getTimeThenDate} from '@/lib/getTimeStrings';
 import {calcUserName} from '@/lib/matrixUtils';
 
 export default {
@@ -31,7 +32,8 @@ export default {
     getPreviewString(room){
       let event = this.getLatestEvent(room);
       if (!event) return '';
-      return `${this.calcUserName(event.sender)}: ${event.content.body||'unknown event'} ${getTime(event.origin_server_ts)}`;
+      if (event.content.msgtype) return `${event.content.msgtype==='m.text'?'':event.content.msgtype} ${event.content.body||''}`;
+      return `${event.type}`;
     },
     getLatestEvent(room){
       return room.timeline[room.timeline.length-1]
@@ -39,14 +41,7 @@ export default {
     },
     getMxcFromChat,
     calcUserName,
-  },
-  data(){
-    return {
-      previewString: 'loading'
-    }
-  },
-  created() {
-    this.previewString = this.getPreviewString(this.room);
+    getTimeThenDate
   }
 }
 </script>
@@ -56,7 +51,7 @@ export default {
   position: relative;
   height: 3rem;
   width: 100%;
-  font-size: 1.2rem;
+  min-width: 10rem;
   cursor: pointer;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -73,15 +68,23 @@ export default {
   .roomListName{
     position: absolute;
     left: 4rem;
-    top: 0.25rem;
+    top: 0.4rem;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: calc(100% - 5rem);
+    overflow: hidden;
+    width: calc(100% - 10rem);
     text-align: left;
+    font-size: 1rem;
+  }
+  .time{
+    position: absolute;
+    top: 0.4rem;
+    right: 0.5rem;
+    font-size: 0.8rem;
   }
   .status{
     position: absolute;
-    top: 1.5rem;
+    bottom: 0.4rem;
     left: 4rem;
     font-size: 0.8rem;
     text-align: left;
@@ -89,6 +92,9 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     width: calc(100% - 4.5rem);
+    .user{
+      font-weight: bold;
+    }
   }
 }
 .roomListElement:hover{

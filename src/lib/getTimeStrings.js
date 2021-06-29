@@ -8,3 +8,7 @@ export function getDate(time) {
   let date = new Date(time);
   return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
+
+export function getTimeThenDate(time){
+  return time > Date.now() - 1000*60*60*12?getTime(time):getDate(time);
+}

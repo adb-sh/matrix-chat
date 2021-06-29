@@ -13,7 +13,12 @@
       </div>
     </div>
     <h3>Members</h3>
-    <user-list-element v-for="member in members.slice(0,20)" :key="member" :user="getUser(member)"/>
+    <user-list-element
+      v-for="member in members.slice(0,20)"
+      :key="member.userId"
+      :user="getUser(member.userId)"
+      :info="member.typing?'is typing ...':null"
+    />
     <p v-if="members.length>20">and {{members.length-20}} other members</p>
     <h3>Add User</h3>
     <user-search :filter="prop=>!(usersToAdd.find(temp=>temp===prop)||members.find(temp=>temp===prop.userId))" :callback="addUser" class="userSearch"/>
@@ -54,7 +59,7 @@ export default {
   },
   methods: {
     getMembers(){
-      return Object.keys(this.room.currentState.members)
+      return Object.values(this.room.currentState.members)
     },
     addUser(user){
       if (this.usersToAdd.find(tmp => tmp === user)) return;

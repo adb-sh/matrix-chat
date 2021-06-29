@@ -11,6 +11,7 @@
           :setReplyTo="setReplyTo"
           :on-update="()=>$nextTick(resize)"
         />
+        <p v-if="getUsersTyping().length" class="info">{{getTypingInfo()}}</p>
       </div>
       <icon v-if="showScrollBtn" @click.native="scroll.scrollToBottom()" id="scrollDown" ic="./sym/ic_expand_more_black.svg" />
     </div>
@@ -40,7 +41,7 @@ import {matrix} from '@/main.js';
 import splitArray from '@/lib/splitArray.js'
 import timeline from '@/components/chat/timeline';
 import scrollHandler from '@/lib/scrollHandler';
-import {getUser} from '@/lib/matrixUtils';
+import {getUser, calcUserName} from '@/lib/matrixUtils';
 import overlay from '@/components/layout/overlay';
 import popupQuestion from '@/components/layout/popupQuestion';
 
@@ -91,7 +92,20 @@ export default {
     manageScrollBottom(){
       if(this.scroll.getScrollBottom() < 400 && this.loadingStatus !== 'loading') this.scroll.scrollToBottom();
     },
+    getUsersTyping(){
+      return Object.values(this.room.currentState.members).filter(user => user.typing && user.userId!==this.matrix.user);
+    },
+    getTypingInfo(){
+      let usersTyping = this.getUsersTyping();
+      switch (usersTyping.length) {
+        case 0: return '';
+        case 1: return `${calcUserName(usersTyping[0].userId)} is typing ...`;
+        case 2: return `${calcUserName(usersTyping[0].userId)} and ${calcUserName(usersTyping[1].userId)} are typing ...`;
+        default: return`${calcUserName(usersTyping[0].userId)} and ${usersTyping.length-1} others are typing ...`;
+      }
+    },
     getUser,
+    calcUserName,
     splitArray
   },
   data(){
@@ -161,5 +175,9 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%,-50%);
+}
+.info{
+  font-style: italic;
+  margin-left: 1rem;
 }
 </style>

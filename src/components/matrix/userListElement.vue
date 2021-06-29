@@ -10,7 +10,7 @@
       <div v-if="user.currentlyActive" class="online"></div>
     </div>
     <div :class="compact?'userListName compact':'userListName'">{{user.displayName || user.userId}}</div>
-    <div v-if="!compact" class="status">{{user.presence}}</div>
+    <div v-if="!compact" class="status">{{info || user.presence}}</div>
   </div>
 </template>
 
@@ -27,7 +27,8 @@ export default {
     compact: {
       type: Boolean,
       default: false
-    }
+    },
+    info: String
   }
 }
 </script>

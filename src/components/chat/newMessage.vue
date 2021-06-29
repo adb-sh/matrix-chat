@@ -82,8 +82,7 @@ export default {
     async sendEvent(event){
       if (!event.content.body.trim()) return;
       this.setReplyTo(this.replyTo);
-      this.isSending = true;
-      await matrix.sendEvent(new Proxy(this.event, this.eventProxyHandler), this.roomId);
+      matrix.sendEvent(new Proxy(this.event, this.eventProxyHandler), this.roomId);
       this.isSending = false;
       event.content.body = '';
       this.resetAttachment();

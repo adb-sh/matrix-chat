@@ -7,8 +7,7 @@
       <input v-model="search" class="input wideElement" type="text" maxlength="50" placeholder="search">
       <p class="wideElement">- rooms -</p>
       <room-list-element
-        v-for="room in matrix.client.getRooms()
-          .filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
+        v-for="room in matrix.rooms.filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
         :key="room.roomId" @click.native="openChat(room)"
         :room="room"
         class="roomListElement"

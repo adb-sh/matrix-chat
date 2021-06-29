@@ -1,5 +1,6 @@
 import matrix from 'matrix-js-sdk';
 import {NotificationHandler} from '@/lib/NotificationHandler';
+import {sortRoomsByTimestamp} from '@/lib/matrixUtils';
 
 export class MatrixHandler {
   constructor(clientDisplayName = 'matrix-chat') {
@@ -81,9 +82,10 @@ export class MatrixHandler {
     await this.client.startClient();
     this.client.once('sync', state => {
       console.log(state);
-      this.rooms = this.client.getRooms();
+      this.rooms = sortRoomsByTimestamp(this.client.getRooms());
       this.loading = false;
       callback();
+      this.listenToRoomChanges();
       this.listenToPushEvents();
     });
   }
@@ -91,6 +93,14 @@ export class MatrixHandler {
     this.client.on('event', event => {
       if (this.client.getPushActionsForEvent(event).notify){
         this.notify.showNotification(event.event);
+      }
+    });
+  }
+  listenToRoomChanges(){
+    this.client.on('event', event => {
+      if (event.getType().includes('m.room')){
+        this.rooms = sortRoomsByTimestamp(this.client.getRooms());
+        console.log('updated rooms');
       }
     });
   }

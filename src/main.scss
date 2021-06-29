@@ -38,6 +38,10 @@ input:focus, textarea:focus {
   background-color: var(--grey300);
 }
 
+input {
+  height: 1.2rem;
+}
+
 textarea {
   width: 20rem;
   min-width: 10rem;

@@ -28,3 +28,7 @@ export async function createRoom({name = '', users = [], description = undefined
     return matrix.client.getRoom(room.room_id);
   });
 }
+export function sortRoomsByTimestamp(rooms){
+  let getLatestTimestamp= room => room.timeline[room.timeline.length-1].event.origin_server_ts;
+  return rooms.sort((a,b) => getLatestTimestamp(b)-getLatestTimestamp(a));
+}

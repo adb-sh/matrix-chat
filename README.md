@@ -23,3 +23,25 @@ npm run serve
 ```
 npm run build
 ```
+
+## native
+### copy build files
+```
+npx cap copy
+```
+### start android studio
+```
+npx cap open android
+```
+### start electron app
+```
+npx cap open electron
+```
+
+## links and references
+some docs and repos that helped me out a lot
+* https://matrix-org.github.io/matrix-js-sdk/10.0.0
+* https://matrix.org/docs/spec/client_server/latest
+* https://matrix.org/docs/api/client-server/
+* https://git.pixie.town/neo/neo
+* https://github.com/matrix-org/matrix-react-sdk

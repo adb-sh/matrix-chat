@@ -19,6 +19,7 @@ export class NotificationHandler{
       .then(permission => {return permission === 'granted'});
   }
   showNotification(event){
+    new Audio('./sounds/notification1.wav').play();
     if (Capacitor.isNative) return this.showNativeNotification(event);
     if (Notification.permission !== 'granted') return false;
     console.log(event);

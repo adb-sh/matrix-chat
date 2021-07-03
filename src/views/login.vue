@@ -3,8 +3,8 @@
     <div class="loginBox">
       <h1 class="title">[chat]</h1>
       <form v-if="!matrix.client" @submit.prevent="login()">
-        <input v-model="user" class="input" name="user" type="text" maxlength="30" placeholder="@user:adb.sh"><br>
-        <input v-model="password" class="input" name="password" type="password" maxlength="30" placeholder="password"><br>
+        <input v-model="user" class="input" name="user" type="text" placeholder="@user:adb.sh"><br>
+        <input v-model="password" class="input" name="password" type="password" placeholder="password"><br>
         <input v-model="homeServer" class="input" name="homeserver" placeholder="https://matrix.org"><br>
         <div v-if="loginError" class="info">{{loginError}}</div>
         <textbtn type="submit" text="login" class="rounded"/>

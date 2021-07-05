@@ -9,8 +9,9 @@
       />
     </div>
     <div class="roomListName">{{room.name}}</div>
-    <div class="time">{{getTimeThenDate(getLatestEvent(room).origin_server_ts)}}</div>
+    <div class="time wideElement">{{getTimeThenDate(getLatestEvent(room).origin_server_ts)}}</div>
     <div class="status"><span class="user">{{calcUserName(getLatestEvent(room).sender)}}:</span> {{getPreviewString(room)}}</div>
+    <div v-if="room._notificationCounts.total" class="notificationCount">{{room._notificationCounts.total}}</div>
   </div>
 </template>
 
@@ -95,6 +96,18 @@ export default {
     .user{
       font-weight: bold;
     }
+  }
+  .notificationCount{
+    position: absolute;
+    height: 0.8rem;
+    min-width: 0.8rem;
+    bottom: 0.4rem;
+    padding: 0.2rem;
+    right: 0.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    background-color: var(--red);
+    border-radius: 2rem;
   }
 }
 .roomListElement:hover{

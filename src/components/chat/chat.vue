@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div ref="chatContainer" class="chatContainer">
-      <div @scroll="onScroll()" ref="timelineContainer" class="timelineContainer">
+    <div @mouseover="onActive()" ref="chatContainer" class="chatContainer">
+      <div @scroll="onScroll(); onActive();" ref="timelineContainer" class="timelineContainer">
         <div v-if="loadingStatus" @click="loadEvents()" class="loadMore">{{loadingStatus}}</div>
         <p v-if="room.timeline.length === 0" class="chatInfo">this room is empty</p>
         <timeline
@@ -104,6 +104,16 @@ export default {
         default: return`${calcUserName(usersTyping[0].userId)} and ${usersTyping.length-1} others are typing ...`;
       }
     },
+    getLatestEvent(room){
+      return room.timeline[room.timeline.length-1]
+    },
+    onActive(){
+      if(this.isActive) return;
+      this.isActive = true;
+      setTimeout(()=>this.isActive=false, 10000);
+      matrix.client.setRoomReadMarkers(this.room.roomId, this.getLatestEvent(this.room).event.event_id, this.getLatestEvent(this.room));
+      console.log('set read receipt');
+    },
     getUser,
     calcUserName,
     splitArray
@@ -115,6 +125,7 @@ export default {
       loadingStatus: 'load more',
       scroll: ()=>{},
       replyTo: undefined,
+      active: false,
       matrix
     }
   },
@@ -125,6 +136,7 @@ export default {
     this.scroll = new scrollHandler(this.$refs.timelineContainer);
     this.scroll.scrollToBottom();
     this.onScroll();
+    this.onActive();
   },
   watch: {
     '$route'(){

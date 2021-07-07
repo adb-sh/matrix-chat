@@ -100,6 +100,7 @@ export default {
     },
     sendTyping(timeout){
       if (this.waitForSendTyping) return;
+      this.waitForSendTyping = true;
       matrix.client.sendTyping(this.roomId, true, timeout+100);
       setTimeout(()=>this.waitForSendTyping=false, timeout);
     },

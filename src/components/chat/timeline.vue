@@ -2,35 +2,36 @@
   <div class="timeline">
     <div
       class="timeGroup"
-      v-for="timeGroup in splitArray(timeline,obj => getDate(obj.event.origin_server_ts),obj => obj.event)"
-      :key="timeGroup[0].origin_server_ts"
+      v-for="timeGroup in splitArray(timeline,obj => getDate(obj.event.origin_server_ts))"
+      :key="timeGroup[0].event.origin_server_ts"
     >
-      <div class="date">{{getDate(timeGroup[0].origin_server_ts)}}</div>
-      <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].origin_server_ts">
+      <div class="date">{{getDate(timeGroup[0].event.origin_server_ts)}}</div>
+      <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].event.origin_server_ts">
         <div class="thumbnailContainer">
           <div class="filler"></div>
           <avatar
-            v-if="group[0].sender !== user && groupTimeline"
-            :fallback="group[0].sender"
+            v-if="group[0].event.sender !== user && groupTimeline"
+            :fallback="group[0].event.sender"
             class="userThumbnail"
-            :mxcURL="getUser(group[0].sender).avatarUrl"
+            :mxcURL="getUser(group[0].event.sender).avatarUrl"
             :size="2"
-            :title="group[0].sender"
+            :title="group[0].event.sender"
           />
         </div>
         <div
           :class="groupTimeline?'indent username':'username'"
-          v-if="group[0].sender !== user && groupTimeline"
+          v-if="group[0].event.sender !== user && groupTimeline"
         >
-          {{calcUserName(group[0].sender)}}
+          {{calcUserName(group[0].event.sender)}}
         </div>
         <event
           v-for="event in group"
-          :key="event.origin_server_ts"
+          :key="event.event.origin_server_ts"
           :class="groupTimeline?'indent event':'event'"
-          :title="`${group[0].sender} at ${getTime(event.origin_server_ts)}`"
-          :type="event.sender === user?'send':'receive'"
-          :event="event"
+          :title="`${group[0].sender} at ${getTime(event.event.origin_server_ts)}`"
+          :type="event.event.sender === user?'send':'receive'"
+          :event="event.event"
+          :status="event.status"
           :on-update="onUpdate"
           :setReplyTo="setReplyTo"
         />

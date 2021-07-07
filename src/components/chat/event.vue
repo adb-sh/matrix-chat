@@ -3,7 +3,7 @@
     <div v-if="event.type==='m.room.message'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <reply-event :event="replyEvent" v-if="replyEvent"/>
       <event-content :content="event.content"/>
-      <div class="time">{{getTime(event.origin_server_ts)}}</div>
+      <div class="time">{{getTime(event.origin_server_ts)}} {{status}}</div>
       <icon
         class="replyBtn" :class="type==='send'?'send':'receive'"
         title="toggle emoji"
@@ -14,7 +14,7 @@
     <div v-else :class="type==='send'?'info send':'info receive'">
       <span v-if="event.type==='m.room.member'">{{membershipEvents[event.content.membership](event)}}</span>
       <span v-else>unsupported event: {{event.type}}</span>
-      <span class="time"> {{getTime(event.origin_server_ts)}}</span>
+      <span class="time"> {{getTime(event.origin_server_ts)}} {{status}}</span>
     </div>
   </div>
 </template>
@@ -40,7 +40,8 @@ export default {
     type: String,
     event: Object,
     onUpdate: Function,
-    setReplyTo: Function
+    setReplyTo: Function,
+    status: String
   },
   methods:{
     async getReplyEvent(event){

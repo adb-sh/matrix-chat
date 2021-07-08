@@ -6,7 +6,7 @@
       :key="timeGroup[0].event.origin_server_ts"
     >
       <div class="date">{{getDate(timeGroup[0].event.origin_server_ts)}}</div>
-      <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.sender)" :key="group[0].event.origin_server_ts">
+      <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.event.sender)" :key="group[0].event.origin_server_ts">
         <div class="thumbnailContainer">
           <div class="filler"></div>
           <avatar

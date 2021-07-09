@@ -12,7 +12,7 @@
           <avatar
             v-if="group[0].event.sender !== user && groupTimeline"
             :fallback="group[0].event.sender"
-            class="userThumbnail"
+            class="avatar"
             :mxcURL="getUser(group[0].event.sender).avatarUrl"
             :size="2"
             :title="group[0].event.sender"
@@ -24,17 +24,29 @@
         >
           {{calcUserName(group[0].event.sender)}}
         </div>
-        <event
-          v-for="event in group"
-          :key="event.event.origin_server_ts"
-          :class="groupTimeline?'indent event':'event'"
-          :title="`${group[0].sender} at ${getTime(event.event.origin_server_ts)}`"
-          :type="event.event.sender === user?'send':'receive'"
-          :event="event.event"
-          :status="event.status"
-          :on-update="onUpdate"
-          :setReplyTo="setReplyTo"
-        />
+        <div v-for="event in group" :key="event.event.event_id">
+          <event
+            :class="groupTimeline?'indent event':'event'"
+            :title="`${event.event.sender} at ${getTime(event.event.origin_server_ts)}`"
+            :type="event.event.sender === user?'send':'receive'"
+            :event="event.event"
+            :status="event.status"
+            :on-update="onUpdate"
+            :setReplyTo="setReplyTo"
+          />
+          <div class="receipts">
+            {{getReceipts(event).length>5?`${getReceipts(event).length-5}+`:''}}
+            <avatar
+              v-for="read in getReceipts(event).splice(0,5)"
+              :key="read[0]+read[1].eventId"
+              :fallback="read[0]"
+              class="avatar"
+              :mxcURL="getUser(read[0]).avatarUrl"
+              :size="1"
+              :title="'seen by '+calcUserName(read[0])"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -46,6 +58,7 @@ import avatar from '@/components/matrix/avatar';
 import splitArray from '@/lib/splitArray';
 import {getDate, getTime} from '@/lib/getTimeStrings';
 import {getUser, calcUserName} from '@/lib/matrixUtils';
+import {matrix} from '@/main';
 
 export default {
   name: 'eventGroup',
@@ -58,9 +71,14 @@ export default {
     user: String,
     groupTimeline: Boolean,
     setReplyTo: Function,
-    onUpdate: Function
+    onUpdate: Function,
+    receipts: Object
   },
   methods: {
+    getReceipts(event){
+      return Object.entries(this.receipts['m.read']).filter(ar =>
+        ar[0]!==matrix.user && ar[1].eventId===event.event.event_id);
+    },
     getUser,
     calcUserName,
     splitArray,
@@ -102,11 +120,21 @@ export default {
         .filler {
           height: calc(100% - 2rem);
         }
-        .userThumbnail {
+        .avatar {
           position: sticky;
           bottom: 0.5rem;
           width: 2rem;
           height: 2rem;
+        }
+      }
+      .receipts{
+        text-align: right;
+        .avatar{
+          top: 0.2rem;
+          margin: 0 0.1rem;
+          display: inline-block;
+          width: 1rem;
+          height: 1rem;
         }
       }
       .username{

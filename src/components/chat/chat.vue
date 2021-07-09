@@ -10,6 +10,7 @@
           :user="user" :roomId="room.roomId"
           :setReplyTo="setReplyTo"
           :on-update="()=>$nextTick(resize)"
+          :receipts="room._receipts"
         />
         <p v-if="getUsersTyping().length" class="info">{{getTypingInfo()}}</p>
       </div>

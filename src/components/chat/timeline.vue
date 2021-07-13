@@ -6,47 +6,39 @@
       :key="timeGroup[0].event.origin_server_ts"
     >
       <div class="date">{{getDate(timeGroup[0].event.origin_server_ts)}}</div>
-      <div class="eventGroup" v-for="group in splitArray(timeGroup, obj => obj.event.sender)" :key="group[0].event.origin_server_ts">
-        <div class="thumbnailContainer">
-          <div class="filler"></div>
-          <avatar
-            v-if="group[0].event.sender !== user && groupTimeline"
-            :fallback="group[0].event.sender"
-            class="avatar"
-            :mxcURL="getUser(group[0].event.sender).avatarUrl"
-            :size="2"
-            :title="group[0].event.sender"
-          />
-        </div>
-        <div
-          :class="groupTimeline?'indent username':'username'"
-          v-if="group[0].event.sender !== user && groupTimeline"
-        >
-          {{calcUserName(group[0].event.sender)}}
-        </div>
-        <div v-for="event in group" :key="event.event.event_id">
-          <event
-            :class="groupTimeline?'indent event':'event'"
-            :title="`${event.event.sender} at ${getTime(event.event.origin_server_ts)}`"
-            :type="event.event.sender === user?'send':'receive'"
-            :event="event.event"
-            :status="event.status"
-            :on-update="onUpdate"
-            :setReplyTo="setReplyTo"
-          />
-          <div class="receipts">
-            {{getReceipts(event).length>5?`${getReceipts(event).length-5}+`:''}}
+      <div v-for="group in splitArray(timeGroup, obj => obj.event.sender)" :key="group[0].event.origin_server_ts">
+        <div class="eventGroup">
+          <div class="thumbnailContainer">
+            <div class="filler"></div>
             <avatar
-              v-for="read in getReceipts(event).splice(0,5)"
-              :key="read[0]+read[1].eventId"
-              :fallback="read[0]"
+              v-if="group[0].event.sender !== user && groupTimeline"
+              :fallback="group[0].event.sender"
               class="avatar"
-              :mxcURL="getUser(read[0]).avatarUrl"
-              :size="1"
-              :title="'seen by '+calcUserName(read[0])"
+              :mxcURL="getUser(group[0].event.sender).avatarUrl"
+              :size="2"
+              :title="group[0].event.sender"
             />
           </div>
+          <div
+            :class="groupTimeline?'indent username':'username'"
+            v-if="group[0].event.sender !== user && groupTimeline"
+          >
+            {{calcUserName(group[0].event.sender)}}
+          </div>
+          <div v-for="(event, i) in group" :key="event.event.event_id">
+            <event
+              :class="groupTimeline?'indent event':'event'"
+              :title="`${event.event.sender} at ${getTime(event.event.origin_server_ts)}`"
+              :type="event.event.sender === user?'send':'receive'"
+              :event="event.event"
+              :status="event.status"
+              :on-update="onUpdate"
+              :setReplyTo="setReplyTo"
+            />
+            <receipts v-if="i < group.length-1" :receipts="getReceipts(event)"/>
+          </div>
         </div>
+        <receipts :receipts="getReceipts(group[group.length-1])"/>
       </div>
     </div>
   </div>
@@ -55,6 +47,7 @@
 <script>
 import event from '@/components/chat/event';
 import avatar from '@/components/matrix/avatar';
+import receipts from '@/components/chat/receipts';
 import splitArray from '@/lib/splitArray';
 import {getDate, getTime} from '@/lib/getTimeStrings';
 import {getUser, calcUserName} from '@/lib/matrixUtils';
@@ -63,6 +56,7 @@ import {matrix} from '@/main';
 export default {
   name: 'eventGroup',
   components: {
+    receipts,
     event,
     avatar
   },
@@ -125,16 +119,6 @@ export default {
           bottom: 0.5rem;
           width: 2rem;
           height: 2rem;
-        }
-      }
-      .receipts{
-        text-align: right;
-        .avatar{
-          top: 0.2rem;
-          margin: 0 0.1rem;
-          display: inline-block;
-          width: 1rem;
-          height: 1rem;
         }
       }
       .username{

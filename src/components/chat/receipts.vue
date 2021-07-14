@@ -37,9 +37,12 @@ export default {
   text-align: right;
   margin: 0.2rem 0.5rem;
   font-size: 0.8rem;
+  height: 1rem;
   .counter{
+    position: relative;
     display: inline-block;
     margin: 0 0.2rem;
+    bottom: 0.2rem;
   }
   .avatar{
     display: inline-block;

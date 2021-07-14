@@ -81,7 +81,6 @@ export class MatrixHandler {
     this.loading = true;
     await this.client.startClient();
     await new Promise(resolve => this.client.on('sync', state => {
-      console.log('sync state:', state);
       if (state === 'PREPARED') resolve();
     }));
     this.rooms = sortRoomsByTimestamp(this.client.getRooms());
@@ -101,7 +100,6 @@ export class MatrixHandler {
     this.client.on('event', event => {
       if (event.getType().includes('m.room')){
         this.rooms = sortRoomsByTimestamp(this.client.getRooms());
-        console.log('updated rooms');
       }
     });
   }

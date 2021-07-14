@@ -64,7 +64,7 @@ export default {
       membershipEvents:{
         invite(event){ return `invited ${event.target?calcUserName(event.target.userId):event.content.displayname||event.state_key}` },
         join(event){
-          if (!event.unsigned.prev_content) return 'joined the room';
+          if (!event.unsigned.prev_content || event.unsigned.prev_content.membership === 'leave') return 'joined the room';
           if (event.unsigned.prev_content.membership === 'invite') return 'accepted invite';
           if (event.unsigned.prev_content.displayname !== event.content.displayname)
             return `changed displayname from ${event.unsigned.prev_content.displayname} to ${event.content.displayname}`;
@@ -74,7 +74,10 @@ export default {
           if (event.unsigned.prev_content && event.unsigned.prev_content.membership === 'invite') return 'rejected invite';
           return 'left the room'
         },
-        ban(event){return `banned ${calcUserName(event.target.userId)}` }
+        ban(event){
+          if (event.content.reason) return `banned ${event.content.displayname} (reason: ${event.content.reason})`;
+          return `banned ${event.content.displayname}`;
+        }
       }
     }
   },

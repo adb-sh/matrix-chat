@@ -2,7 +2,7 @@
   <div class="receipts">
     <div class="counter" v-if="receipts.length>5">{{`${receipts.length-5}+`}}</div>
     <avatar
-      v-for="read in Object.assign([], receipts).splice(0,5)"
+      v-for="read in receipts.slice(0,5)"
       :key="read[0]+read[1].eventId"
       :fallback="read[0]"
       class="avatar"
@@ -35,7 +35,7 @@ export default {
 <style scoped lang="scss">
 .receipts{
   text-align: right;
-  margin: 0.2rem;
+  margin: 0.2rem 0.5rem;
   font-size: 0.8rem;
   .counter{
     display: inline-block;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div @mouseover="onActive()" ref="chatContainer" class="chatContainer">
-      <div @scroll="onScroll(); onActive();" ref="timelineContainer" class="timelineContainer">
+      <div @scroll="onScroll()" ref="timelineContainer" class="timelineContainer">
         <div v-if="loadingStatus" @click="loadEvents()" class="loadMore">{{loadingStatus}}</div>
         <p v-if="room.timeline.length === 0" class="chatInfo">this room is empty</p>
         <timeline
@@ -68,6 +68,7 @@ export default {
       this.showScrollBtn = this.scroll.getScrollBottom() > 500;
     },
     resize(height = this.$refs.newMessage.$refs.newMessageBanner.clientHeight){
+      this.scrollBottom = this.scroll.getScrollBottom();
       this.$refs.chatContainer.style.height = `calc(100% - ${height}px - 3.5rem)`;
       this.manageScrollBottom();
     },
@@ -75,11 +76,9 @@ export default {
       return Object.keys(this.room.currentState.members).length > 2;
     },
     async loadEvents(){
-      let scrollBottom = this.scroll.getScrollBottom();
       this.loadingStatus = 'loading';
       await matrix.client.scrollback(this.room, 30);
       this.loadingStatus = 'load more';
-      this.scroll.setScrollBottom(scrollBottom)
     },
     setReplyTo(event){
       this.replyTo=event;
@@ -92,6 +91,7 @@ export default {
     },
     manageScrollBottom(){
       if(this.scroll.getScrollBottom() < 400 && this.loadingStatus !== 'loading') this.scroll.scrollToBottom();
+      else this.scroll.setScrollBottom(this.scrollBottom);
     },
     getUsersTyping(){
       return Object.values(this.room.currentState.members).filter(user => user.typing && user.userId!==this.matrix.user);
@@ -113,7 +113,6 @@ export default {
       this.isActive = true;
       setTimeout(()=>this.isActive=false, 10000);
       matrix.client.setRoomReadMarkers(this.room.roomId, this.getLatestEvent(this.room).event.event_id, this.getLatestEvent(this.room));
-      console.log('set read receipt');
     },
     getUser,
     calcUserName,
@@ -127,8 +126,12 @@ export default {
       scroll: ()=>{},
       replyTo: undefined,
       active: false,
-      matrix
+      matrix,
+      scrollBottom: 0
     }
+  },
+  beforeUpdate(){
+    this.scrollBottom = this.scroll.getScrollBottom();
   },
   updated(){
     this.manageScrollBottom();

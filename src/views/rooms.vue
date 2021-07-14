@@ -124,9 +124,9 @@ export default {
         }
       }
     },
-    joinRoom(room){
-      this.matrix.client.joinRoom(room).then(()=>{
-        this.openChat(getRoom(room.room_id));
+    joinRoom(roomId){
+      this.matrix.client.joinRoom(roomId).then(room=>{
+        this.openChat(getRoom(room.roomId));
       });
     },
     setShowCreateRoom(props, callback=()=>{}){

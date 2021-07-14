@@ -1,5 +1,5 @@
 <template>
-  <img v-if="mxcURL" :src="getPreviewUrl(mxcURL)" class="userThumbnail image"/>
+  <img v-if="mxcURL && !error" :src="getPreviewUrl(mxcURL)" class="userThumbnail image" @error="error=true" alt=" "/>
   <div v-else v-html="getJdenticon()" class="userThumbnail identicon"/>
 </template>
 
@@ -29,7 +29,8 @@ export default {
   data(){
     return {
       resizeMethod: 'scale',
-      imageSize: 128
+      imageSize: 128,
+      error: false
     }
   }
 }

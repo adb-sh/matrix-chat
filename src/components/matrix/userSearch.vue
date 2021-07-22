@@ -69,6 +69,7 @@ export default {
   box-shadow: var(--shadow200);
   width: calc(100% + 0.8rem);
   border-radius: 0.6rem;
+  min-height: 3rem;
 }
 .results{
   max-height: 10.5rem;

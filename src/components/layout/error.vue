@@ -1,6 +1,6 @@
 <template>
   <div id="errorBox" class="errorBox">
-    <icon class="errorBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white_24px.svg" />
+    <icon class="errorBtn" onclick="this.parentNode.style.display = 'none'" ic="./sym/ic_close_white.svg" />
     <div id="errorMessage" class="btnText">
       {{msg}}
     </div>

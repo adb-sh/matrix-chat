@@ -84,8 +84,7 @@ export default {
 
 <style scoped lang="scss">
 .timeline{
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin: 0.5rem;
   .timeGroup {
     .date {
       top: 0.25rem;
@@ -101,11 +100,9 @@ export default {
     }
     .eventGroup {
       position: relative;
-      width: calc(100% - 1rem);
+      width: 100%;
       height: fit-content;
       margin-top: 0.75rem;
-      margin-left: 0.5rem;
-      margin-right: 0.5rem;
       .thumbnailContainer {
         position: absolute;
         top: 0;

@@ -21,7 +21,7 @@
     />
     <p v-if="members.length>20">and {{members.length-20}} other members</p>
     <h3>Add User</h3>
-    <user-search :filter="prop=>!(usersToAdd.find(temp=>temp===prop)||members.find(temp=>temp===prop.userId))" :callback="addUser" class="userSearch"/>
+    <user-search :filter="prop=>!(usersToAdd.find(temp=>temp===prop)||members.find(temp=>temp.userId===prop.userId))" :callback="addUser" class="userSearch"/>
     <div>
       <user-list-element
         v-for="user in usersToAdd"

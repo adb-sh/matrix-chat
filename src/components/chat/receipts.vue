@@ -35,9 +35,8 @@ export default {
 <style scoped lang="scss">
 .receipts{
   text-align: right;
-  margin: 0.2rem 0.5rem;
+  margin: 0.2rem 0;
   font-size: 0.8rem;
-  height: 1rem;
   .counter{
     position: relative;
     display: inline-block;

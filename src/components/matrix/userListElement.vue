@@ -65,7 +65,7 @@ export default {
   .userListName{
     position: absolute;
     left: 4rem;
-    top: 0.25rem;
+    top: 0.4rem;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: calc(100% - 5rem);
@@ -73,7 +73,7 @@ export default {
   }
   .status{
     position: absolute;
-    top: 1.5rem;
+    bottom: 0.4rem;
     left: 4rem;
     font-size: 0.8rem;
     text-align: left;

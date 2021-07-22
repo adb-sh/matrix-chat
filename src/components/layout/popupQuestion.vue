@@ -3,7 +3,7 @@
     <h2>{{title}}</h2>
     <p>{{question}}</p>
     <textbtn :text="action" @click.native="callback()"/>
-    <textbtn text="Cancel" @click.native="onReject()" class="outline"/>
+    <textbtn :text="reject" @click.native="onReject()" class="outline"/>
   </popup>
 </template>
 
@@ -25,6 +25,10 @@ export default {
     action: {
       type: String,
       default: 'Apply'
+    },
+    reject: {
+      type: String,
+      default: 'Cancel'
     }
   }
 }

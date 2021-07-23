@@ -4,6 +4,7 @@ import App from './App.vue'
 import {router} from '@/router'
 import {MatrixHandler} from './lib/MatrixHandler.js'
 import {DataStore} from '@/lib/DataStore';
+import {enableBackgroundMode} from '@/lib/backgroundMode';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
@@ -15,6 +16,8 @@ export let matrix = new MatrixHandler();
   if (login && login.baseUrl && login.accessToken && login.userId) {
     matrix.tokenLogin(login.baseUrl, login.accessToken, login.userId);
   }
+
+  enableBackgroundMode();
 
   new Vue({
     el: '#app',

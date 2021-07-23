@@ -35,6 +35,7 @@ export class NotificationHandler{
         {
           title: `${calcUserName(event.sender)} in ${getRoom(event.room_id).name}`,
           body: event.content.body,
+          smallIcon: 'status_icon',
           id: 1,
           schedule: { at: new Date(Date.now() + 1000 * 5) },
           sound: null,

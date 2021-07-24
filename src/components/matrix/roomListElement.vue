@@ -9,8 +9,10 @@
       />
     </div>
     <div class="roomListName">{{room.name}}</div>
-    <div class="time wideElement">{{getTimeThenDate(getLatestEvent(room).origin_server_ts)}}</div>
-    <div class="status"><span class="user">{{calcUserName(getLatestEvent(room).sender)}}:</span> {{getPreviewString(room)}}</div>
+    <div v-if="room.timeline.length" class="time wideElement">{{getTimeThenDate(getLatestEvent(room).origin_server_ts)}}</div>
+    <div v-if="room.currentState.members[matrix.user].membership==='invite'" class="status">you are invited</div>
+    <div v-else-if="room.timeline.length" class="status"><span class="user">{{calcUserName(getLatestEvent(room).sender)}}:</span> {{getPreviewString(room)}}</div>
+    <div v-else>Empty room</div>
     <div v-if="room._notificationCounts.total" class="notificationCount">{{room._notificationCounts.total}}</div>
   </div>
 </template>
@@ -20,6 +22,7 @@ import avatar from '@/components/matrix/avatar';
 import {getMxcFromChat} from '@/lib/getMxc';
 import {getTimeThenDate} from '@/lib/getTimeStrings';
 import {calcUserName} from '@/lib/matrixUtils';
+import {matrix} from '@/main';
 
 export default {
   name: 'roomListElement',
@@ -28,6 +31,11 @@ export default {
   },
   props:{
     room: Object
+  },
+  data(){
+    return{
+      matrix
+    }
   },
   methods:{
     getPreviewString(room){

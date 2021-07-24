@@ -20,7 +20,8 @@
       <popup-question
         v-if="room.currentState.members[matrix.user].membership==='invite'"
         class="acceptInvite"
-        title="Accept invite"
+        title="Accept Invite"
+        reject="Reject"
         :question="`Join ${room.name}?`"
         :callback="()=>matrix.client.joinRoom(room.roomId)"
         :onReject="()=>matrix.client.leave(room.roomId)"
@@ -99,20 +100,24 @@ export default {
     getTypingInfo(){
       let usersTyping = this.getUsersTyping();
       switch (usersTyping.length) {
-        case 0: return '';
-        case 1: return `${calcUserName(usersTyping[0].userId)} is typing ...`;
-        case 2: return `${calcUserName(usersTyping[0].userId)} and ${calcUserName(usersTyping[1].userId)} are typing ...`;
-        default: return`${calcUserName(usersTyping[0].userId)} and ${usersTyping.length-1} others are typing ...`;
+      case 0: return '';
+      case 1: return `${calcUserName(usersTyping[0].userId)} is typing ...`;
+      case 2: return `${calcUserName(usersTyping[0].userId)} and ${calcUserName(usersTyping[1].userId)} are typing ...`;
+      default: return`${calcUserName(usersTyping[0].userId)} and ${usersTyping.length-1} others are typing ...`;
       }
     },
     getLatestEvent(room){
-      return room.timeline[room.timeline.length-1]
+      return room.timeline.length && room.timeline[room.timeline.length-1]
     },
     onActive(){
       if(this.isActive) return;
       this.isActive = true;
       setTimeout(()=>this.isActive=false, 10000);
-      matrix.client.setRoomReadMarkers(this.room.roomId, this.getLatestEvent(this.room).event.event_id, this.getLatestEvent(this.room));
+      if (this.getLatestEvent(this.room)) matrix.client.setRoomReadMarkers(
+        this.room.roomId,
+        this.getLatestEvent(this.room).event.event_id,
+        this.getLatestEvent(this.room)
+      );
     },
     getUser,
     calcUserName,

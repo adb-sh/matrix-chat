@@ -6,7 +6,7 @@
 
 <script>
 export default {
-name: "icon",
+  name: 'icon',
   props: {
     ic: String
   }
@@ -24,6 +24,11 @@ name: "icon",
     cursor: pointer;
     user-select: none;
     border: none;
+    outline: none;
+  }
+  button:focus{
+    border: none !important;
+    outline: none !important;
   }
   .icon{
     position: absolute;

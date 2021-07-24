@@ -11,7 +11,7 @@
 import icon from './icon.vue';
 
 export default {
-name: "error",
+  name: 'error',
   components: {
     icon
   },

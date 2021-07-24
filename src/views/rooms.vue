@@ -1,17 +1,38 @@
 <template>
   <overlay v-if="matrix.loading"><throbber text="loading" class="center"/></overlay>
-  <overlay v-else-if="!matrix.client"><popup-question :callback="()=>$router.push('/login')" :title="'Connection failed'" :question="'Go to login?'" class="center"/></overlay>
+  <overlay v-else-if="!matrix.client">
+    <popup-question :callback="()=>$router.push('/login')" :on-reject="()=>reconnect()"
+    :title="'Connection failed'" :question="'Go to login?'" :reject="'Retry'" class="center"/>
+  </overlay>
   <div v-else>
     <div id="roomList" class="roomList">
-      <h1 class="wideElement">[chat]</h1><h1 class="smallElement">[c]</h1>
-      <input v-model="search" class="input wideElement" type="text" maxlength="50" placeholder="search">
-      <p class="wideElement">- rooms -</p>
-      <room-list-element
-        v-for="room in matrix.rooms.filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
-        :key="room.roomId" @click.native="openChat(room)"
-        :room="room"
-        class="roomListElement"
-      />
+      <div ref="topLogo" class="top"><h1 class="wideElement topLogo">[chat]</h1><h1 class="smallElement topLogo">[c]</h1></div>
+      <div class="stickySearch top" ref="stickySearch">
+        <icon class="menu" ic="./sym/ic_menu_white.svg" @click.native="()=>showSideMenu=true"/>
+        <input v-model="search" class="input wideElement search" type="text" maxlength="50" placeholder="search">
+      </div>
+      <div v-if="search">
+        <p class="wideElement">- rooms -</p><p class="smallElement">—</p>
+        <room-list-element
+          v-for="room in matrix.rooms.all.filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
+          :key="room.roomId" @click.native="openChat(room)"
+          :room="room"
+          class="roomListElement"
+        />
+      </div>
+      <div v-else v-for="category in [
+        {rooms: matrix.rooms.favourite, name: 'favourites'},
+        {rooms: matrix.rooms.other, name: 'rooms'},
+        {rooms: matrix.rooms.lowPriority, name: 'low priority'}
+      ].filter(c=>c.rooms.length)" :key="category.name">
+        <p class="wideElement">- {{category.name}} -</p><p class="smallElement">—</p>
+        <room-list-element
+          v-for="room in category.rooms" :key="room.roomId"
+          @click.native="openChat(room)"
+          :room="room"
+          class="roomListElement"
+        />
+      </div>
       <div v-if="search">
         <p class="wideElement">- users -</p><p class="smallElement">—</p>
         <user-list-element
@@ -28,7 +49,7 @@
         <p class="wideElement">- suggestions -</p><p class="smallElement">…</p>
         <div class="wideElement">
           <p v-if="isValidUserId(search)"
-           class="suggestion"
+            class="suggestion"
             @click="setQuestion({
             title:'New Chat',
             question:`Create private chat with '${search}'?`,
@@ -60,6 +81,8 @@
     />
     <div class="noRoomSelected" v-else>Please select a room to be displayed.</div>
     <overlay>
+      <sideMenu v-if="showSideMenu" :close="()=>showSideMenu=false"
+        :options="{setShowCreateRoom, setQuestion}"/>
       <chatInformation v-if="showRoom && showChatInfo" :room="getCurrentRoom()" :close-chat-info="()=>showChatInfo=false" class="center"/>
       <new-room v-if="showCreateRoom.props" :callback="showCreateRoom.callback" :props="showCreateRoom.props" class="center"/>
       <popup-question v-if="popup.question" :callback="popup.callback" :onReject="popup.onReject" :question="popup.question" :title="popup.title" class="center"/>
@@ -81,10 +104,14 @@ import newRoom from '@/components/matrix/newRoom';
 import Overlay from '@/components/layout/overlay';
 import Throbber from '@/components/layout/throbber';
 import {createRoom} from '@/lib/matrixUtils';
+import icon from '@/components/layout/icon';
+import {DataStore} from '@/lib/DataStore';
+import SideMenu from "@/components/layout/sideMenu";
 
 export default {
   name: 'rooms',
   components:{
+    SideMenu,
     Throbber,
     Overlay,
     PopupQuestion,
@@ -92,7 +119,8 @@ export default {
     chat,
     chatInformation,
     roomListElement,
-    newRoom
+    newRoom,
+    icon
   },
   methods:{
     openChat(room){
@@ -138,6 +166,14 @@ export default {
         }
       }
     },
+    reconnect(){
+      new DataStore().get('login').then(login => {
+        if (login && login.baseUrl && login.accessToken && login.userId){
+          matrix.tokenLogin(login.baseUrl, login.accessToken, login.userId);
+        }
+        else this.$router.push('/login');
+      });
+    },
     getMxcFromRoom,
     getRoom,
     getUser,
@@ -152,11 +188,18 @@ export default {
       showRoom: true,
       search: '',
       popup:{},
-      showCreateRoom:{}
+      showCreateRoom:{},
+      showSideMenu: false
     }
   },
-  created() {
+  created(){
     if (matrix.client === undefined) this.$router.push('/login');
+  },
+  updated(){
+    if (this.$refs.stickySearch) new IntersectionObserver(
+      ([e]) => [e.target, this.$refs.topLogo].map(el=>el.classList.toggle('isSticky', e.intersectionRatio < 1)),
+      {threshold: [1]}
+    ).observe(this.$refs.stickySearch);
   }
 }
 </script>
@@ -168,7 +211,7 @@ export default {
   top: 0;
   width: 18rem;
   height: 100%;
-  background-color: #222;
+  background-color: var(--grey500);
   text-align: center;
   overflow-y: auto;
   overflow-x: hidden;
@@ -181,6 +224,7 @@ export default {
   width: calc(100% - 18rem);
   height: 100%;
   background-color: #313131;
+  z-index: 10;
 }
 .roomListElement{
   position: relative;
@@ -189,6 +233,7 @@ export default {
   font-size: 1.2rem;
   cursor: pointer;
   background-color: #222;
+  transition: all 200ms;
 }
 .noRoomSelected{
   position: absolute;
@@ -198,10 +243,12 @@ export default {
   text-align: center;
 }
 input{
-  position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  width: calc(100% - 4rem);
+  position: absolute;
+  top: 50%;
+  left: 4rem;
+  transform: translate(0, -50%);
+  margin: 0;
+  width: calc(100% - 5.5rem);
 }
 .wideElement{
   display: block;
@@ -221,6 +268,34 @@ input{
 }
 .suggestion:hover{
   background-color: #4444;
+}
+.topLogo{
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 2rem;
+}
+.stickySearch{
+  position: sticky;
+  top: -1px;
+  padding-top: 1px;
+  width: 100%;
+  height: 3.5rem;
+  z-index: 10;
+  .menu{
+    position: absolute;
+    left: 0.5rem;
+    background-color: unset;
+    box-shadow: none;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+}
+.top{
+  transition: 0.4s;
+  background-color: inherit;
+}
+.top.isSticky{
+  background-color: var(--grey600);
 }
 
 @media (max-width: 48rem) and (min-width: 30rem) {

@@ -29,6 +29,13 @@ export async function createRoom({name = '', users = [], description = undefined
   });
 }
 export function sortRoomsByTimestamp(rooms){
-  let getLatestTimestamp = room => room.timeline[room.timeline.length-1].event.origin_server_ts;
-  return rooms.sort((a,b) => getLatestTimestamp(b)-getLatestTimestamp(a));
+  let getLatestTimestamp = room => room.timeline[room.timeline.length-1]
+      && room.timeline[room.timeline.length-1].event.origin_server_ts;
+  let all = rooms.sort((a,b) => getLatestTimestamp(b)-getLatestTimestamp(a)||0);
+  return {
+    all,
+    favourite: all.filter(r=>r.tags['m.favourite']),
+    lowPriority: all.filter(r=>r.tags['m.lowpriority']),
+    other: all.filter(r=>!(r.tags['m.favourite']||r.tags['m.lowpriority']))
+  }
 }

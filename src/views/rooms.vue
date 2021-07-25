@@ -11,16 +11,9 @@
         <icon class="menu" ic="./sym/ic_menu_white.svg" @click.native="()=>showSideMenu=true"/>
         <input v-model="search" class="input wideElement search" type="text" maxlength="50" placeholder="search">
       </div>
-      <div v-if="search">
-        <p class="wideElement">- rooms -</p><p class="smallElement">—</p>
-        <room-list-element
-          v-for="room in matrix.rooms.all.filter(prop=>matchResults(prop.name, search)||prop.roomId===search)"
-          :key="room.roomId" @click.native="openChat(room)"
-          :room="room"
-          class="roomListElement"
-        />
-      </div>
-      <div v-else v-for="category in [
+      <div v-for="category in search?[
+        {rooms: matrix.rooms.all.filter(r=>matchResults(r.name, search)||r.roomId===search), name: 'rooms'}
+      ]:[
         {rooms: matrix.rooms.favourite, name: 'favourites'},
         {rooms: matrix.rooms.other, name: 'rooms'},
         {rooms: matrix.rooms.lowPriority, name: 'low priority'}

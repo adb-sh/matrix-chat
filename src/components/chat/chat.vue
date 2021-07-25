@@ -12,7 +12,6 @@
           :on-update="()=>$nextTick(resize)"
           :receipts="room._receipts"
         />
-        <p v-if="getUsersTyping().length" class="info">{{getTypingInfo()}}</p>
       </div>
       <icon v-if="showScrollBtn" @click.native="scroll.scrollToBottom()" id="scrollDown" ic="./sym/ic_expand_more_black.svg" />
     </div>
@@ -31,7 +30,7 @@
       :onResize="resize" :roomId="room.roomId" ref="newMessage"
       :replyTo="replyTo" :resetReplyTo="resetReplyTo"
     />
-    <topBanner :room="room" :close-chat="closeChat" :open-chat-info="openChatInfo"/>
+    <topBanner :info="getTypingInfo()" :room="room" :close-chat="closeChat" :open-chat-info="openChatInfo"/>
   </div>
 </template>
 
@@ -99,6 +98,7 @@ export default {
     },
     getTypingInfo(){
       let usersTyping = this.getUsersTyping();
+      if (!usersTyping) return null;
       switch (usersTyping.length) {
       case 0: return '';
       case 1: return `${calcUserName(usersTyping[0].userId)} is typing ...`;

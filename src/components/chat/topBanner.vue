@@ -5,7 +5,7 @@
       <div @click="openChatInfo()" class="container">
         <avatar class="topIcon avatar" :mxcURL="getMxcFromChat(room)" :fallback="room.roomId" :size="3"/>
         <div class="chatName">{{room.name}}</div>
-        <div class="info">{{Object.keys(room.currentState.members).length}} members</div>
+        <div class="info">{{info||`${Object.keys(room.currentState.members).length} members`}}</div>
       </div>
     </div>
   </div>
@@ -24,7 +24,8 @@ export default {
   props:{
     room: [Object, undefined],
     closeChat: Function,
-    openChatInfo: Function
+    openChatInfo: Function,
+    info: [String, null]
   },
   methods: {
     getMxcFromChat

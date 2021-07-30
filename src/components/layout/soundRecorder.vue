@@ -23,7 +23,6 @@
 
 <script>
 import icon from '@/components/layout/icon';
-import Recorder from 'recorder-js';
 const audioContext =  new (window.AudioContext || window.webkitAudioContext)();
 
 export default {
@@ -44,37 +43,51 @@ export default {
   methods: {
     startRecording(){
       this.onStart();
-      navigator.mediaDevices.getUserMedia({audio: true})
-        .then(stream => {
-          this.stream = stream;
-          this.recorder.init(stream);
-          this.recorder.start().then(()=>this.isRecording=true);
-        })
-        .catch(err => console.log('unable to get stream', err));
-    },
-    stopRecording(){
-      this.recorder.stop()
-        .then(({blob}) => {
+      navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
+        this.isRecording = true;
+        this.createAudioMeter(stream).onData(this.setVoiceMeter);
+        this.recorder = new MediaRecorder(stream);
+        this.recorder.start();
+        this.recorder.ondataavailable = ev => this.data.push(ev.data);
+        this.recorder.onstop = () => {
+          let blob = new Blob(this.data, {'type': 'audio/mp3'});
+          this.data = [];
           blob.name = `Recording-${new Date().toISOString()}.${blob.type.split('/')[1]}`;
           this.onStop({blob});
-          this.stream.getTracks().map(track => track.stop());
-          this.isRecording=false;
-        });
+          this.isRecording = false;
+        };
+      }).catch(err => console.log('unable to get stream', err));
+    },
+    stopRecording(){
+      this.recorder.stop();
     },
     setVoiceMeter(value){
       if (!this.$refs.stopRecord) return;
       this.$refs.voiceMeter.style.height = `calc(3rem + ${value/4}px`;
       this.$refs.voiceMeter.style.width = `calc(3rem + ${value/4}px`;
     },
+    createAudioMeter(stream){
+      let onDataCallbacks = [];
+      let onData = callback => onDataCallbacks.push(callback);
+      let processor = audioContext.createScriptProcessor(512, 1 , 1);
+      processor.onaudioprocess = event => {
+        let sum = 0;
+        event.inputBuffer.getChannelData(0).forEach(val => sum += val * val);
+        onDataCallbacks.map(callback => callback(Math.sqrt(sum)*100));
+      };
+      processor.connect(audioContext.destination);
+      processor.shutdown = () => {
+        processor.disconnect();
+        processor.onaudioprocess = null;
+      }
+      audioContext.createMediaStreamSource(stream).connect(processor);
+      return {onData};
+    }
   },
   data(){
     return{
-      recorder: new Recorder(audioContext, {
-        onAnalysed: data => {
-          this.setVoiceMeter(data.lineTo);
-        }
-      }),
-      stream: undefined,
+      recorder: null,
+      data: [],
       isRecording: false
     }
   }

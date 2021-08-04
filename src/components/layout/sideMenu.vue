@@ -100,6 +100,7 @@ export default {
         padding-top: 1rem;
         height: 4rem;
         text-align: left;
+        white-space: nowrap;
         .name{
           overflow: hidden;
           text-overflow: ellipsis;

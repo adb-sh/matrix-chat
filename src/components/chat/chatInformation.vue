@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     getMembers(){
-      return Object.values(this.room.currentState.members)
+      return Object.values(this.room.currentState.members).filter(user=>user.membership==='join')
     },
     addUser(user){
       if (this.usersToAdd.find(tmp => tmp === user)) return;

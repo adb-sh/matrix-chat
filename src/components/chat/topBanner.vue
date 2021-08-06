@@ -5,7 +5,7 @@
       <div @click="openChatInfo()" class="container">
         <avatar class="topIcon avatar" :mxcURL="getMxcFromChat(room)" :fallback="room.roomId" :size="3"/>
         <div class="chatName">{{room.name}}</div>
-        <div class="info">{{info||`${Object.keys(room.currentState.members).length} members`}}</div>
+        <div class="info">{{info||`${Object.values(room.currentState.members).filter(user=>user.membership==='join').length} members`}}</div>
       </div>
     </div>
   </div>

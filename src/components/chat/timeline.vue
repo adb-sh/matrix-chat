@@ -1,5 +1,5 @@
 <template>
-  <lazy-renderer class="timeline">
+  <div class="timeline">
     <div
       class="timeGroup"
       v-for="timeGroup in splitArray(timeline,obj => getDate(obj.event.origin_server_ts))"
@@ -32,7 +32,8 @@
               :type="event.event.sender === user?'send':'receive'"
               :event="event.event"
               :status="event.status"
-              :on-update="onUpdate"
+              :beforeUpdate="beforeUpdate"
+              :onUpdate="onUpdate"
               :setReplyTo="setReplyTo"
             />
             <receipts v-if="i < group.length-1" :receipts="getReceipts(event)"/>
@@ -41,7 +42,7 @@
         <receipts :receipts="getReceipts(group[group.length-1])"/>
       </div>
     </div>
-  </lazy-renderer>
+  </div>
 </template>
 
 <script>
@@ -63,6 +64,7 @@ export default {
     user: String,
     groupTimeline: Boolean,
     setReplyTo: Function,
+    beforeUpdate: Function,
     onUpdate: Function,
     receipts: Object
   },
@@ -76,6 +78,9 @@ export default {
     splitArray,
     getDate,
     getTime
+  },
+  beforeUpdate() {
+    this.beforeUpdate();
   },
   updated() {
     this.onUpdate();

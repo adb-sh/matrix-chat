@@ -9,7 +9,8 @@
           :timeline="room.timeline" :group-timeline="isGroup()"
           :user="user" :roomId="room.roomId"
           :setReplyTo="setReplyTo"
-          :on-update="()=>$nextTick(resize)"
+          :beforeUpdate="()=>scrollBottom = scroll.getScrollBottom()"
+          :onUpdate="()=>manageScrollBottom()"
           :receipts="room._receipts"
         />
       </div>
@@ -141,14 +142,9 @@ export default {
   },
   mounted(){
     this.scroll = new scrollHandler(this.$refs.timelineContainer);
-    this.scroll.scrollToBottom();
+    this.$nextTick(this.scroll.scrollToBottom());
     this.onScroll();
     this.onActive();
-  },
-  watch: {
-    '$route'(){
-      this.scroll.scrollToBottom();
-    }
   }
 }
 </script>

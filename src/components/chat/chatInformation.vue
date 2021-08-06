@@ -14,10 +14,7 @@
     </div>
     <h3>Members</h3>
     <user-list-element
-      v-for="member in Object.assign(
-        members.filter(mem=>!mem.powerLevel),
-        members.filter(mem=>mem.powerLevel).sort((a,b)=>b.powerLevel-a.powerLevel)
-      ).slice(0,20)"
+      v-for="member in members.slice(0,20)"
       :key="member.userId"
       :user="getUser(member.userId)"
       :info="member.typing?'is typing ...':null"

@@ -1,5 +1,8 @@
 <template>
-  <div class="event">
+  <div class="event" @contextmenu.prevent="contextEvent=>setContextMenu({event:contextEvent, options:{
+    Reply:()=>setReplyTo(event),
+    Copy:()=>copy(event.content.body)
+  }})">
     <div v-if="event.type==='m.room.message'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <reply-event :event="replyEvent" v-if="replyEvent"/>
       <event-content :content="event.content"/>
@@ -37,6 +40,7 @@ export default {
   props: {
     type: String,
     event: Object,
+    beforeUpdate: Function,
     onUpdate: Function,
     setReplyTo: Function,
     status: String
@@ -81,6 +85,9 @@ export default {
   },
   created(){
     this.getReplyEvent(this.event).then((res) => this.replyEvent = res);
+  },
+  beforeUpdate(){
+    this.beforeUpdate();
   },
   updated(){
     this.onUpdate();

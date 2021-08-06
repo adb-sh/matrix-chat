@@ -1,5 +1,5 @@
 <template>
-  <div class="timeline">
+  <lazy-renderer class="timeline">
     <div
       class="timeGroup"
       v-for="timeGroup in splitArray(timeline,obj => getDate(obj.event.origin_server_ts))"
@@ -41,13 +41,11 @@
         <receipts :receipts="getReceipts(group[group.length-1])"/>
       </div>
     </div>
-  </div>
+  </lazy-renderer>
 </template>
 
 <script>
-import event from '@/components/chat/event';
 import avatar from '@/components/matrix/avatar';
-import receipts from '@/components/chat/receipts';
 import splitArray from '@/lib/splitArray';
 import {getDate, getTime} from '@/lib/getTimeStrings';
 import {getUser, calcUserName} from '@/lib/matrixUtils';
@@ -56,8 +54,8 @@ import {matrix} from '@/main';
 export default {
   name: 'eventGroup',
   components: {
-    receipts,
-    event,
+    receipts:()=>import('@/components/chat/receipts'),
+    event:()=>import('@/components/chat/event'),
     avatar
   },
   props: {
@@ -78,6 +76,9 @@ export default {
     splitArray,
     getDate,
     getTime
+  },
+  updated() {
+    this.onUpdate();
   }
 }
 </script>

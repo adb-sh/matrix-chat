@@ -25,6 +25,7 @@
     "v-emoji-picker": "^2.3.1",
     "viewerjs": "*",
     "vue": "^2.6.11",
+    "vue-lazy-renderer": "^1.2.1",
     "ws": "^7.3.1"
   },
   "devDependencies": {

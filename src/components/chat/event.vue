@@ -25,7 +25,6 @@ import {calcUserName} from '@/lib/matrixUtils';
 import {parseMessage} from '@/lib/eventUtils';
 import {getTime} from '@/lib/getTimeStrings';
 import {getMediaUrl} from '@/lib/getMxc';
-import ReplyEvent from '@/components/chat/replyEvent';
 import EventContent from '@/components/chat/eventContent';
 import icon from '@/components/layout/icon';
 
@@ -33,7 +32,7 @@ export default {
   name: 'message',
   components: {
     EventContent,
-    ReplyEvent,
+    ReplyEvent:()=>import('@/components/chat/replyEvent'),
     icon
   },
   props: {
@@ -49,9 +48,7 @@ export default {
       return replyId && await matrix.client.fetchRoomEvent(this.event.room_id, replyId);
     },
     getReplyId(content){
-      return content['m.relates_to']
-        && content['m.relates_to']['m.in_reply_to']
-        && content['m.relates_to']['m.in_reply_to'].event_id
+      return content['m.relates_to']?.['m.in_reply_to']?.event_id;
     },
     calcUserName,
     parseMessage,

@@ -43,8 +43,6 @@ import splitArray from '@/lib/splitArray.js'
 import timeline from '@/components/chat/timeline';
 import scrollHandler from '@/lib/scrollHandler';
 import {getUser, calcUserName} from '@/lib/matrixUtils';
-import overlay from '@/components/layout/overlay';
-import popupQuestion from '@/components/layout/popupQuestion';
 
 export default {
   name: 'chat',
@@ -53,8 +51,8 @@ export default {
     Icon,
     newMessage,
     topBanner,
-    overlay,
-    popupQuestion
+    overlay:()=>import('@/components/layout/overlay'),
+    popupQuestion:()=>import('@/components/layout/popupQuestion')
   },
   props: {
     room: [Object, undefined],

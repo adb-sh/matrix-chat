@@ -3,17 +3,31 @@
     <div id="appContent">
       <router-view />
       <error />
+      <contextMenu
+        v-if="contextMenuData.options&&contextMenuData.event"
+        :options="contextMenuData.options"
+        :event="contextMenuData.event"
+        :close="()=>contextMenuData.event=false"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import error from '@/components/layout/error.vue';
+import contextMenu from '@/components/layout/contextMenu';
+import {getContextMenu} from '@/lib/contextMenuUtils';
 
 export default {
   name: 'App',
   components:{
-    error
+    error,
+    contextMenu
+  },
+  data(){
+    return{
+      contextMenuData: getContextMenu()
+    }
   }
 }
 </script>

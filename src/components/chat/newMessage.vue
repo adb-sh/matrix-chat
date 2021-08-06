@@ -80,7 +80,8 @@ export default {
       event.content.msgtype==='m.text'?this.sendEvent(event):this.sendMediaEvent(event);
     },
     async sendEvent(event){
-      if (!event.content.body.trim()) return;
+      event.content.body = event.content.body.trim();
+      if (!event.content.body) return;
       this.setReplyTo(this.replyTo);
       matrix.sendEvent(new Proxy(this.event, this.eventProxyHandler), this.roomId);
       this.isSending = false;

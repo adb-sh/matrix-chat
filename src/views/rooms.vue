@@ -24,6 +24,11 @@
           @click.native="openChat(room)"
           :room="room"
           class="roomListElement"
+          @contextmenu.native.prevent="event=>setContextMenu({event, options:{
+            'Add to Favourites':()=>{setTag(room, 'm.favourite'); removeTag(room, 'm.lowpriority'); },
+            'Low Priority':()=>{setTag(room, 'm.lowpriority'); removeTag(room, 'm.favourite'); },
+            'Reset Priority':()=>{removeTag(room, 'm.favourite'); removeTag(room, 'm.lowpriority'); }
+          }})"
         />
       </div>
       <div v-if="search">
@@ -99,7 +104,8 @@ import Throbber from '@/components/layout/throbber';
 import {createRoom} from '@/lib/matrixUtils';
 import icon from '@/components/layout/icon';
 import {DataStore} from '@/lib/DataStore';
-import SideMenu from "@/components/layout/sideMenu";
+import SideMenu from '@/components/layout/sideMenu';
+import {setContextMenu} from '@/lib/contextMenuUtils';
 
 export default {
   name: 'rooms',
@@ -167,12 +173,20 @@ export default {
         else this.$router.push('/login');
       });
     },
+    setTag(room, tag){
+      matrix.client.setRoomTag(room.roomId, tag, {}).then(matrix.reloadRooms);
+
+    },
+    removeTag(room, tag){
+      matrix.client.deleteRoomTag(room.roomId, tag).then(matrix.reloadRooms);
+    },
     getMxcFromRoom,
     getRoom,
     getUser,
     isValidUserId,
     isValidRoomId,
-    createRoom
+    createRoom,
+    setContextMenu
   },
   data(){
     return {

@@ -1,5 +1,8 @@
 <template>
-  <div class="event">
+  <div class="event" @contextmenu.prevent="contextEvent=>setContextMenu({event:contextEvent, options:{
+    Reply:()=>setReplyTo(event),
+    Copy:()=>copy(event.content.body)
+  }})">
     <div v-if="event.type==='m.room.message'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <reply-event :event="replyEvent" v-if="replyEvent"/>
       <event-content :content="event.content"/>
@@ -22,12 +25,11 @@
 <script>
 import {matrix} from '@/main';
 import {calcUserName} from '@/lib/matrixUtils';
-import {parseMessage} from '@/lib/eventUtils';
 import {getTime} from '@/lib/getTimeStrings';
-import {getMediaUrl} from '@/lib/getMxc';
 import ReplyEvent from '@/components/chat/replyEvent';
 import EventContent from '@/components/chat/eventContent';
 import icon from '@/components/layout/icon';
+import {setContextMenu} from '@/lib/contextMenuUtils';
 
 export default {
   name: 'message',
@@ -53,10 +55,12 @@ export default {
         && content['m.relates_to']['m.in_reply_to']
         && content['m.relates_to']['m.in_reply_to'].event_id
     },
+    copy(text){
+      navigator.clipboard.writeText(text);
+    },
     calcUserName,
-    parseMessage,
     getTime,
-    getMediaUrl
+    setContextMenu
   },
   data(){
     return{

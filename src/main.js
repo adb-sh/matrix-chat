@@ -5,9 +5,11 @@ import {router} from '@/router'
 import {MatrixHandler} from './lib/MatrixHandler.js'
 import {DataStore} from '@/lib/DataStore';
 import {enableBackgroundMode} from '@/lib/backgroundMode';
+import VueLazyRenderer from 'vue-lazy-renderer';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
+Vue.use(VueLazyRenderer);
 
 export let matrix = new MatrixHandler();
 

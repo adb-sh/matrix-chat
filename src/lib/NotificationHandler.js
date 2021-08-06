@@ -15,8 +15,7 @@ export class NotificationHandler{
       return false;
     }
     if (Notification.permission === 'granted') return true;
-    return await Notification.requestPermission()
-      .then(permission => {return permission === 'granted'});
+    return await Notification.requestPermission().then(permission => {return permission === 'granted'});
   }
   showNotification(event){
     new Audio('./sounds/notification1.wav').play();

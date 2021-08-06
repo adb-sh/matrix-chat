@@ -22,13 +22,13 @@
     <p v-if="members.length>20">and {{members.length-20}} other members</p>
     <h3>Add User</h3>
     <user-search :filter="prop=>!(usersToAdd.find(temp=>temp===prop)||members.find(temp=>temp.userId===prop.userId))" :callback="addUser" class="userSearch"/>
-    <div>
+    <lazy-renderer>
       <user-list-element
         v-for="user in usersToAdd"
         :user="user" :key="user.userId"
         @click.native="removeUser(user)"
       />
-    </div>
+    </lazy-renderer>
     <textbtn v-if="usersToAdd.length" @click.native="inviteUsers(usersToAdd).then(()=>usersToAdd=[])">Invite</textbtn>
     <h3>Other</h3>
     <textbtn class="leave" @click.native="matrix.client.leave(room.roomId)">Leave room</textbtn>

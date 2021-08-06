@@ -83,11 +83,14 @@ export class MatrixHandler {
     await new Promise(resolve => this.client.on('sync', state => {
       if (state === 'PREPARED') resolve();
     }));
-    this.rooms = sortRoomsByTimestamp(this.client.getRooms());
+    this.reloadRooms();
     this.loading = false;
     callback();
     this.listenToRoomChanges();
     this.listenToPushEvents();
+  }
+  reloadRooms(){
+    this.rooms = sortRoomsByTimestamp(this.client.getRooms());
   }
   listenToPushEvents(){
     this.client.on('event', event => {
@@ -98,9 +101,7 @@ export class MatrixHandler {
   }
   listenToRoomChanges(){
     this.client.on('event', event => {
-      if (event.getType().includes('m.room')){
-        this.rooms = sortRoomsByTimestamp(this.client.getRooms());
-      }
+      if (event.getType().includes('m.room')) this.reloadRooms();
     });
   }
   async sendEvent({content, type}, roomId){

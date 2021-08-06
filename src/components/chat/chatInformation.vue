@@ -14,10 +14,15 @@
     </div>
     <h3>Members</h3>
     <user-list-element
-      v-for="member in members.slice(0,20)"
+      v-for="member in Array.assign(
+        members.filter(mem=>!mem.powerLevel),
+        members.filter(mem=>mem.powerLevel).sort((a,b)=>b.powerLevel-a.powerLevel)
+      ).slice(0,20)"
       :key="member.userId"
       :user="getUser(member.userId)"
       :info="member.typing?'is typing ...':null"
+      :role="{100:'Admin', 50:'Mod'}[member.powerLevel]||`${member.powerLevel||''}`"
+      @contextmenu.native.prevent="event=>setContextMenu({event, options:{'Ban User':()=>matrix.client.ban(room.room_id, member.userId)}})"
     />
     <p v-if="members.length>20">and {{members.length-20}} other members</p>
     <h3>Add User</h3>
@@ -43,6 +48,7 @@ import popup from '@/components/layout/popup';
 import textbtn from '@/components/layout/textbtn';
 import {matrix} from '@/main';
 import userSearch from '@/components/matrix/userSearch';
+import {setContextMenu} from '@/lib/contextMenuUtils';
 
 export default {
   name: 'chatInformation',
@@ -74,7 +80,8 @@ export default {
       this.$forceUpdate();
     },
     getUser,
-    getMxcFromChat
+    getMxcFromChat,
+    setContextMenu
   },
   data(){
     return{

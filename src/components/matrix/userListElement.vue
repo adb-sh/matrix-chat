@@ -11,6 +11,7 @@
     </div>
     <div :class="compact?'userListName compact':'userListName'">{{user.displayName || user.userId}}</div>
     <div v-if="!compact" class="status">{{info || user.presence}}</div>
+    <div v-if="role" class="role">{{role}}</div>
   </div>
 </template>
 
@@ -26,9 +27,10 @@ export default {
     user: Object,
     compact: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    info: String
+    info: String,
+    role: String
   }
 }
 </script>
@@ -81,6 +83,12 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     width: calc(100% - 4.5rem);
+  }
+  .role{
+    position: absolute;
+    font-size: 0.8rem;
+    top: 0.4rem;
+    right: 0.5rem;
   }
 }
 .userListElement:hover{

@@ -14,7 +14,7 @@
     </div>
     <h3>Members</h3>
     <user-list-element
-      v-for="member in Array.assign(
+      v-for="member in Object.assign(
         members.filter(mem=>!mem.powerLevel),
         members.filter(mem=>mem.powerLevel).sort((a,b)=>b.powerLevel-a.powerLevel)
       ).slice(0,20)"

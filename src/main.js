@@ -6,6 +6,7 @@ import {MatrixHandler} from './lib/MatrixHandler.js'
 import {DataStore} from '@/lib/DataStore';
 import {enableBackgroundMode} from '@/lib/backgroundMode';
 import VueLazyRenderer from 'vue-lazy-renderer';
+import {fetchConfig} from '@/lib/getConfig';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
@@ -13,14 +14,16 @@ Vue.use(VueLazyRenderer);
 
 export let matrix = new MatrixHandler();
 
-(async () => {
-  let login = await new DataStore().get('login');
-  if (login && login.baseUrl && login.accessToken && login.userId) {
-    matrix.tokenLogin(login.baseUrl, login.accessToken, login.userId);
-  }
 
+Promise.all([
+  fetchConfig().then(conf => console.log('config:', conf)),
+  new DataStore().get('login').then(login => {
+    if (login && login.baseUrl && login.accessToken && login.userId) {
+      return matrix.tokenLogin(login.baseUrl, login.accessToken, login.userId);
+    }
+  })
+]).then(() => {
   enableBackgroundMode();
-
   new Vue({
     el: '#app',
     router,
@@ -30,6 +33,4 @@ export let matrix = new MatrixHandler();
       return {}
     }
   }).$mount('#app');
-})()
-
-
+});

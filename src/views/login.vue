@@ -3,9 +3,9 @@
     <div class="loginBox">
       <h1 class="title">[chat]</h1>
       <form v-if="!matrix.client" @submit.prevent="login()">
-        <input v-model="user" class="input" name="user" type="text" placeholder="@user:adb.sh"><br>
-        <input v-model="password" class="input" name="password" type="password" placeholder="password"><br>
-        <input v-model="homeServer" class="input" name="homeserver" placeholder="https://matrix.org"><br>
+        <input v-model="user" class="input" name="user" type="text" :placeholder="config.user.placeholder"><br>
+        <input v-model="password" class="input" name="password" type="password" :placeholder="config.password.placeholder"><br>
+        <input v-model="homeServer" class="input" name="homeserver" :placeholder="config.homeServer.placeholder"><br>
         <div v-if="loginError" class="info">{{loginError}}</div>
         <textbtn type="submit" text="login" class="rounded"/>
       </form>
@@ -13,6 +13,9 @@
         <p>you are already logged in</p>
         <textbtn @click.native="$router.push('rooms')" text="chat" />
         <textbtn @click.native="logout()" text="logout" class="outline"/>
+      </div>
+      <div class="notice">
+        <a href="https://git.cybre.town/adb/matrix-chat">matrix-chat</a> powerd by <a href="https://matrix.org">Matrix</a>
       </div>
     </div>
     <overlay v-if="loading"><throbber :text="loading"/></overlay>
@@ -27,6 +30,7 @@ import {DataStore} from '@/lib/DataStore';
 import Overlay from '@/components/layout/overlay';
 import Throbber from '@/components/layout/throbber';
 const store = new DataStore();
+import {config} from '@/lib/getConfig';
 
 export default {
   name: 'login.vue',
@@ -72,17 +76,22 @@ export default {
     return {
       user: '',
       password: '',
-      homeServer: 'https://adb.sh',
+      homeServer: config?.login?.homeServer?.default||'',
       loginError: '',
       store,
       loading: false,
-      matrix
+      matrix,
+      config:{
+        user:{placeholder: config?.login?.user?.placeholder||'User Id',},
+        password:{placeholder: config?.login?.password?.placeholder||'Password'},
+        homeServer:{placeholder: config?.login?.homeServer?.placeholder||'Home Server'}
+      }
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 input{
   padding: 0 2rem 0 2rem;
   height: 2.5rem;
@@ -101,22 +110,39 @@ input:focus{
   background-color: #fff;
 }
 .login{
+  position: absolute;
   width: 100%;
   height: 100%;
+  background-image: linear-gradient(2.6rad , #39dcae, #083a87);
 }
 .loginBox{
   position: absolute;
-  top: 40%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
   height: min-content;
-  width: 100%;
+  width: max-content;
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: var(--grey600);
+  box-shadow: var(--shadow300);
+}
+.notice{
+  position: absolute;
+  bottom: -1.5rem;
+  right: .5rem;
+  a{
+    color: #fff;
+  }
 }
 
 @media (max-width: 35rem) {
   input {
-    width: calc(100% - 8rem);
+    width: calc(100% - 4rem);
+  }
+  .loginBox{
+    width: calc(100% - 6rem);
   }
 }
 </style>

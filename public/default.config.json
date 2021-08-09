@@ -1,0 +1,14 @@
+{
+  "login": {
+    "user": {
+      "placeholder": "@user:matrix.org"
+    },
+    "password": {
+      "placeholder": "Password"
+    },
+    "homeServer": {
+      "placeholder": "Home Server",
+      "default": "https://matrix.org"
+    }
+  }
+}

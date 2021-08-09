@@ -63,12 +63,11 @@ export default {
     },
     setVoiceMeter(value){
       if (!this.$refs.stopRecord) return;
-      this.$refs.voiceMeter.style.height = `calc(3rem + ${value/4}px`;
-      this.$refs.voiceMeter.style.width = `calc(3rem + ${value/4}px`;
+      this.$refs.voiceMeter.style.height = `calc(3rem + ${value/4}px)`;
+      this.$refs.voiceMeter.style.width = `calc(3rem + ${value/4}px)`;
     },
     createAudioMeter(stream){
       let onDataCallbacks = [];
-      let onData = callback => onDataCallbacks.push(callback);
       let processor = audioContext.createScriptProcessor(512, 1 , 1);
       processor.onaudioprocess = event => {
         let sum = 0;
@@ -81,7 +80,7 @@ export default {
         processor.onaudioprocess = null;
       }
       audioContext.createMediaStreamSource(stream).connect(processor);
-      return {onData};
+      return {onData: callback => onDataCallbacks.push(callback)};
     }
   },
   data(){

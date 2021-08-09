@@ -45,8 +45,7 @@ export default {
       return `${event.type}`;
     },
     getLatestEvent(room){
-      return room.timeline[room.timeline.length-1]
-        && room.timeline[room.timeline.length-1].event;
+      return [...room.timeline]?.pop()?.event;
     },
     getMxcFromChat,
     calcUserName,

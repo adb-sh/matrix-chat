@@ -39,7 +39,7 @@
             <receipts v-if="i < group.length-1" :receipts="getReceipts(event)"/>
           </div>
         </div>
-        <receipts :receipts="getReceipts(group[group.length-1])"/>
+        <receipts :receipts="getReceipts([...group].pop())"/>
       </div>
     </div>
   </div>

@@ -12,7 +12,7 @@
       <div v-else>
         <p>you are already logged in</p>
         <textbtn @click.native="$router.push('rooms')" text="chat" />
-        <textbtn @click.native="logout()" text="logout" class="outline"/>
+        <textbtn @click.native="$router.push('logout')" text="logout" class="outline"/>
       </div>
       <div class="notice">
         <a href="https://git.cybre.town/adb/matrix-chat">matrix-chat</a> powerd by <a href="https://matrix.org">Matrix</a>
@@ -56,13 +56,6 @@ export default {
         this.loading = false;
         this.$router.push('/rooms/');
       });
-    },
-    async logout(){
-      this.loading = 'logging out';
-      await matrix.logout();
-      this.store.set('login', {});
-      this.loading = false;
-      this.$forceUpdate();
     },
     getInputErrors(){
       if (matrix.client !== undefined) return 'you are already logged in';

@@ -22,7 +22,7 @@
       <div class="menuItem" @click="()=>{options.setShowCreateRoom({}); close();}">
         <icon class="itemIcon" ic="./sym/ic_add_white.svg"/><div class="title">New Room</div>
       </div>
-      <div class="menuItem" @click="()=>$router.push('/login')">
+      <div class="menuItem" @click="()=>$router.push('/logout')">
         <icon class="itemIcon" ic="./sym/ic_logout_white.svg"/><div class="title">Logout</div>
       </div>
     </div>

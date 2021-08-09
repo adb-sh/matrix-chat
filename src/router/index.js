@@ -2,6 +2,7 @@ import VueRouter from 'vue-router';
 import login from '@/views/login';
 import rooms from '@/views/rooms';
 import admin from '@/views/admin';
+import logout from '@/views/logout';
 
 export const router = new VueRouter({
   routes: [
@@ -14,6 +15,11 @@ export const router = new VueRouter({
       path: '/login',
       name: 'login',
       component: login
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: logout
     },
     {
       path: '/rooms/*',

@@ -204,7 +204,7 @@ export default {
   },
   updated(){
     if (this.$refs.stickySearch) new IntersectionObserver(
-      ([e]) => [e.target, this.$refs.topLogo].map(el=>el.classList.toggle('isSticky', e.intersectionRatio < 1)),
+      ([e]) => [e.target, this.$refs.topLogo].map(el=>el?.classList?.toggle('isSticky', e.intersectionRatio < 1)),
       {threshold: [1]}
     ).observe(this.$refs.stickySearch);
   }

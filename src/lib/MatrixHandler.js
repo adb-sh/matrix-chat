@@ -18,6 +18,7 @@ export class MatrixHandler {
       dbName: 'matrix-chat-sync'
     }):null;
     this.indexedDBStore.startup();
+    this.sessionStore = new matrix.WebStorageSessionStore(window.localStorage);
   }
   login(user, password, baseUrl, onError, callback = ()=>{}){
     if (this.client){ console.log('there is already an active session'); return; }
@@ -25,7 +26,7 @@ export class MatrixHandler {
       baseUrl: baseUrl,
       store: this.indexedDBStore,
       useAuthorizationHeader: true,
-      sessionStore: new matrix.WebStorageSessionStore(window.localStorage)
+      sessionStore: this.sessionStore
     });
     this.client.login('m.login.password', {
       user: user,
@@ -60,7 +61,7 @@ export class MatrixHandler {
       baseUrl,
       store: this.indexedDBStore,
       useAuthorizationHeader: true,
-      sessionStore: new matrix.WebStorageSessionStore(window.localStorage)
+      sessionStore: this.sessionStore
     });
     this.client.getAccountDataFromServer('verification').then(() => {
       this.user = userId;
@@ -76,6 +77,12 @@ export class MatrixHandler {
   async logout(){
     await this.client.stopClient();
     this.client = undefined;
+  }
+  async deleteAllData(){
+    await this.indexedDBStore?.deleteAllData();
+    await this.sessionStore?.removeAllEndToEndSessions();
+    await this.sessionStore?.removeEndToEndAccount();
+    await this.sessionStore?.removeEndToEndDeviceData();
   }
   async startSync(callback = ()=>{}){
     this.loading = true;

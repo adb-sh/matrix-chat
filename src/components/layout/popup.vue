@@ -53,6 +53,12 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
 }
+.center{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
 @media (max-width: 30rem) {
   .popup{
     transform: unset;

@@ -40,7 +40,6 @@ export default {
   .btn.outline{
     background-color: unset;
     box-shadow: none;
-    text-decoration: underline;
     border: #fff solid 1px;
   }
   .btn.squared{

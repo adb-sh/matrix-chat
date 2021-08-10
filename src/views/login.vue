@@ -15,7 +15,7 @@
         <textbtn @click.native="$router.push('logout')" text="logout" class="outline"/>
       </div>
       <div class="notice">
-        <a href="https://git.cybre.town/adb/matrix-chat">matrix-chat</a> powerd by <a href="https://matrix.org">Matrix</a>
+        <a href="https://git.cybre.town/adb/matrix-chat">matrix-chat</a> powered by <a href="https://matrix.org">Matrix</a>
       </div>
     </div>
     <overlay v-if="loading"><throbber :text="loading"/></overlay>

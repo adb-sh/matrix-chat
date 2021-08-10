@@ -86,17 +86,7 @@ export default {
 
 <style scoped lang="scss">
 input{
-  padding: 0 2rem 0 2rem;
-  height: 2.5rem;
-  color: #fff;
-  background-color: #1d1d1d;
-  border-radius: 1.25rem;
-  border: 0.1rem solid #fff;
-  text-align: center;
-  font-size: 1.1rem;
-  margin: 0.5rem;
-  appearance: none;
-  outline: none;
+  width: 16rem;
 }
 input:focus{
   color: #000;
@@ -130,9 +120,9 @@ input:focus{
   }
 }
 
-@media (max-width: 35rem) {
+@media (max-width: 30rem) {
   input {
-    width: calc(100% - 4rem);
+    width: calc(100% - 2rem);
   }
   .loginBox{
     width: calc(100% - 6rem);

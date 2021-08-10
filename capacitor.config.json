@@ -1,5 +1,5 @@
 {
-  "appId": "sh.adb.matrixChat",
+  "appId": "sh.adb.matrixchat",
   "appName": "matrix-chat",
   "bundledWebRuntime": false,
   "npmClient": "npm",

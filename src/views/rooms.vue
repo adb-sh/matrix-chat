@@ -28,7 +28,7 @@
             'Add to Favourites':()=>{setTag(room, 'm.favourite'); removeTag(room, 'm.lowpriority'); },
             'Low Priority':()=>{setTag(room, 'm.lowpriority'); removeTag(room, 'm.favourite'); },
             'Reset Priority':()=>{removeTag(room, 'm.favourite'); removeTag(room, 'm.lowpriority'); },
-            'Forget and Delete':()=>forgetRoom(room.roomId, true)
+            'Forget and Delete':()=>matrix.client.forget(room.roomId, true)
           }})"
         />
       </div>
@@ -93,7 +93,6 @@
 import chat from '@/components/chat/chat.vue';
 import chatInformation from '@/components/chat/chatInformation';
 import {matrix} from '@/main';
-const {forget: forgetRoom} = matrix.client;
 import {getMxcFromRoom} from '@/lib/getMxc';
 import roomListElement from '@/components/matrix/roomListElement';
 import {getRoom, getUser} from '@/lib/matrixUtils';
@@ -130,6 +129,7 @@ export default {
       this.$router.push(`/rooms/${room.roomId}`);
       this.$nextTick(() => this.showRoom = true);
       this.search = '';
+      console.log(matrix.client.getRoomPushRule('global', room.roomId()))
     },
     getCurrentRoom(){
       return getRoom(this.$route.path.split('/')[2]);
@@ -188,8 +188,7 @@ export default {
     isValidUserId,
     isValidRoomId,
     createRoom,
-    setContextMenu,
-    forgetRoom
+    setContextMenu
   },
   data(){
     return {

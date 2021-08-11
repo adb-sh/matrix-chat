@@ -27,7 +27,8 @@
           @contextmenu.native.prevent="event=>setContextMenu({event, options:{
             'Add to Favourites':()=>{setTag(room, 'm.favourite'); removeTag(room, 'm.lowpriority'); },
             'Low Priority':()=>{setTag(room, 'm.lowpriority'); removeTag(room, 'm.favourite'); },
-            'Reset Priority':()=>{removeTag(room, 'm.favourite'); removeTag(room, 'm.lowpriority'); }
+            'Reset Priority':()=>{removeTag(room, 'm.favourite'); removeTag(room, 'm.lowpriority'); },
+            'Forget and Delete':()=>forgetRoom(room.roomId, true)
           }})"
         />
       </div>
@@ -92,6 +93,7 @@
 import chat from '@/components/chat/chat.vue';
 import chatInformation from '@/components/chat/chatInformation';
 import {matrix} from '@/main';
+const {forget: forgetRoom} = matrix.client;
 import {getMxcFromRoom} from '@/lib/getMxc';
 import roomListElement from '@/components/matrix/roomListElement';
 import {getRoom, getUser} from '@/lib/matrixUtils';
@@ -186,7 +188,8 @@ export default {
     isValidUserId,
     isValidRoomId,
     createRoom,
-    setContextMenu
+    setContextMenu,
+    forgetRoom
   },
   data(){
     return {

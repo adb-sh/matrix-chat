@@ -1,8 +1,10 @@
 <template>
-  <div class="event" @contextmenu.prevent="contextEvent=>setContextMenu({event:contextEvent, options:{
+  <div class="event" @contextmenu.prevent="contextEvent=>setContextMenu({event:contextEvent, options:Object.assign({
     Reply:()=>setReplyTo(event),
     Copy:()=>copy(event.content.body)
-  }})">
+  }, status==='not_send'||status==='queued'?{
+    'Cancel pending Event':()=>cancelPendingEvent(event)
+  }:{})})">
     <div v-if="event.type==='m.room.message'" :class="type==='send'?'messageSend':'messageReceive'" class="message">
       <reply-event :event="replyEvent" v-if="replyEvent"/>
       <event-content :content="event.content"/>
@@ -24,6 +26,7 @@
 
 <script>
 import {matrix} from '@/main';
+const {cancelPendingEvent} = matrix.client;
 import {calcUserName} from '@/lib/matrixUtils';
 import {getTime} from '@/lib/getTimeStrings';
 import EventContent from '@/components/chat/eventContent';
@@ -58,7 +61,8 @@ export default {
     },
     calcUserName,
     getTime,
-    setContextMenu
+    setContextMenu,
+    cancelPendingEvent
   },
   data(){
     return{

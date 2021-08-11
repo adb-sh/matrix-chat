@@ -14,6 +14,7 @@
     <div v-else-if="room.timeline.length" class="status"><span class="user">{{calcUserName(getLatestEvent(room).sender)}}:</span> {{getPreviewString(room)}}</div>
     <div v-else>Empty room</div>
     <div v-if="room._notificationCounts.total" class="notificationCount">{{room._notificationCounts.total}}</div>
+    <div v-else-if="getUnreadEventsCount(room)" class="notificationCount silent">{{getUnreadEventsCount(room)}}</div>
   </div>
 </template>
 
@@ -46,6 +47,12 @@ export default {
     },
     getLatestEvent(room){
       return [...room.timeline]?.pop()?.event;
+    },
+    getUnreadEventsCount(room){
+      if (!room.timeline?.length) return 0;
+      let read = room._receipts['m.read'][matrix.user]?.eventId;
+      if (!read) return 0;
+      return room.timeline.length - room.timeline.findIndex(ev=>ev.event.event_id===read) - 1;
     },
     getMxcFromChat,
     calcUserName,
@@ -115,6 +122,10 @@ export default {
     font-size: 0.8rem;
     background-color: var(--red);
     border-radius: 2rem;
+  }
+  .notificationCount.silent{
+    background-color: var(--grey200);
+    color: #fff;
   }
 }
 .roomListElement:hover{

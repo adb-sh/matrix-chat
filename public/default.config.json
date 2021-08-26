@@ -1,14 +1,22 @@
 {
   "login": {
     "user": {
+      "placeholder": "Username"
+    },
+    "userId": {
       "placeholder": "@user:matrix.org"
     },
     "password": {
       "placeholder": "Password"
     },
     "homeServer": {
+      "placeholder": "Server",
+      "default": "matrix.org"
+    },
+    "homeServerUrl": {
       "placeholder": "Home Server",
       "default": "https://matrix.org"
-    }
+    },
+    "extendedView": false
   }
 }

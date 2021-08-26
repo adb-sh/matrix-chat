@@ -129,7 +129,6 @@ export default {
       this.$router.push(`/rooms/${room.roomId}`);
       this.$nextTick(() => this.showRoom = true);
       this.search = '';
-      console.log(matrix.client.getRoomPushRule('global', room.roomId()))
     },
     getCurrentRoom(){
       return getRoom(this.$route.path.split('/')[2]);

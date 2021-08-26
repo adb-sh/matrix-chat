@@ -3,6 +3,7 @@ import login from '@/views/login';
 import rooms from '@/views/rooms';
 import admin from '@/views/admin';
 import logout from '@/views/logout';
+import register from '@/views/register';
 
 export const router = new VueRouter({
   routes: [
@@ -15,6 +16,11 @@ export const router = new VueRouter({
       path: '/login',
       name: 'login',
       component: login
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: register
     },
     {
       path: '/logout',

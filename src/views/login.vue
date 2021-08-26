@@ -1,25 +1,25 @@
 <template>
-  <div class="login">
-    <div class="loginBox">
-      <h1 class="title">[chat]</h1>
-      <form v-if="!matrix.client" @submit.prevent="login()">
-        <input v-model="user" class="input" name="user" type="text" :placeholder="config.user.placeholder"><br>
-        <input v-model="password" class="input" name="password" type="password" :placeholder="config.password.placeholder"><br>
-        <input v-model="homeServer" class="input" name="homeserver" :placeholder="config.homeServer.placeholder"><br>
-        <div v-if="loginError" class="info">{{loginError}}</div>
-        <textbtn type="submit" text="login" class="rounded"/>
-      </form>
+  <loginView :loading="loading">
+    <form @submit.prevent="login()">
+      <div v-if="extendedView">
+        <input v-model="userId" class="input" name="user" type="text" :placeholder="config.userId.placeholder" required><br>
+        <input v-model="homeServerUrl" class="input serverExtend" name="homeserver" :placeholder="config.homeServerUrl.placeholder" required>
+        <button @click.prevent="toggleView()" class="toggle" title="Fold In">⤴</button><br>
+        <input v-model="password" class="input" name="password" type="password" :placeholder="config.password.placeholder" required><br>
+      </div>
       <div v-else>
-        <p>you are already logged in</p>
-        <textbtn @click.native="$router.push('rooms')" text="chat" />
-        <textbtn @click.native="$router.push('logout')" text="logout" class="outline"/>
+        <div class="inputCombo">
+          <input v-model="user" class="input user" name="user" type="text" :placeholder="config.user.placeholder" required>
+          <input v-model="homeServer" class="input server" name="homeserver" :placeholder="config.homeServer.placeholder" required>
+          <button @click.prevent="toggleView()" class="toggle" title="Extend">⤦</button>
+        </div><br>
+        <input v-model="password" class="input" name="password" type="password" :placeholder="config.password.placeholder" required><br>
       </div>
-      <div class="notice">
-        <a href="https://git.cybre.town/adb/matrix-chat">matrix-chat</a> powered by <a href="https://matrix.org">Matrix</a>
-      </div>
-    </div>
-    <overlay v-if="loading"><throbber :text="loading"/></overlay>
-  </div>
+      <p v-if="loginError" class="error">{{loginError}}</p>
+      <textbtn type="submit" text="login" class="rounded"/>
+      <p class="">Don't have an account? <router-link to="/register">Register</router-link></p>
+    </form>
+  </loginView>
 </template>
 
 <script>
@@ -27,105 +27,114 @@ import textbtn from '@/components/layout/textbtn';
 import {matrix} from '@/main.js';
 import {isValidUserId} from '@/lib/matrixUtils';
 import {DataStore} from '@/lib/DataStore';
-import Overlay from '@/components/layout/overlay';
-import Throbber from '@/components/layout/throbber';
 const store = new DataStore();
 import {config} from '@/lib/getConfig';
+import loginView from '@/components/layout/loginView';
 
 export default {
   name: 'login.vue',
   components: {
-    Throbber,
-    Overlay,
-    textbtn
+    textbtn,
+    loginView
   },
   methods: {
     login(){
-      // eslint-disable-next-line no-cond-assign
-      if (this.loginError = this.getInputErrors()) return false;
+      this.loginError = this.getInputErrors()
+      if (this.loginError) return false;
       this.loading = 'logging in';
-      matrix.login(this.user, this.password, this.homeServer, (error) => {
-        this.loginError = `login failed: ${error}`;
-        this.loading = false;
-      }, token => {
+      if (!this.extendedView){
+        this.userId = `@${this.user}:${this.homeServer}`;
+        this.homeServerUrl = `https://${this.homeServer}`;
+      }
+      matrix.login(this.userId, this.password, this.homeServerUrl).then(token=>{
         this.store.set('login', {
-          baseUrl: this.homeServer,
-          userId: this.user,
+          baseUrl: this.homeServerUrl,
+          userId: this.userId,
           accessToken: token
         });
         this.loading = false;
         this.$router.push('/rooms/');
+      }).catch(error=>{
+        this.loginError = `login failed: ${error}`;
+        this.loading = false;
       });
     },
     getInputErrors(){
       if (matrix.client !== undefined) return 'you are already logged in';
-      if (this.user === '') return 'username is empty';
+      if (this.extendedView){
+        if (this.userId === '') return 'user id is empty';
+        if (!isValidUserId(this.userId)) return 'user id is in wrong style';
+        if (this.homeServerUrl === '') return 'server is undefined';
+      } else {
+        if (this.user === '') return 'username is empty';
+        if (!this.user.match(/^[a-zA-Z0-9=/_.+-]+$/)) return 'allowed special characters for the username are: =/_.+-';
+      }
       if (this.password === '') return 'password is empty';
-      if (!isValidUserId(this.user)) return 'username is in wrong style';
       return false;
+    },
+    toggleView(){
+      this.extendedView = !this.extendedView;
     }
   },
   data(){
     return {
       user: '',
+      userId: '',
       password: '',
       homeServer: config?.login?.homeServer?.default||'',
+      homeServerUrl: config?.login?.homeServerUrl?.default||'',
       loginError: '',
       store,
       loading: false,
       matrix,
       config:{
-        user:{placeholder: config?.login?.user?.placeholder||'User Id',},
+        user:{placeholder: config?.login?.user?.placeholder||'Username'},
+        userId:{placeholder: config?.login?.userId?.placeholder||'User Id'},
         password:{placeholder: config?.login?.password?.placeholder||'Password'},
-        homeServer:{placeholder: config?.login?.homeServer?.placeholder||'Home Server'}
-      }
+        homeServer:{placeholder: config?.login?.homeServer?.placeholder||'Server'},
+        homeServerUrl:{placeholder: config?.login?.homeServerUrl?.placeholder||'Home Server'}
+      },
+      extendedView: config?.login?.extendedView||false
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-input{
-  width: 16rem;
+.user{
+  width: calc(60% - 2rem);
+  margin-right: 0;
+  border-radius: 0.7rem 0 0 0.7rem;
 }
-input:focus{
-  color: #000;
-  background-color: #fff;
+.server{
+  width: calc(40% - 2rem);
+  margin-left: 0;
+  border-radius: 0 0.7rem 0.7rem 0;
+  background-color: #282828;
 }
-.login{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(2.6rad , #39dcae, #083a87);
+.serverExtend{
+  width: 15rem;
 }
-.loginBox{
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  height: min-content;
-  width: max-content;
-  padding: 2rem;
-  border-radius: 1rem;
-  background-color: var(--grey600);
-  box-shadow: var(--shadow300);
+.toggle{
+  background-color: unset;
+  border: unset;
+  height: 2.2rem;
+  width: 1rem;
+  color: #fff;
+  margin: 0;
+  font-size: 1rem;
+  cursor: pointer;
 }
-.notice{
-  position: absolute;
-  bottom: -1.5rem;
-  right: .5rem;
-  a{
-    color: #fff;
-  }
+.inputCombo{
+  display: inline-block;
+  width: 18rem;
 }
-
 @media (max-width: 30rem) {
-  input {
-    width: calc(100% - 2rem);
+  .inputCombo{
+    width: 100%;
   }
-  .loginBox{
-    width: calc(100% - 6rem);
+  .serverExtend{
+    width: calc(100% - 3rem);
   }
 }
 </style>

@@ -6,7 +6,7 @@ export function getMxcFromUser(user){
 }
 
 export function getMxcFromUserId(userId){
-  return matrix.client.getUser(userId).avatarUrl;
+  return matrix.client.getUser(userId)?.avatarUrl;
 }
 
 export function getMxcFromRoom(room){
@@ -24,7 +24,7 @@ export function getMxcFromChat(room){
     :getMxcFromRoom(room);
 }
 
-export function getPreviewUrl(mxcUrl, size = 64, resizeMethod = 'crop'){
+export function getPreviewUrl(mxcUrl, size = 96, resizeMethod = 'crop'){
   return matrix.client.mxcUrlToHttp(mxcUrl, size, size, resizeMethod);
 }
 

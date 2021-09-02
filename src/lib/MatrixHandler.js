@@ -1,11 +1,15 @@
 import matrix from 'matrix-js-sdk';
 import {NotificationHandler} from '@/lib/NotificationHandler';
 import {sortRoomsByTimestamp} from '@/lib/matrixUtils';
+import {DataStore} from '@/lib/DataStore';
+// eslint-disable-next-line no-unused-vars
+import olm from 'olm';
 
 export class MatrixHandler {
   constructor(clientDisplayName = 'matrix-chat') {
+    this.store = new DataStore();
     this.clientDisplayName = clientDisplayName;
-    this.accessToken;
+    this.accessToken = undefined;
     this.client = undefined;
     this.rooms = [];
     this.loading = undefined;
@@ -21,7 +25,6 @@ export class MatrixHandler {
     this.sessionStore = new matrix.WebStorageSessionStore(window.localStorage);
     this.cryptoStore = new matrix.MemoryCryptoStore();
     this.params = {
-      deviceId: 'matrix-chat',
       store: this.indexedDBStore,
       useAuthorizationHeader: true,
       sessionStore: this.sessionStore,
@@ -35,16 +38,15 @@ export class MatrixHandler {
         console.log('there is already an active session');
         reject();
       }
-      this.client = new matrix.createClient(Object.assign({...this.params}, {
+      let tempClient = new matrix.createClient(Object.assign({...this.params}, {
         baseUrl
       }));
-      this.client.login('m.login.password', {
+      tempClient.login('m.login.password', {
         user: user,
         password: password,
         initial_device_display_name: this.clientDisplayName,
-      }).then(res => {
+      }).then(async res => {
         if (res.error) {
-          this.logout();
           console.error(`login error => ${res.error}`);
           reject(res.error);
         }
@@ -53,8 +55,9 @@ export class MatrixHandler {
           this.user = user;
           this.baseUrl = baseUrl;
           this.accessToken = res.access_token;
-          this.startSync()
-          resolve(res.access_token);
+          this.deviceId = res.device_id;
+          await this.updateDataStore();
+          resolve(this.tokenLogin({}));
         }
       }).catch(error => {
         console.error(error);
@@ -62,22 +65,22 @@ export class MatrixHandler {
       })
     });
   }
-  tokenLogin(baseUrl, accessToken, userId){
+  tokenLogin({baseUrl = this.baseUrl, accessToken = this.accessToken, userId = this.user, deviceId = this.deviceId}){
     this.loading = true;
-    return new Promise((resolve, reject) => {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
       if (this.client){
         console.log('there is already an active session');
         reject();
       }
       this.client = new matrix.createClient(Object.assign({...this.params}, {
-        userId: userId,
-        accessToken,
-        baseUrl
+        userId, accessToken, baseUrl, deviceId
       }));
       this.client.getAccountDataFromServer('verification').then(() => {
         this.user = userId;
         this.baseUrl = baseUrl;
         this.accessToken = accessToken;
+        this.deviceId = deviceId;
         this.startSync();
         resolve(this.accessToken);
       }).catch(err=>{
@@ -100,8 +103,27 @@ export class MatrixHandler {
     await this.sessionStore?.removeEndToEndAccount();
     await this.sessionStore?.removeEndToEndDeviceData();
   }
+  updateDataStore(){
+    return this.store.set('login', {
+      baseUrl: this.baseUrl,
+      userId: this.user,
+      accessToken: this.accessToken,
+      deviceId: this.deviceId
+    });
+  }
+  loadFromDataStore(){
+    return this.store.get('login').then(data => {
+      this.baseUrl = data.baseUrl;
+      this.userId = data.userId;
+      this.accessToken = data.accessToken;
+      this.deviceId = data.deviceId;
+      return data;
+    });
+  }
   async startSync(callback = ()=>{}){
     this.loading = true;
+    await olm.init().then(console.log).catch(()=>null);
+    await this.client.initCrypto();
     await this.client.startClient();
     await new Promise(resolve => this.client.on('sync', state => {
       if (state === 'PREPARED') resolve();

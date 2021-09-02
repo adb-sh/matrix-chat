@@ -26,8 +26,6 @@
 import textbtn from '@/components/layout/textbtn';
 import {matrix} from '@/main.js';
 import {isValidUserId} from '@/lib/matrixUtils';
-import {DataStore} from '@/lib/DataStore';
-const store = new DataStore();
 import {config} from '@/lib/getConfig';
 import loginView from '@/components/layout/loginView';
 
@@ -46,12 +44,7 @@ export default {
         this.userId = `@${this.user}:${this.homeServer}`;
         this.homeServerUrl = `https://${this.homeServer}`;
       }
-      matrix.login(this.userId, this.password, this.homeServerUrl).then(token=>{
-        this.store.set('login', {
-          baseUrl: this.homeServerUrl,
-          userId: this.userId,
-          accessToken: token
-        });
+      matrix.login(this.userId, this.password, this.homeServerUrl).then(()=>{
         this.loading = false;
         this.$router.push('/rooms/');
       }).catch(error=>{
@@ -84,7 +77,6 @@ export default {
       homeServer: config?.login?.homeServer?.default||'',
       homeServerUrl: config?.login?.homeServerUrl?.default||'',
       loginError: '',
-      store,
       loading: false,
       matrix,
       config:{

@@ -14,12 +14,11 @@ Vue.use(VueLazyRenderer);
 
 export let matrix = new MatrixHandler();
 
-
 Promise.all([
   fetchConfig().then(conf => console.log('config:', conf)),
   new DataStore().get('login').then(login => {
-    if (login && login.baseUrl && login.accessToken && login.userId) {
-      return matrix.tokenLogin(login.baseUrl, login.accessToken, login.userId);
+    if (login && login.baseUrl && login.accessToken && login.userId && login.deviceId) {
+      return matrix.tokenLogin(login);
     }
   })
 ]).then(() => {

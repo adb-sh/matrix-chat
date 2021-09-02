@@ -145,6 +145,7 @@ export default {
     this.$nextTick(this.scroll.scrollToBottom());
     this.onScroll();
     this.onActive();
+    matrix.client.downloadKeys((await this.room.getEncryptionTargetMembers()).map(user=>user['userId']));
   }
 }
 </script>

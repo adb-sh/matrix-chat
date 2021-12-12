@@ -184,7 +184,7 @@ export default {
       eventProxyHandler: {
         set: () => true,
         get: (target, key) => {
-          if (typeof target[key] === 'object') return new Proxy(Object.assign({}, target[key]), this.eventProxyHandler);
+          if (typeof target[key] === 'object') return new Proxy({...target[key]}, this.eventProxyHandler);
           return target[key];
         }
       },

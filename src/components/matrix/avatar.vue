@@ -1,6 +1,6 @@
 <template>
-  <img v-if="mxcURL && !error" :src="getPreviewUrl(mxcURL)" class="userThumbnail image" @error="error=true" alt=" "/>
-  <div v-else v-html="getJdenticon()" class="userThumbnail identicon"/>
+  <img v-if="mxcURL && !error" :src="getPreviewUrl(mxcURL, 64)" class="userThumbnail image" @error="error=true" alt=" "/>
+  <div v-else v-html="getJdenticon()" class="userThumbnail identicon" ref="identicon"/>
 </template>
 
 <script>

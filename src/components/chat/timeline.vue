@@ -14,7 +14,7 @@
               v-if="group[0].event.sender !== user && groupTimeline"
               :fallback="group[0].event.sender"
               class="avatar"
-              :mxcURL="getUser(group[0].event.sender).avatarUrl"
+              :mxcURL="getMxcFromUserId(group[0].event.sender)"
               :size="2"
               :title="group[0].event.sender"
             />
@@ -49,7 +49,8 @@
 import avatar from '@/components/matrix/avatar';
 import splitArray from '@/lib/splitArray';
 import {getDate, getTime} from '@/lib/getTimeStrings';
-import {getUser, calcUserName} from '@/lib/matrixUtils';
+import {calcUserName} from '@/lib/matrixUtils';
+import {getMxcFromUserId} from '@/lib/getMxc';
 import {matrix} from '@/main';
 
 export default {
@@ -73,11 +74,11 @@ export default {
       return Object.entries(this.receipts['m.read']).filter(ar =>
         ar[0]!==matrix.user && ar[1].eventId===event.event.event_id);
     },
-    getUser,
     calcUserName,
     splitArray,
     getDate,
-    getTime
+    getTime,
+    getMxcFromUserId
   },
   beforeUpdate() {
     this.beforeUpdate();

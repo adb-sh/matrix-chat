@@ -9,10 +9,10 @@
       <div ref="topLogo" class="top"><h1 class="wideElement topLogo">[chat]</h1><h1 class="smallElement topLogo">[c]</h1></div>
       <div class="stickySearch top" ref="stickySearch">
         <icon class="menu" ic="./sym/ic_menu_white.svg" @click.native="()=>showSideMenu=true"/>
-        <input v-model="search" class="input wideElement search" type="text" maxlength="50" placeholder="search">
+        <input v-model="search.data" class="input wideElement search" type="text" maxlength="50" placeholder="search">
       </div>
-      <div v-for="category in search?[
-        {rooms: matrix.rooms.all.filter(r=>matchResults(r.name, search)||r.roomId===search), name: 'rooms'}
+      <div v-for="category in delayedSearch.data?[
+        {rooms: matrix.rooms.all.filter(r=>matchResults(r.name, delayedSearch.data)||r.roomId===delayedSearch.data), name: 'rooms'}
       ]:[
         {rooms: matrix.rooms.favourite, name: 'favourites'},
         {rooms: matrix.rooms.other, name: 'rooms'},
@@ -32,11 +32,11 @@
           }})"
         />
       </div>
-      <div v-if="search">
+      <div v-if="delayedSearch.data">
         <p class="wideElement">- users -</p><p class="smallElement">—</p>
         <user-list-element
           v-for="user in matrix.client.getUsers()
-            .filter(prop=>matchResults(prop.displayName, search)||matchResults(prop.userId, search))
+            .filter(prop=>matchResults(prop.displayName, delayedSearch.data)||matchResults(prop.userId, delayedSearch.data))
             .slice(0,10)"
           :user="user" :key="user.userId"
           @click.native="setQuestion({
@@ -47,26 +47,26 @@
         />
         <p class="wideElement">- suggestions -</p><p class="smallElement">…</p>
         <div class="wideElement">
-          <p v-if="isValidUserId(search)"
+          <p v-if="isValidUserId(delayedSearch.data)"
             class="suggestion"
             @click="setQuestion({
             title:'New Chat',
-            question:`Create private chat with '${search}'?`,
-            callback:()=>createRoom({users:[{userId:search}], access: 'private'}).then(openChat)
+            question:`Create private chat with '${delayedSearch.data}'?`,
+            callback:()=>createRoom({users:[{userId:delayedSearch.data}], access: 'private'}).then(openChat)
           })"
-          >create chat: {{search}} ➤</p>
-          <p v-if="isValidRoomId(search)"
+          >create chat: {{delayedSearch.data}} ➤</p>
+          <p v-if="isValidRoomId(delayedSearch.data)"
             class="suggestion"
             @click="setQuestion({
               title:'Join room',
-              question:`Join '${search}'?`,
-              callback:()=>joinRoom(search)
+              question:`Join '${delayedSearch.data}'?`,
+              callback:()=>joinRoom(delayedSearch.data)
             })"
-          >join room: {{search}} ➤</p>
-          <p v-if="search.match(/^[a-zA-Z0-9_.+-]+$/)"
-            @click="setShowCreateRoom({name: search}, openChat)"
+          >join room: {{delayedSearch.data}} ➤</p>
+          <p v-if="delayedSearch.data.match(/^[a-zA-Z0-9_.+-]+$/)"
+            @click="setShowCreateRoom({name: delayedSearch.data}, openChat)"
             class="suggestion"
-          >create room: {{search}} ➤</p>
+          >create room: {{delayedSearch.data}} ➤</p>
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@ export default {
       this.showRoom = false;
       this.$router.push(`/rooms/${room.roomId}`);
       this.$nextTick(() => this.showRoom = true);
-      this.search = '';
+      this.search.data = '';
     },
     getCurrentRoom(){
       return getRoom(this.$route.path.split('/')[2]);
@@ -176,10 +176,21 @@ export default {
     },
     setTag(room, tag){
       matrix.client.setRoomTag(room.roomId, tag, {}).then(matrix.reloadRooms);
-
     },
     removeTag(room, tag){
       matrix.client.deleteRoomTag(room.roomId, tag).then(matrix.reloadRooms);
+    },
+    proxyOnTimeout(data, callback, ms){
+      let timeout;
+      return new Proxy(data, {
+        set: (target, key, value) => {
+          target[key] = value;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => callback(data), ms);
+          return true;
+        },
+        get: (target, key) => target[key]
+      });
     },
     getMxcFromRoom,
     getRoom,
@@ -194,7 +205,8 @@ export default {
       matrix,
       showChatInfo: false,
       showRoom: true,
-      search: '',
+      delayedSearch: {data: ''},
+      search: this.proxyOnTimeout({data: ''}, data=>this.delayedSearch={...data}, 250),
       popup:{},
       showCreateRoom:{},
       showSideMenu: false

@@ -2,7 +2,7 @@
   <loginView :loading="loading">
     <form @submit.prevent="login()">
       <div v-if="extendedView">
-        <input v-model="userId" class="input" name="user" type="text" :placeholder="config.userId.placeholder" required><br>
+        <input v-model="userId" class="input" name="userId" type="text" :placeholder="config.userId.placeholder" required><br>
         <input v-model="homeServerUrl" class="input serverExtend" name="homeserver" :placeholder="config.homeServerUrl.placeholder" required>
         <button @click.prevent="toggleView()" class="toggle" title="Fold In">⤴</button><br>
         <input v-model="password" class="input" name="password" type="password" :placeholder="config.password.placeholder" required><br>

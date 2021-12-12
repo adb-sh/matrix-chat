@@ -18,7 +18,7 @@ Promise.all([
   fetchConfig().then(conf => console.log('config:', conf)),
   new DataStore().get('login').then(login => {
     if (login && login.baseUrl && login.accessToken && login.userId && login.deviceId) {
-      return matrix.tokenLogin(login);
+      return matrix.tokenLogin(login).catch(()=>console.error('login failed'));
     }
   })
 ]).then(() => {

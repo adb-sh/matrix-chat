@@ -2,8 +2,9 @@ import matrix from 'matrix-js-sdk';
 import {NotificationHandler} from '@/lib/NotificationHandler';
 import {sortRoomsByTimestamp} from '@/lib/matrixUtils';
 import {DataStore} from '@/lib/DataStore';
-// eslint-disable-next-line no-unused-vars
 import olm from 'olm';
+// eslint-disable-next-line no-undef
+global.Olm = olm;
 
 export class MatrixHandler {
   constructor(clientDisplayName = 'matrix-chat') {
@@ -38,9 +39,7 @@ export class MatrixHandler {
         console.log('there is already an active session');
         reject();
       }
-      let tempClient = new matrix.createClient(Object.assign({...this.params}, {
-        baseUrl
-      }));
+      let tempClient = new matrix.createClient({...this.params, baseUrl});
       tempClient.login('m.login.password', {
         user: user,
         password: password,
@@ -59,9 +58,11 @@ export class MatrixHandler {
           await this.updateDataStore();
           resolve(this.tokenLogin({}));
         }
-      }).catch(error => {
+      }).catch(async error => {
         console.error(error);
-        this.logout().then(()=>reject(error.toString()));
+        await tempClient.stopClient()
+        tempClient = null;
+        reject(error.toString());
       })
     });
   }
@@ -73,9 +74,9 @@ export class MatrixHandler {
         console.log('there is already an active session');
         reject();
       }
-      this.client = new matrix.createClient(Object.assign({...this.params}, {
-        userId, accessToken, baseUrl, deviceId
-      }));
+      this.client = new matrix.createClient({
+        ...this.params, userId, accessToken, baseUrl, deviceId
+      });
       this.client.getAccountDataFromServer('verification').then(() => {
         this.user = userId;
         this.baseUrl = baseUrl;
@@ -114,7 +115,7 @@ export class MatrixHandler {
   loadFromDataStore(){
     return this.store.get('login').then(data => {
       this.baseUrl = data.baseUrl;
-      this.userId = data.userId;
+      this.user = data.userId;
       this.accessToken = data.accessToken;
       this.deviceId = data.deviceId;
       return data;
@@ -122,17 +123,22 @@ export class MatrixHandler {
   }
   async startSync(callback = ()=>{}){
     this.loading = true;
-    await olm.init().then(console.log).catch(()=>null);
+    await olm.init().then(console.log).catch(console.error);
     await this.client.initCrypto();
-    await this.client.startClient();
+    await this.client.startClient({ initialSyncLimit: 1 });
     await new Promise(resolve => this.client.on('sync', state => {
       if (state === 'PREPARED') resolve();
     }));
+    this.client.setGlobalErrorOnUnknownDevices(false);
+    //this.client.requestVerification(this.user)
     this.reloadRooms();
     this.loading = false;
     callback();
     this.listenToRoomChanges();
     this.listenToPushEvents();
+    this.client.on('Room.timeline', message => {
+      if (message.event.type === 'm.room.encrypted') message = this.client._crypto.decryptEvent(message);
+    });
   }
   reloadRooms(){
     this.rooms = sortRoomsByTimestamp(this.client.getRooms());
@@ -152,6 +158,6 @@ export class MatrixHandler {
   async sendEvent({content, type}, roomId){
     return await this.client.sendEvent(roomId, type, content)
       .then(() => console.log('message sent successfully'))
-      .catch((err) => console.log(`error while sending message => ${err}`));
+      .catch((err) => console.log('error while sending message =>', err));
   }
 }
